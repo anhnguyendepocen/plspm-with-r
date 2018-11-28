@@ -1,0 +1,70 @@
+% !Rnw root = ../PLS_Path_Modeling_with_R.Rnw
+
+
+\chapter*{Preface}
+\addcontentsline{toc}{chapter}{Preface}
+On a sunny September morning of 2005, Tomas Aluja ---my PhD advisor--- and I were walking around the campus of the Universitat Politecnica de Catalunya in Barcelona. ``So, how did you like the symposium?'' Tomas asked me. The week before we had hosted the \textit{PLS'05 International Symposium on PLS and Related Methods}. It was my first academic conference ever and I had just been introduced to the PLS methods early that year. ``I kind of liked it'' I responded. ``What was your favorite talk?'', Tomas said. ``Well, I liked this guy's presentation and also the case study in that woman's talk'' I answered vaguely. I was part of the staff and my role during the symposium was to be in charge of one of the conference halls. In other words, I had to make sure that everything worked fine, the lights, the projector, the microphone, the speakers' banners. I barely had a chance to sit down and listen carefully to the talks. You can't blame me for not paying attention to the speakers; after all, I was checking that all the small details were in place (which I diligently did).
+
+Tomas paused, stared at me, and put all the cards on the table: ``Would you be interested in working on PLS?'' I knew that a proposal like that from Tomas was a once-in-lifetime opportunity that I couldn't reject. ``Yes, absolutely'', I responded. I was not exactly sure if PLS was for me but I would figure that out later. ``The plan is to make an R library to calculate PLS path models. Then, we need to work on segmentation issues. You know, find a way to detect segments and compare path models \dots'' Tomas continued describing the general idea of the project, thinking out loud and mentioning some of the potential problems that I would have to deal with. When he finished, all I said was ``OK''(I'm not a very talkative person). Oh boy, what an innocent grad student I was. To put that in perspective is like if you were just start learning to climb, and then your instructor says: ``Would you be interested in Mount Everest? The plan is to climb mount Everest under the following conditions: you need to climb it by its north face, during the winter season, in alpine style, without Sherpas, with no oxygen supply, and open a new route that nobody else has climbed before''. Anyone in their right mind would thought twice about it and even then would have doubted the feasibility of the project. But I'm glad I didn't know in advance what it would take to climb ``mount PLS''. I was going to climb it or die trying.
+
+Fast-forward to July 2009. The seemingly utopian project my advisor proposed me, became a reality. I'll save the story of what happened in those four years for when I write my memoirs. The important thing for this story was what happened on the day of my dissertation defense. That evening, after successfully defending my climbing of mount PLS, I attended the traditional dinner with Tomas, the members of the defense committee, and my invited guests. At the end when it came the time to say goodbye, Professor Ludovic Lebart, a member of my defense committee, approached me and strongly encouraged me to write a textbook about Partial Least Squares Path Modeling \textit{as soon as possible}. ``Me? A book on PLS Path Modeling? No way!'', I thought. At least not anytime soon. I smiled and told him that I would think about it. Since I had just finished my PhD, I didn't have the necessary motivation and required stamina to write another manuscript. Besides, the \textit{Handbook of Partial Least Squares} was already being edited. The world didn't need another book on PLS. Or so I thought.
+
+Life has this strange way of proving that sometimes you are wrong. I kept maintaining the R package for PLS Path Modeling and adding more features. Emails from all over the world filled my inbox with questions, inquiries, doubts, comments, suggestions, contributions, and of course, complaints about those random but nasty, pain-in-the-butt, bugs. People asked me how to apply PLS for a given problem; how to calculate such and such; what was the meaning of those displayed numbers; and so on. Moreover, Lebart's words were still in my head. ``Maybe it wouldn't be such a bad idea to write a book on PLS Path Modeling after all'', I used to say to myself. The more I remained involved with PLS ---either by maintaining the R package, applying it for my research projects, answering emails and collaborating with other colleagues--- the more I realized there was something missing. As John Lennon said: \textit{``Life is what happens to you while you're busy making other plans''}. Finally, it was clear to me that if I didn't write this book, nobody else would. I decided not to think any more in Lebart's words, stopped making random plans, and instead made the decision to write this book about \textbf{Partial Least Squares Path Modeling} \dots \textbf{with R}. 
+
+
+\section*{Why this book?}
+The simplest answer to the question \textit{Why this book?} is that there are no books dedicated to instruct how to apply PLS Path Modeling using R. The extended answer is a little more complex. First, I've found the time and motivation to write it. Second, I wanted to create a resource that were different from the rest of texts about Partial Least Squares. Most of the existing literature on PLS Path Modeling consists of material describing the methodology, and showing the results from a real-life application. However, there are no resources that show readers how they can play with the broad range of PLS-PM applications using the existing software. If a grad student wants to apply a model, she has to read a paper, figure out how the authors performed the PLS-PM analysis, and then struggle with the untold steps that she might need to get her job done.
+
+It is precisely the void in the current PLS literature with a lack of textbooks specifically dedicated to PLS Path Modeling, that I wanted to start filling. I wrote this text because I wanted to have a way to make PLS Path Modeling more accessible to a wider audience and not only to a select group of people learning PLS-PM in a seminar or workshop. If someone is interested in learning PLS-PM by herself, the path to the summit is very steep and slippery. It is one thing to work on a PhD project where it is expected that you will walk through fire to find the scant and elusive resources for your research topic. A completely different thing is to work on an analysis project without having the time, accessability and availability to books, electronic databases, journals, courses and other resources about Partial Least Squares. 
+
+Likewise, I wanted to share my experience and knowledge on PLS Path Modeling with the users of my R package; I wanted to give them an approachable and useful book where they can find the necessary material (mostly written in plain language) to carry out their own PLS-PM analysis. This has been the toughest challenge for me. I believe that for ideas to be widely spread and adopted they need to be perceived in a friendly and understandable way. If they are perceived as obscure, arcane and intimidating, only a few people will be crazy enough to dare to apply them. PLS Path Modeling has been available since the early 1980s but went unnoticed because there were no channels of distribution. Fortunately, this has changed in the last decade, but still I want to add my own contribution. 
+
+This book is about both the art and the science of PLS Path Modeling analysis. By this I mean that PLS Path Modeling is not only an algorithm to analyze data but also a methodology with its own mechanics and solid principles on which it is based. That is the science. But as with any other analysis, there is also human involvement and subjectivity. The idyllic perception of plugging some data in the computer, run an analysis, and get beautiful results, rarely happens in real life. All analyses require the user's skills and contextual knowledge to review the data and interpret the results. The analyses also require the user's know-how to perform an iterative process of trial an error until he or she understands what the data is telling. This is the art. 
+
+
+\section*{Audience of the Book}
+My hypothesized readers are a handful of senior undergraduate students, a few dozens or hundreds (or who knows, maybe more) of graduate students, and a broad variety of researchers, practitioners, and analysts that in one way or another are interested in applying PLS Path Modeling. This book assumes almost no prior experience with PLS techniques, although I imagine that you are reading this text because you have been already exposed to some PLS method. However, this text does rely on a couple of more or less technical assumptions.
+
+It assumes you have taken introductory courses of matrix algebra and statistics. I know this is kind of naive but ideally you should have been introduced to concepts of matrix algebra like the rank of a matrix, linear (in)dependence of vectors, matrix inversion, matrix factorization, orthogonality, and eigenvectors. You should also have been introduced to basic multivariate analysis methods like regression analysis, principal component analysis, canonical correlation analysis, etc. It would also be highly desirable to have previous experience with the statistical software R. Having said that, I'm perfectly conscious that this profile is like a list of requirements that human resources people typically ask in a job posting for the ideal but imaginary candidate.
+
+I have written the book as much informal as possible trying to keep it understandable even if you don't meet the previous assumptions. It doesn't follow a complete mathematical rigor, which I have relegated to a second plane. Instead, the discussion and explanations are more in the spirit of a tutorial. The book is designed to offer something for people who want to get started in PLS-PM, something to read as a jumping-off point for more complicated material. This does not mean that it cannot be of interest to PLS \textit{jedis} and \textit{ninjas}. However, I assume this book would be better used as your introduction to PLS Path Modeling analysis.
+
+\paragraph{To independent readers}
+My expectations is that many readers will use this book to improve the efficiency of their research, enrich their existing PLS analytical tools, and develop the skills needed for new types of studies. Much of what I use in practice was garnered through self-directed experience, and I have tried to compile this knowledge in one place to make it easier for other analysts to do the same.
+
+\paragraph{To teachers using this book}
+Although this book is written to stand on its own outside the classroom, it is also been designed to be used as a supplement text within the classroom. I actually don't know how many courses about PLS-PM are out there in the academic world, but I do know that many seminars and workshops on PLS-PM and related methods are taught in an increasing number every year. While there are examples and opportunities for practicing new skills as they are developed, there are no formal exercises or test questions in this book.
+
+
+
+
+\section*{Beyond this book}
+A lot of things have happened since that September of 2005. In particular, PLS Path Modeling has become much more popular while its community has grown substantially, and this trend is not going to slow down anytime soon. 
+
+This is the book that I wish existed when I started working on PLS in 2005. My aim in writing this book has been to allow more people to get into the PLS path modeling world. It is also intended as a stepping-stone to more advanced topics. The long-term goal is to empower you in the use of PLS and enjoy the rewards that it brings. It is my hope that by showing users how to apply the powerful PLS tools, they will be free to spend more time on the pleasures of scientific inquiry and data analysis projects. I hope you find it useful and are able to apply its content in your work and research projects. I certainly enjoyed the challenge of putting the book together.
+
+To comment or ask technical questions about this book, send an email to: \\
+\texttt{gaston.stat at gmail.com}
+
+
+\section*{Attribution}
+This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License. You can check the details at: \\
+\href{http://creativecommons.org/licenses/by-nc-sa/3.0/}{http://creativecommons.org/licenses/by-nc-sa/3.0/}
+
+In essence it states that I retain the Copyright but you are free to use, copy, reproduce and distribute the material in this book, but only under the same license to this one. You may not alter, transform, build upon it, or use this work for commercial purposes. However, permission to use this book in nonprofit teaching is still granted, provided the authorship and licensing information here is displayed. If you are using the book, either in teaching a class or for your own learning, I would highly appreciate your letting me know.
+
+I will be ridiculously happy and utterly pleased if you give proper attribution to my work. I'm not asking you for money or any donations; I'm not asking you to like me on any annoying social network; I'm not asking you to register or fill any stupid form. I'm just simply asking you to give me credit for my work. It costs you nothing, it doesn't hurt you, and I guarantee you that I would do the same for you. Also, it'll give you instant credit in your karma balance. Here's how you can cite my book:
+\vspace{2mm}
+\begin{quotation}\noindent
+\textsf{Sanchez, G. (2013) \textbf{PLS Path Modeling with R} \\
+Trowchez Editions. Berkeley, 2013.} \\
+\hspace{1.5mm} \texttt{http://www.gastonsanchez.com/PLS\_Path\_Modeling\_with\_R.pdf}
+\end{quotation}
+\vspace{2mm}
+See how easy that is? \\
+
+
+\vspace{2mm}
+Gaston Sanchez \\
+Berkeley, California. \\
+January 2013.

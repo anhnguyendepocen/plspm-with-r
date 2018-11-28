@@ -1,0 +1,788 @@
+% !Rnw root = ../PLS_Path_Modeling_with_R.Rnw
+
+
+\chapter{Moderating Effects}
+One of the analysis tasks that arises from time to time when studying path models is the examination of the so-called \textit{moderating effects}, also known as \textit{interaction effects}. In short, this type of effect represents the influence that a third variable has on the relationship between an independent and a dependent variable. This chapter is dedicated to show you how to test moderating effects with \plspm{}. 
+
+
+\section{Moderator Variables}
+If you are dealing with testing moderating effects, chances are that you will encounter some type of definition like the one below:
+
+\begin{quotation} \noindent
+A moderating effect is caused by  a variable ($M$) whose variation influences the strength or the direction of a relationship between an independent variable ($X$) and a dependent variable ($Y$). 
+\end{quotation}
+
+If you are like me, don't worry if you haven't grasped the notion of a moderating effect from the previous definition (you're not alone). A moderating effect is the fancy term that some authors use to say that there is a nosy variable $M$ influencing the effect between an independent variable $X$ and a dependent variable $Y$. Not surprinsingly, the nosy variable $M$ is called a \textit{moderator} variable and it can be a qualitative or a quantitative variable. Common examples of qualitative moderator variables are things like Gender or Ethnicity; in turn, quantitative moderator variables are things like Age or Income.
+
+Perhaps a better way to explain the concept of a moderating effect is by using a graphical display. The following figure is a typical diagram showing the effect of a moderator variable. We have three variables: an independent variable $X$, a dependent variable $Y$, and the moderator variable $M$. It is assumed that there is a causal relationship between $X$ and $Y$. The key component in the diagram is the dashed arrow from $M$ affecting the arrow between $X$ and $Y$. This dashed line represents the moderating effect of $M$, which is supposed to influence the \textbf{strength} and/or \textbf{direction} that $X$ has on $Y$.
+
+<<moderator_concept, echo=FALSE, message=FALSE>>=
+# load the package
+library(pathdiagram)
+
+X = latent(expression(X), x=0.25, y=0.75, rx=0.07, ry=0.06, fill="gray80", col="gray30")
+Y = latent(expression(Y), x=0.75, y=0.75, rx=0.07, ry=0.06, fill="gray80", col="gray30")
+M = latent(expression(M), x=0.5, y=0.4, rx=0.07, ry=0.06, fill="gray80", col="gray30")
+W = latent("", x=0.5, y=0.8, rx=0.07, ry=0.06, fill="white")
+@
+
+<<typical_moderator, echo=FALSE, fig.keep='last', fig.width=4.5, fig.height=3.5, out.width='.7\\linewidth', out.height='.4\\linewidth', fig.align='center', fig.pos='h', fig.cap='Typical diagram illustrating the effect of a nosy moderator variable'>>=
+# PLOT
+op = par(mar = rep(0,4))
+wall(ylim=c(0.3, 0.85))
+# draw latent variables
+draw(W)
+draw(X)
+draw(Y)
+draw(M)
+# arrows of inner model
+arrow(from=M, to=W, start="north", end="south", length=0.3, col="gray90", lty=2, angle=20)
+arrow(from=X, to=Y, start="east", end="west", length=0.2, col="gray90")
+# add text
+text(x=0.25, y=0.85, labels="independent", col="gray40")
+text(x=0.75, y=0.85, labels="dependent", col="gray40")
+text(x=0.5, y=0.3, labels="moderator", col="gray40")
+# reset par
+par(op)
+@
+
+This diagram is just for illustration purposes. Keep in mind that this diagram is an abstract representation; it's not a path diagram that you are supposed to figure out how to implement in PLS-PM software.
+
+
+
+\section{Moderating effects in PLS-PM}
+The general concepts of moderating effects and moderator variables have their own adaptation and representation in the PLS-PM world. Basically, there are two main options to study moderating effects depending on the nature of the moderator variable:
+
+\begin{itemize}
+ \item \textbf{Group Comparisons} This approach has to do when the moderator is qualitative (i.e. categorical) like Age or Gender, or when the moderator can be categorized. In this case we should use one of the methods discussed in Chapter 6 for comparing groups ---\plspm{} comes with the function \code{plspm.groups()} that is designed to compare two models by providing a categorical variable (an R \code{factor}) with two categories---.
+ 
+ \item \textbf{Moderator Constructs} This approach has to do when the moderator variable is treated as a latent variable. Under this approach, moderator variables are only considered in the inner model (the structural part of a path model).
+\end{itemize}
+
+
+\subsection{Moderator variables as constructs}
+When moderator variables are to be included in the model, the most important thing you need to know is that they have to be considered in the inner model. This means that moderating effects are treated as latent variables. In PLS-PM, we can find four main ways to study the effects of latent moderator variables: 
+\begin{itemize}
+ \item by using a \textbf{Product Indicator Approach}
+ \item by using a \textbf{Two-Stage Path Modeling Approach}
+ \item by using a \textbf{Two-Stage Regression Approach}
+ \item by using a \textbf{Categorical Variable Approach}
+\end{itemize}
+In the following sections we'll describe each of these approaches.
+
+
+
+\subsection{Case Study: Simplified Customer Satisfaction}
+In this example we are going to consider a simplified version of the Customer Satisfaction Index model with three latent variables: Image, Satisfaction and Loyalty. 
+<<simple_ecsi, echo=FALSE, message=FALSE>>=
+# latent variables
+LV = list(
+  Ima = latent("Image", x=0.55, y=0.8, rx=0.09, ry=0.08, fill="gray65"),
+  Sat = latent("Satisfaction", x=0.55, y=0.2, rx=0.09, ry=0.08, fill="gray65"), 
+  Loy = latent("Loyalty", x=0.75, y=0.5, rx=0.09, ry=0.08, fill="gray65"))
+# manifest variables
+inds = list(
+  i1 = manifest("imag1", x=0.35, y=0.9, width=0.09, height=0.08, fill="gray80"),
+  i2 = manifest("imag2", x=0.35, y=0.8, width=0.09, height=0.08, fill="gray80"),
+  i3 = manifest("imag3", x=0.35, y=0.7, width=0.09, height=0.08, fill="gray80"),
+  s1 = manifest("sat1", x=0.35, y=0.3, width=0.09, height=0.08, fill="gray80"),
+  s2 = manifest("sat2", x=0.35, y=0.2, width=0.09, height=0.08, fill="gray80"),
+  s3 = manifest("sat3", x=0.35, y=0.1, width=0.09, height=0.08, fill="gray80"),
+  l1 = manifest("loy1", x=1, y=0.6, width=0.09, height=0.08, fill="gray80"),
+  l2 = manifest("loy2", x=1, y=0.5, width=0.09, height=0.08, fill="gray80"),
+  l3 = manifest("loy3", x=1, y=0.4, width=0.09, height=0.08, fill="gray80"))
+@
+
+<<simple_ecsi_diag, echo=FALSE, fig.keep='last', fig.width=6, fig.height=4, out.width='.8\\linewidth', out.height='.5\\linewidth', fig.align='center', fig.pos='h', fig.cap='Simplified Customer Satisfaction Model'>>=
+# PLOT
+op = par(mar = rep(0,4))
+wall(xlim=c(0.2, 1.05), ylim=c(0.05, 0.95))
+# draw latent variables
+for (i in 1:3) draw(LV[[i]])
+# draw manifest variables
+for (j in 1:9) draw(inds[[j]])
+# arrows
+for (j in 1:3) arrow(from=LV$Ima, to=inds[[j]], start="west", end="east", col="gray90")
+for (j in 4:6) arrow(from=LV$Sat, to=inds[[j]], start="west", end="east", col="gray90")
+for (j in 7:9) arrow(from=LV$Loy, to=inds[[j]], start="east", end="west", col="gray90")
+# arrows of inner model
+arrow(from=LV$Ima, to=LV$Loy, start="east", end="north", col="gray85")
+arrow(from=LV$Sat, to=LV$Loy, start="east", end="south", col="gray85")
+arrow(from=LV$Ima, to=LV$Sat, start="south", end="north", col="gray85", lty=2, angle=28)
+# reset par
+par(op)
+@
+
+The model is focused on Loyalty and we are assuming that it depends on the Perceived Image and the Customer Satisfaction. The better the Perceived Image as well as the Satisfaction, the more Loyals will be the customers. To keep things simple, each block will have three indicators. For whatever reason you like to think of, let's assume that Image plays the role of a moderator variable. That's why there is a dashed arrow from Image to Satisfaction. In summary, there is going to be a main effect of Image on Loyalty, but there is also going to be a moderating effect of Image in the relationship between Satisfaction and Loyalty.
+
+
+
+\section{Product Indicator Approach}
+The first approach we will describe for analyzing moderating effects in PLS Path Modeling is the \textbf{Product Indicator Approach}. In this approach we seek to create a new latent variable that represents the interaction between the exogenous variable and the moderator variable. How do we create this new latent variable? As its name says, the idea behind the Product Inicator Approach is to build \textbf{product} terms between the \textbf{indicators} of the independent latent variable and the indicators of the moderator latent variable. These product terms are the indicators that we use for the latent interaction term in the structural model. Last but not least, we always treat the created interaction construct as a \textbf{reflective construct}.
+
+
+<<prod_ind_approach, echo=FALSE, message=FALSE>>=
+# latent variables
+LV = list(
+  X = latent("exogenous\nX", x=0.45, y=0.75, rx=0.11, ry=0.07, fill="gray65"),
+  I = latent("interaction\nXM", x=0.35, y=0.5, rx=0.11, ry=0.08), 
+  M = latent("moderator\nM", x=0.45, y=0.25, rx=0.11, ry=0.07, fill="gray65"), 
+  Y = latent("endogenous\nY", x=0.75, y=0.5, rx=0.11, ry=0.07, fill="gray65"))
+# manifest variables
+inds = list(
+  x1 = manifest(expression(x[1]), x=0.25, y=0.8, width=0.08, height=0.08, fill="gray80"),
+  x2 = manifest(expression(x[2]), x=0.25, y=0.7, width=0.08, height=0.08, fill="gray80"),
+  m1 = manifest(expression(m[1]), x=0.25, y=0.3, width=0.08, height=0.08, fill="gray80"),
+  m2 = manifest(expression(m[2]), x=0.25, y=0.2, width=0.08, height=0.08, fill="gray80"),
+  # product indicators
+  i1 = manifest(expression(paste(x[1],m[1])), x=0.10, y=0.65, width=0.1, height=0.08),
+  i2 = manifest(expression(paste(x[1],m[2])), x=0.10, y=0.55, width=0.1, height=0.08),
+  i3 = manifest(expression(paste(x[2],m[1])), x=0.10, y=0.45, width=0.1, height=0.08),
+  i4 = manifest(expression(paste(x[2],m[2])), x=0.10, y=0.35, width=0.1, height=0.08),
+  # endogenous indicators
+  y1 = manifest(expression(y[1]), x=1, y=0.6, width=0.1, height=0.08, fill="gray80"),
+  y2 = manifest(expression(y[2]), x=1, y=0.5, width=0.1, height=0.08, fill="gray80"),
+  y3 = manifest(expression(y[3]), x=1, y=0.4, width=0.1, height=0.08, fill="gray80"))
+@
+
+<<prod_ind_app_diag, echo=FALSE, fig.keep='last', fig.width=6, fig.height=4, out.width='.8\\linewidth', out.height='.5\\linewidth', fig.align='center', fig.pos='h', fig.cap='Diagram of a Product Indicator latent variable (XM)'>>=
+# PLOT
+op = par(mar = rep(0,4))
+wall(xlim=c(0, 1.05), ylim=c(0.15, 0.85))
+# draw latent variables
+for (i in 1:4) draw(LV[[i]])
+# draw latent variables
+for (j in 1:11) draw(inds[[j]])
+# arrows
+for (j in 1:2) arrow(from=LV$X, to=inds[[j]], start="west", end="east", col="gray90")
+for (j in 3:4) arrow(from=LV$M, to=inds[[j]], start="west", end="east", col="gray90")
+for (j in 5:8) arrow(from=LV$I, to=inds[[j]], start="west", end="east")
+for (j in 9:11) arrow(from=LV$Y, to=inds[[j]], start="east", end="west", col="gray90")
+# arrows of inner model
+arrow(from=LV$X, to=LV$Y, start="east", end="west", col="gray85")
+arrow(from=LV$I, to=LV$Y, start="east", end="west", col="gray85")
+arrow(from=LV$M, to=LV$Y, start="east", end="west", col="gray85")
+# reset par
+par(op)
+@
+
+A better way to understand the Product Indicator Approach is by looking at a simple example shown in figure 2.3. Let's say we have three reflective constructs: an exogenous $X$, a moderator $M$ (also exogenous), and an endogenous $Y$. Let's suppose that $X$ and $M$ have two indicators, and that $Y$ has three indicators. To estimate the moderating effect, we need to create a new latent interaction term $XM$ whose indicators will be the products of the indicators of $X$ and $M$.
+
+
+\subsection{Example}
+Let's see how to test for moderating effects with the Product Indicator Approach in \plspm{}. As we mentioned above, we will treat Image as the moderator variable in our simplified customer satisfaction model: Image moderates the effect that Satisfaction has on Loyalty. This implies that we will have three indicators (\code{Image}, \code{Satisfaction}, and \code{Loyalty}) plus a new latent construct, \texttt{Inter}, representing the product interaction of \code{Image} and \code{Satisfaction}. The new latent construct \texttt{Inter} will be measured by the product terms of the indicators of both \texttt{Image} and \texttt{Satisfaction}. See the following diagram:
+
+<<prod_ind_satisfaction, echo=FALSE, message=FALSE>>=
+# latent variables
+LV = list(
+  Ima = latent("Image", x=0.55, y=0.8, rx=0.09, ry=0.07, fill="gray65"),
+  Int = latent("Inter", x=0.4, y=0.5, rx=0.09, ry=0.08), 
+  Sat = latent("Satisfaction", x=0.55, y=0.2, rx=0.09, ry=0.07, fill="gray65"), 
+  Loy = latent("Loyalty", x=0.75, y=0.5, rx=0.09, ry=0.07, fill="gray65"))
+# manifest variables
+inds = list(
+  i1 = manifest("imag1", x=0.35, y=0.9, width=0.09, height=0.08, fill="gray90"),
+  i2 = manifest("imag2", x=0.35, y=0.8, width=0.09, height=0.08, fill="gray90"),
+  i3 = manifest("imag3", x=0.35, y=0.7, width=0.09, height=0.08, fill="gray90"),
+  s1 = manifest("sat1", x=0.35, y=0.3, width=0.09, height=0.08, fill="gray90"),
+  s2 = manifest("sat2", x=0.35, y=0.2, width=0.09, height=0.08, fill="gray90"),
+  s3 = manifest("sat3", x=0.35, y=0.1, width=0.09, height=0.08, fill="gray90"),
+  # product indicators
+  x1 = manifest("imag1 sat1", x=0.10, y=0.9, width=0.16, height=0.08),
+  x2 = manifest("imag1 sat2", x=0.10, y=0.8, width=0.16, height=0.08),
+  x3 = manifest("imag1 sat3", x=0.10, y=0.7, width=0.16, height=0.08),
+  x4 = manifest("imag2 sat1", x=0.10, y=0.6, width=0.16, height=0.08),
+  x5 = manifest("imag2 sat2", x=0.10, y=0.5, width=0.16, height=0.08),
+  x6 = manifest("imag2 sat3", x=0.10, y=0.4, width=0.16, height=0.08),
+  x7 = manifest("imag3 sat1", x=0.10, y=0.3, width=0.16, height=0.08),
+  x8 = manifest("imag3 sat2", x=0.10, y=0.2, width=0.16, height=0.08),
+  x9 = manifest("imag3 sat3", x=0.10, y=0.1, width=0.16, height=0.08),
+  # endogenous indicators
+  l1 = manifest("loy1", x=1, y=0.6, width=0.09, height=0.08, fill="gray90"),
+  l2 = manifest("loy2", x=1, y=0.5, width=0.09, height=0.08, fill="gray90"),
+  l3 = manifest("loy3", x=1, y=0.4, width=0.09, height=0.08, fill="gray90"))
+@
+
+<<prod_ind_app_sat_diag, echo=FALSE, fig.keep='last', fig.width=7, fig.height=5, out.width='.8\\linewidth', out.height='.6\\linewidth', fig.align='center', fig.pos='h', fig.cap='Customer Satisfaction Model with a Product Indicator latent variable (Inter)'>>=
+# PLOT
+op = par(mar = rep(0,4))
+wall(xlim=c(0, 1.05), ylim=c(0.05, 0.95))
+# draw latent variables
+for (i in 1:4) draw(LV[[i]])
+# draw manifest variables
+for (j in 1:18) draw(inds[[j]])
+# arrows
+for (j in 1:3) arrow(from=LV$Ima, to=inds[[j]], start="west", end="east", col="gray90")
+for (j in 4:6) arrow(from=LV$Sat, to=inds[[j]], start="west", end="east", col="gray90")
+for (j in 7:15) arrow(from=LV$Int, to=inds[[j]], start="west", end="east")
+for (j in 16:18) arrow(from=LV$Loy, to=inds[[j]], start="east", end="west", col="gray90")
+# arrows of inner model
+arrow(from=LV$Ima, to=LV$Loy, start="east", end="north", col="gray85")
+arrow(from=LV$Sat, to=LV$Loy, start="east", end="south", col="gray85")
+arrow(from=LV$Int, to=LV$Loy, start="east", end="west", col="gray85")
+# reset par
+par(op)
+@
+
+
+
+\subsubsection*{Step 1}
+First thigs first, let's load the \plspm{} package and let's get the data \code{satisfaction}: 
+<<plspm_imag_sat>>=
+# load package "plspm"
+library("plspm")
+
+# get data satisfaction
+data(satisfaction)
+@
+
+Our initial step is to create the product-indicators of the new moderating latent variable \texttt{Inter}. 
+This means we need to calculate the products between the three indicators of \texttt{Image} and the three indicators of \texttt{Satisfaction}. For convenience, we will ``duplicate'' the data frame \code{satisfaction} in another data frame: \code{satisfaction1};
+<<deplicate_satisfaction>>=
+# duplicate satisfaction as satisfaction1
+satisfaction1 = satisfaction
+
+# how many columns in satisfaction1?
+ncol(satisfaction1)
+@
+
+Once we have the new (duplicated) data frame we will add the product terms as new columns in \code{satisfaction1}. To check we have more added columns simply inspect the number of columns with \code{ncol()}
+<<imag_sat_prod_terms>>=
+# create product indicator terms between Image and Satisfaction
+satisfaction1$inter1 = satisfaction$imag1 * satisfaction$sat1
+satisfaction1$inter2 = satisfaction$imag1 * satisfaction$sat2
+satisfaction1$inter3 = satisfaction$imag1 * satisfaction$sat3
+satisfaction1$inter4 = satisfaction$imag2 * satisfaction$sat1
+satisfaction1$inter5 = satisfaction$imag2 * satisfaction$sat2
+satisfaction1$inter6 = satisfaction$imag2 * satisfaction$sat3
+satisfaction1$inter7 = satisfaction$imag3 * satisfaction$sat1
+satisfaction1$inter8 = satisfaction$imag3 * satisfaction$sat2
+satisfaction1$inter9 = satisfaction$imag3 * satisfaction$sat3
+
+# check again the number of columns in satisfaction1
+ncol(satisfaction1)
+@
+Originally, the data \code{satisfaction1} contained 28 variables, but we added nine more variables with the creation of the product-indicator terms. Now we should have a total of 37 columns in the duplicated data set.
+
+\subsubsection{Step 2}
+We proceed as usual with the definition of the ingredients for our PLS-PM cook recipe: a path matrix for the inner model, a list of \code{blocks} for the outer model list, and a vector for the measurement modes. Additionally, we'll run the \fplspm{} function with bootstrap validation (200 resamples).
+<<ProdIndApp_plspm, tidy=FALSE>>=
+# create path matrix
+r1 = c(0, 0, 0, 0)
+r2 = c(0, 0, 0, 0)
+r3 = c(0, 0, 0, 0)
+r4 = c(1, 1, 1, 0)
+prod_path = rbind(r1, r2, r3, r4)
+rownames(prod_path) = c("Image", "Inter", "Satisfaction", "Loyalty")
+colnames(prod_path) = c("Image", "Inter", "Satisfaction", "Loyalty")
+
+# define outer model list
+prod_blocks = list(1:3, 29:37, 20:22, 24:26)
+
+# define reflective indicators
+prod_modes = rep("A", 4)
+
+# run plspm analysis with bootstrap validation
+prod_pls = plspm(satisfaction1, prod_path, prod_blocks, modes = prod_modes, 
+                 boot.val = TRUE, br = 200)
+@
+
+
+\subsubsection*{Step 3}
+After running the PLS-PM analysis, we check the obtained path coefficients:
+<<ProdIndApp_path_coef>>=
+# check path coefficients
+prod_pls$path_coefs
+@
+
+Looking at the path coefficients you can see that the moderating product construct \texttt{Inter} has a negative effect on \texttt{Loyalty}
+<<ProdIndApp_plot_inner_code, fig.keep='none'>>=
+# plot inner model
+plot(prod_pls)
+@
+
+<<ProdIndApp_plot_inner, fig.width=4, fig.height=3, out.width='.6\\linewidth', out.height='.4\\linewidth', fig.align='center', fig.pos='h', fig.cap='Inner model with path coefficients', echo=FALSE>>=
+# plot inner model
+op = par(mar = c(1, 0, 1, 0))
+plot(prod_pls, box.size = 0.12)
+par(op)
+@
+
+
+In order to confirm the significance of the path coefficients, we need to check the bootstrap results contained in \code{\$boot\$paths}:
+<<ProdIndApp_boots_coefficients>>=
+# check bootstrapped path coefficients
+prod_pls$boot$paths
+@
+Even though \texttt{Inter} has a negative effect on \texttt{Loyalty}, its associated bootstrap confidence interval contains the zero, having a non-significant effect. This means that the moderating effect of \texttt{Inter} on the relation between \texttt{Satisfaction} and \texttt{Loyalty} is not significant.
+
+
+
+
+\section{Two-Stage Path Modeling Approach}
+Another approach for testing moderating effects is to use a \textbf{two-stage path modeling approach}. As the name indicates, this approach involves two stages: the first stage consists of applying a PLS-PM analysis without the interaction term; the second stage consists of taking the scores obtained in the first stage for creating the interaction term, and then perform a second PLS-PM analysis including the scores as indicators of the constructs:
+<<TwoStageApp1, echo=FALSE>>=
+# latent variables
+LV = list(
+  Ima = latent("Image", x=0.45, y=0.7, rx=0.09, ry=0.07, fill="gray65"),
+  Sat = latent("Satisfaction", x=0.45, y=0.3, rx=0.09, ry=0.07, fill="gray65"), 
+  Loy = latent("Loyalty", x=0.75, y=0.5, rx=0.09, ry=0.07, fill="gray65"))
+# manifest variables
+inds = list(
+  i1 = manifest("imag1", x=0.25, y=0.8, width=0.09, height=0.08, fill="gray90"),
+  i2 = manifest("imag2", x=0.25, y=0.7, width=0.09, height=0.08, fill="gray90"),
+  i3 = manifest("imag3", x=0.25, y=0.6, width=0.09, height=0.08, fill="gray90"),
+  s1 = manifest("sat1", x=0.25, y=0.4, width=0.09, height=0.08, fill="gray90"),
+  s2 = manifest("sat2", x=0.25, y=0.3, width=0.09, height=0.08, fill="gray90"),
+  s3 = manifest("sat3", x=0.25, y=0.2, width=0.09, height=0.08, fill="gray90"),
+  # endogenous indicators
+  l1 = manifest("loy1", x=1, y=0.6, width=0.09, height=0.08, fill="gray90"),
+  l2 = manifest("loy2", x=1, y=0.5, width=0.09, height=0.08, fill="gray90"),
+  l3 = manifest("loy3", x=1, y=0.4, width=0.09, height=0.08, fill="gray90"))
+@
+
+<<TwoStageApp1_diag, echo=FALSE, fig.keep='last', fig.width=6, fig.height=4.5, out.width='.7\\linewidth', out.height='.45\\linewidth', fig.align='center', fig.pos='h'>>=
+# PLOT
+op = par(mar = rep(0,4))
+wall(xlim=c(0.2, 1.05), ylim=c(0.15, 0.85))
+# draw latent variables
+for (i in 1:3) draw(LV[[i]])
+# draw manifest variables
+for (j in 1:9) draw(inds[[j]])
+# arrows
+for (j in 1:3) arrow(from=LV$Ima, to=inds[[j]], start="west", end="east", col="gray90")
+for (j in 4:6) arrow(from=LV$Sat, to=inds[[j]], start="west", end="east", col="gray90")
+for (j in 7:9) arrow(from=LV$Loy, to=inds[[j]], start="east", end="west", col="gray90")
+# arrows of inner model
+arrow(from=LV$Ima, to=LV$Loy, start="east", end="north", col="gray85")
+arrow(from=LV$Sat, to=LV$Loy, start="east", end="south", col="gray85")
+# title
+text(0.65, 0.85, "First stage: PLS-PM without interaction term", 
+     col.main="gray50", cex.main=1)
+# reset par
+par(op)
+@
+
+
+<<TwoStageApp2, echo=FALSE, message=FALSE>>=
+# latent variables
+lvs = list(
+  Ima = latent("Image", x=0.35, y=0.7, rx=0.12, ry=0.06, fill="gray65"),
+  Sat = latent("Satisfaction", x=0.35, y=0.3, rx=0.12, ry=0.06, fill="gray65"),
+  Loy = latent("Loyalty", x=0.7, y=0.5, rx=0.12, ry=0.06, fill="gray65"),
+  Int = latent("Image x\nSatisfaction", x=0.35, y=0.5, rx=0.12, ry=0.06))
+
+# manifest variables
+mvs = list(
+  x1 = manifest("Image", x=0.05, y=0.7, width=0.20, height=0.08, fill="gray90"),
+  x2 = manifest("Satisfaction", x=0.05, y=0.3, width=0.22, height=0.08, fill="gray90"),
+  x3 = manifest("Loyalty", x=1, y=0.5, width=0.22, height=0.08, fill="gray90"),
+  x4 = manifest("Image x\nSatisfaction", x=0, y=0.5, width=0.20, height=0.10))
+@
+
+<<TwoStageApp2_diag, echo=FALSE, fig.keep='last', fig.width=6, fig.height=4.5, out.width='.7\\linewidth', out.height='.4\\linewidth', fig.align='center', fig.pos='h'>>=
+# PLOT
+op = par(mar = rep(0,4))
+wall(xlim=c(-0.1, 1.05), ylim=c(0.25, 0.8))
+# draw latent and manifest variables
+for (i in 1:4) {
+  draw(lvs[[i]])
+  draw(mvs[[i]])
+}
+# arrows of inner model
+arrow(from=lvs$Ima, to=lvs$Loy, start="east", end="west", length=0.2, col="gray90")
+arrow(from=lvs$Sat, to=lvs$Loy, start="east", end="west", length=0.2, col="gray90")
+arrow(from=lvs$Int, to=lvs$Loy, start="east", end="west", length=0.2, col="gray90")
+# add text
+arrow(from=lvs$Ima, to=mvs$x1, start="west", end="east", length=0.2, col="gray85")
+arrow(from=lvs$Sat, to=mvs$x2, start="west", end="east", length=0.2, col="gray85")
+arrow(from=lvs$Loy, to=mvs$x3, start="east", end="west", length=0.2, col="gray85")
+arrow(from=lvs$Int, to=mvs$x4, start="west", end="east", length=0.2)
+# title
+text(0.5, 0.8, "Second Stage: PLS-PM with Interaction term", col.main="gray50",
+     cex.main=1)
+# reset par
+par(op)
+@
+
+\subsection{Example}
+To apply the Two-Stage Path Modeling Approach with \plspm{} we begin with a first PLS-PM analysis that includes just the main effects (no interaction terms).
+
+
+\subsubsection*{Stage 1}
+We apply a first PLS-PM analysis with \code{Image}, \code{Satisfaction} and \code{Loyalty}:
+<<TwoStageApp1_plspm>>=
+# create path matrix
+f1 = c(0, 0, 0)
+f2 = c(0, 0, 0)
+f3 = c(1, 1, 0)
+first_path = rbind(f1, f2, f3)
+rownames(first_path) = c("Image", "Satisfaction", "Loyalty")
+
+# define list of blocks
+first_blocks = list(1:3, 20:22, 24:26)
+
+# define reflective indicators
+first_modes = rep("A", 3)
+
+# run plspm analysis
+first_pls = plspm(satisfaction, first_path, first_blocks, modes = first_modes)
+@
+
+\subsubsection*{Stage 2: Step 1}
+The second stage involves applying another PLS-PM analysis but this time using the scores obtained in the first stage. This implies that we use the latent variable scores from stage 1 in order to create the interaction term \texttt{Inter = Image x Satisfaction}. For convenience, we can put the scores in \texttt{data.frame} format so we can plot their corresponding densities:
+<<TwoStageApp1_term>>=
+# get the latent variable scores in data frame format
+Scores = as.data.frame(first_pls$scores)
+
+# create the interaction term
+Scores$Inter = Scores$Image * Scores$Satisfaction
+
+# let's see how Scores look like
+head(Scores, n = 5)
+@
+
+To depict the densities of the scores, we can use the function \code{density()} and plot it with the help of \code{plot()} and \code{polygon()}
+<<TwoStageApp1_distributions, fig.keep='none', tidy=FALSE>>=
+# setting graphical parameters
+op = par(mfrow = c(2, 2), mar = c(4, 5, 2, 2), bty = "n")
+# for each scores
+for (j in 1:4)
+{
+   # calculate density 
+   score.dens = density(Scores[,j])
+   # plot window but don't show the density
+   plot(score.dens, main = names(Scores)[j], xlab = "", type = "n")
+   # add polygon
+   polygon(score.dens$x, score.dens$y, col = "gray90", border = "gray80")
+}
+# reset deafult values of graphical parameters
+par(op)
+@
+
+<<TwoStageApp1_distr_plot, fig.width=8, fig.height=6, out.width='.95\\linewidth', out.height='.6\\linewidth', fig.align='center', fig.pos='h', echo=FALSE>>=
+# distribution of the latent variables
+par(mfrow=c(2,2), mar=c(4,5,2,2), bty="n")
+for (j in 1:4)
+{
+   score.dens = density(Scores[,j])
+   plot(score.dens, main=names(Scores)[j], xlab="", type="n")
+   polygon(score.dens$x, score.dens$y, col="gray90", border="gray80")
+}
+@
+
+
+\subsubsection*{Stage 2: Step 2}
+Once we created the interaction term \code{Inter}, the second stage consists of running another PLS-PM analysis but now we replace the original indicators by the scores obtained in the previous stage:
+<<TwoStageApp_plspm, tidy=FALSE>>=
+# create path matrix
+two_path = matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0), 
+                  nrow = 4, ncol = 4, byrow = TRUE)
+rownames(two_path) = c("Image", "Inter", "Satisfaction", "Loyalty")
+colnames(two_path) = c("Image", "Inter", "Satisfaction", "Loyalty")
+
+# define list of blocks
+two_blocks = list(1, 4, 2, 3)
+
+# define reflective indicators
+two_modes= rep("A", 4)
+
+# run plspm analysis with bootstrap validation (200 resamples)
+two_pls = plspm(Scores, two_path, two_blocks, modes = two_modes, 
+                boot.val = TRUE, br = 200)
+
+# check bootstrap results
+round(two_pls$boot$paths, 4)
+@
+
+<<TwoStageApp_plot_inner, fig.width=4, fig.height=3, out.width='.6\\linewidth', out.height='.4\\linewidth', fig.align='center', fig.pos='h', fig.cap='Inner model with path coefficients', echo=c(1,3)>>=
+# plot inner model
+op = par(mar = rep(0,4))
+plot(two_pls)
+par(op)
+@
+
+As you can see, \texttt{Inter} has a very small effect on \texttt{Loyalty}, and its bootstrap confidence interval contains the zero, having a non-significant effect. This means that the moderating effect of \texttt{Image} on the relation between \texttt{Satisfaction} and \texttt{Loyalty} is not significant.
+
+
+
+
+\section{Two-Stage Regression Approach}
+Another alternative for a two-stage procedure is the \textbf{two-stage regression approach}. The first stage is exactly the same as the two-stage path modeling approach: we apply a PLS-PM analysis without the interaction term. The second stage consists of taking the scores obtained in the first stage but, instead of applying another PLS-PM analysis, we apply a regression analysis with the scores of the first stage.
+
+\subsection{Example}
+To apply the Two-Stage Regression Approach with \plspm{} we begin in the same way as we did for the two-stage path modeling approach, that is, we start by running a PLS-PM analysis that includes just the main effects (no interaction terms).
+
+<<TwoStageReg1_diag, echo=FALSE, fig.keep='last', fig.width=6, fig.height=4.5, out.width='.7\\linewidth', out.height='.45\\linewidth', fig.align='center', fig.pos='h', fig.cap='First stage: PLS-PM without interaction term'>>=
+# PLOT
+op = par(mar = rep(0,4))
+wall(xlim=c(0.2, 1.05), ylim=c(0.15, 0.85))
+# draw latent variables
+for (i in 1:3) draw(LV[[i]])
+# draw manifest variables
+for (j in 1:9) draw(inds[[j]])
+# arrows
+for (j in 1:3) arrow(from=LV$Ima, to=inds[[j]], start="west", end="east", col="gray90")
+for (j in 4:6) arrow(from=LV$Sat, to=inds[[j]], start="west", end="east", col="gray90")
+for (j in 7:9) arrow(from=LV$Loy, to=inds[[j]], start="east", end="west", col="gray90")
+# arrows of inner model
+arrow(from=LV$Ima, to=LV$Loy, start="east", end="north", col="gray85")
+arrow(from=LV$Sat, to=LV$Loy, start="east", end="south", col="gray85")
+# reset par
+par(op)
+@
+
+
+\subsubsection*{Stage 1}
+For demonstration purposes, we will apply the first stage (which is the same one as in the previous approach):
+<<TwoStageReg1_plspm>>=
+# create path matrix
+f1 = c(0, 0, 0)
+f2 = c(0, 0, 0)
+f3 = c(1, 1, 0)
+reg_path = rbind(f1, f2, f3)
+rownames(reg_path) = c("Image", "Satisfaction", "Loyalty")
+
+# define list of blocks
+reg_blocks = list(1:3, 20:22, 24:26)
+
+# define reflective indicators
+reg_modes = rep("A", 3)
+
+# run plspm analysis
+reg_pls = plspm(satisfaction, reg_path, reg_blocks, modes = reg_modes)
+@
+
+
+\subsubsection*{Stage 2: Step 1}
+Once we obtained the scores for \code{Image}, \code{Satisfaction} and \code{Loyalty}, the second stage involves creating the interaction term \texttt{Inter = Image x Satisfaction}, and then applying a regression analysis:
+$$Loyalty = b_1 Image + b_2 Satisfaction + b_3 Inter $$
+
+Again, we will put the scores in \texttt{data.frame} format:
+<<TwoStageReg1_term>>=
+# get the latent variable scores in data frame format
+Scores = as.data.frame(reg_pls$scores)
+
+# create the interaction term
+Scores$Inter = Scores$Image * Scores$Satisfaction
+
+# let's see how Scores look like
+head(Scores, n=5)
+@
+
+The path diagram of the second stage is illustrated in the figure below:
+<<TwoStageReg2, echo=FALSE, message=FALSE>>=
+# manifest variables
+mvs = list(
+  x1 = manifest("Image", x=0.35, y=0.7, width=0.16, height=0.08, fill="gray90"),
+  x2 = manifest("Satisfaction", x=0.35, y=0.3, width=0.16, height=0.08, fill="gray90"),
+  x3 = manifest("Inter", x=0.35, y=0.5, width=0.16, height=0.08),
+  x4 = manifest("Loyalty", x=0.65, y=0.5, width=0.16, height=0.08, fill="gray90"))
+@
+
+<<TwoStageReg2_diag, echo=FALSE, fig.keep='last', fig.width=5.5, fig.height=4, out.width='.8\\linewidth', out.height='.45\\linewidth', fig.align='center', fig.pos='h', fig.cap='Second Stage: Regression analysis including the Interaction term'>>=
+# PLOT
+op = par(mar = rep(0,4))
+wall(xlim=c(0.2, 0.8), ylim=c(0.25, 0.75))
+# draw latent and manifest variables
+for (i in 1:4) {
+  draw(mvs[[i]])
+}
+# regression model
+arrow(from=mvs$x1, to=mvs$x4, start="east", end="west", length=0.2, col="gray85")
+arrow(from=mvs$x2, to=mvs$x4, start="east", end="west", length=0.2, col="gray85")
+arrow(from=mvs$x3, to=mvs$x4, start="east", end="west", length=0.2, col="gray85")
+# reset par
+par(op)
+@
+
+\subsubsection*{Stage 2: Step 2}
+To perform the regression analysis we will use function \code{lm()} (i.e. linear model) to get the scores:
+<<TwoStageReg_lm>>=
+# regression analysis
+reg = lm(Loyalty ~ Image + Inter + Satisfaction - 1, data=Scores)
+
+# check the coefficients
+reg$coefficients
+@
+
+If we want to get a plot of the inner model with the path coefficients, we need to first define an inner matrix and then use \code{innerplot()} like this:
+<<TwoStageReg_inner_matrix>>=
+# define path matrix
+c1 = c(0, 0, 0, 0)
+c2 = c(0, 0, 0, 0)
+c3 = c(0, 0, 0, 0)
+c4 = c(reg$coefficients, 0)
+reg_path = rbind(c1, c2, c3, c4)
+rownames(reg_path) = c("Image", "Inter", "Satisfaction", "Loyalty")
+colnames(reg_path) = c("Image", "Inter", "Satisfaction", "Loyalty")
+@
+By default, \code{innerplot()} doesn't show the values of an inner matrix, but we can use the parameter \code{show.values=TRUE} to plot the path coefficients:
+<<TwoStageReg_path_diagram, fig.width=4, fig.height=3, out.width='.6\\linewidth', out.height='.4\\linewidth', fig.align='center', fig.pos='h', fig.cap='Inner model with path coefficients', echo=c(1,3)>>=
+# plot
+op = par(mar = rep(0, 4))
+innerplot(reg_path, show.values = TRUE)
+par(op)
+@
+
+Similar to the two-stage path modeling approach, we obtain a very small effect of \texttt{Inter} on \texttt{Loyalty}. The only ``problem'' is that we cannot perform a bootstrap validation with the two-stage regression approach ---at least not without programming some script in R---. In any case, I wanted to show you both two-stage approaches so you can see how they work and how you can apply them with R.
+
+
+
+
+\section{Categorical Variable Approach}
+The last approach that we will describe for analyzing moderating effects is the \textbf{Categorical Variable Approach}. This approach has place when the moderator variable is a categorical variable. For instance, if we have a categorical variable like Gender, we could apply this approach. However, because we are dealing with a categorical variable, from a theoretical point of view it is questionnable to say that Gender is a latent variable. But for practical reasons we can treat them as latent constructs. 
+
+Again, it is better if we look at a simple example. Let's say we have three reflective constructs: an exogenous $X$, a moderator $M$ (also exogenous), and an endogenous $Y$. Let's suppose that $X$ and $Y$ have two indicators, and that $M$ has three categories. The idea is to use $3 - 1 = 2$ categories of $M$ as dummy variables to get product interaction terms. To estimate the moderating effect, we need to create new latent interaction terms $XM_1$ and $XM_2$ whose indicators will be the products of the indicators of $X$ and $M$. 
+
+<<CatVar_approach, echo=FALSE, message=FALSE>>=
+# latent variables
+LV = list(
+  X = latent(expression(paste("exogenous ", X)), 
+             x=0.35, y=0.9, rx=0.11, ry=0.07, fill="gray65"),
+  M1 = latent(expression(paste("dummy ", M[1])), 
+              x=0.35, y=0.7, rx=0.11, ry=0.08, fill="#8fade3"), 
+  XM1 = latent(expression(paste("interaction ", XM[1])), 
+               x=0.35, y=0.5, rx=0.11, ry=0.07), 
+  M2 = latent(expression(paste("dummy ", M[2])), 
+              x=0.35, y=0.3, rx=0.11, ry=0.07, fill="#8fade3"), 
+  XM2 = latent(expression(paste("interaction ", XM[2])), 
+              x=0.35, y=0.1, rx=0.11, ry=0.07), 
+  Y = latent(expression(paste("endogenous ", Y)), 
+             x=0.75, y=0.5, rx=0.11, ry=0.07, fill="gray65"))
+
+# manifest variables
+inds = list(
+  x1 = manifest(expression(x[1]), x=0.1, y=0.95, width=0.1, height=0.08, fill="gray90"),
+  x2 = manifest(expression(x[2]), x=0.1, y=0.85, width=0.1, height=0.08, fill="gray90"),
+  m1 = manifest(expression(m[1]), x=0.1, y=0.7, width=0.1, height=0.08, fill="#afc5eb"),
+  m2 = manifest(expression(m[2]), x=0.1, y=0.3, width=0.1, height=0.08, fill="#afc5eb"),
+  # product indicators
+  i1 = manifest(expression(paste(x[1],m[1])), x=0.1, y=0.55, width=0.1, height=0.08),
+  i2 = manifest(expression(paste(x[2],m[1])), x=0.1, y=0.45, width=0.1, height=0.08),
+  i3 = manifest(expression(paste(x[1],m[2])), x=0.1, y=0.15, width=0.1, height=0.08),
+  i4 = manifest(expression(paste(x[2],m[2])), x=0.1, y=0.05, width=0.1, height=0.08),
+  # endogenous indicators
+  y1 = manifest(expression(y[1]), x=1, y=0.6, width=0.1, height=0.1, fill="gray90"),
+  y2 = manifest(expression(y[2]), x=1, y=0.4, width=0.1, height=0.1, fill="gray90"))
+@
+
+<<cat_var_app_diag, echo=FALSE, fig.keep='last', fig.width=6, fig.height=4, out.width='.8\\linewidth', out.height='.5\\linewidth', fig.align='center', fig.pos='h', fig.cap='Diagram of a Moderating Categorical Latent Variable'>>=
+# PLOT
+op = par(mar = rep(0,4))
+wall(xlim=c(0.05, 1.05), ylim=c(0, 1))
+# draw latent variables
+for (i in 1:6) draw(LV[[i]])
+# draw manifest variables
+for (j in 1:10) draw(inds[[j]])
+# arrows
+for (j in 1:2) arrow(from=LV$X, to=inds[[j]], start="west", end="east", col="gray90")
+arrow(from=LV$M1, to=inds[[3]], start="west", end="east")
+arrow(from=LV$M2, to=inds[[4]], start="west", end="east")
+for (j in 5:6) arrow(from=LV$XM1, to=inds[[j]], start="west", end="east")
+for (j in 7:8) arrow(from=LV$XM2, to=inds[[j]], start="west", end="east")
+for (j in 9:10) arrow(from=LV$Y, to=inds[[j]], start="east", end="west", col="gray90")
+# arrows of inner model
+for (i in 1:5) arrow(from=LV[[i]], to=LV$Y, start="east", end="west", col="gray90")
+# reset par
+par(op)
+@
+
+\subsection{Example}
+Let us assume that we have a categorical variable $M$ with $m$ categories. The first thing that we need to do is to ``decompose'' $M$ into $m - 1$ dummy variables. Remember that in R a categorical variable is referred to as a \code{factor} and its categories are known as \code{levels}. Hence, we need to pass from a single \code{factor} into $m-1$ binary indicators.
+
+\subsubsection*{Step 1}
+In this example we are going to create an artificial categorical variable (a \code{factor}) with three categories. For that purpose we can use the function \code{gl()} that allows us to generate a factor with \code{n} levels, \code{k} replications, and a total number of elements for a given \code{length}. So let's create a factor of \code{length=250} with \code{n=3} categories, each replicated approximately \code{k=80} times:
+<<cat_var_gl>>=
+# create a categorical variable
+categorical = gl(n=3, k=80, length=250)
+
+# quick look at categorical
+table(categorical)
+@
+As you can tell, the first category does not have 80 replications but 90. That is beacuse $80 x 3 = 240$, so the left 10 replications will have the first category.
+
+\subsubsection*{Step 2}
+We have the categorical variable but we need to get the dummy indicators. There are going to be as many dummy variables as \code{m-1} categories. For no major reason, we'll take the third category as a baseline, and we will create just dummy indicators for categories 1 and 2:
+<<cat_var_into_dummies>>=
+# initialize dummy variables
+dummy1 = rep(0, 250)
+dummy2 = rep(0, 250)
+
+# populate dummy variables
+dummy1[categorical == 1] = 1
+dummy2[categorical == 2] = 1
+@
+
+\subsubsection*{Step 3}
+Once we have the dummy indicators we can create the product indicator terms. Here is how we can have all the variables in a single data set:
+<<add_dummies_to_satis2>>=
+# selected indicators from satisfaction
+satisfaction2 = satisfaction[,c(20:22,24:26)]
+
+# add dummy variables to satisfaction2
+satisfaction2$dummy1 = dummy1
+satisfaction2$dummy2 = dummy2
+
+# add product terms to satisfaction2
+satisfaction2$sat1m1 = satisfaction2$sat1 * dummy1
+satisfaction2$sat2m1 = satisfaction2$sat2 * dummy1
+satisfaction2$sat3m1 = satisfaction2$sat3 * dummy1
+satisfaction2$sat1m2 = satisfaction2$sat1 * dummy2
+satisfaction2$sat2m2 = satisfaction2$sat2 * dummy2
+satisfaction2$sat3m2 = satisfaction2$sat3 * dummy2
+@
+
+\subsubsection*{Step 4}
+After creating the data frame \code{satisfaction2} with all the necessary variables, the last step that we have to perform is the application of \fplspm{} with bootstrap validation:
+<<CatVarApp_plspm, tidy=FALSE>>=
+# path matrix
+c1 = c(0, 0, 0, 0, 0, 0)
+c2 = c(0, 0, 0, 0, 0, 0)
+c3 = c(0, 0, 0, 0, 0, 0)
+c4 = c(0, 0, 0, 0, 0, 0)
+c5 = c(0, 0, 0, 0, 0, 0)
+c6 = c(1, 1, 1, 1, 1, 0)
+cat_path = rbind(c1, c2, c3, c4, c5, c6)
+rownames(cat_path) = c("Satis", "M1", "SatisM1", "M2", "SatisM2", "Loyalty")
+
+# blocks of outer model
+cat_blocks = list(1:3, 7, 9:11, 8, 12:14, 4:6)
+
+# vector of modes
+cat_modes = rep("A", 6)
+
+# apply plspm with bootstrap validation
+cat_pls = plspm(satisfaction2, cat_path, cat_blocks, modes = cat_modes, 
+                boot.val = TRUE)
+@
+
+<<CatVarApp_plot_inner, fig.width=4.5, fig.height=2.5, out.width='.6\\linewidth', out.height='.4\\linewidth', fig.align='center', fig.pos='h', fig.cap='Inner model with path coefficients', echo=c(1,3)>>=
+# plot inner model
+op = par(mar = rep(0, 4))
+plot(cat_pls)
+par(op)
+@
+
+Finally, we can examine the  bootstrap results that are contained in \code{\$boot\$paths}:
+<<CatVarApp_boot>>=
+# bootstrap results
+round(cat_pls$boot$paths, 4)
+@
+
+As we can see from the bootstrap confidence intervals, the only coefficient with a confidence interval that does not include the zero is the one associated with \code{Satis} and \code{Loyalty}. Now, keep in mind that is an artificial example with a simulated categorical variable, and that we are just focusing on the inner model. In a real application, you should assess both the measurement and the structural model, making a full diagnose of the quality of the results, and perhaps even trying a multi-group comparison approach.
+
+
+
+\section{Reading List}
+\begin{itemize}
+ \item \textbf{\textsf{A partial least squares latent variable modeling approach for measuring interaction effects. Results from a monte carlo simulation study and voice mail Emotion/Adoption study}} by Wynne Chin, Barbara Marcolin, and Peter Newsted (1996) Paper presented at the \textit{Seventeenth International Conference on Information Systems} (In J.I. DeGross, S. Jarvenpaa, A. Srinivasan, pp: 21 - 41. Cleveland, OH), where the authors present the Product Indicator Approach as well as a Monte Carlo Simulation study to test the efficacy of PLS-PM for detecting and estimating interaction effects.
+
+ \vspace{2mm}
+ \item \textbf{\textsf{A partial least squares latent variable modeling approach for measuring interaction effects: results from a monte carlo simulation study and an electronic-mail emotion/adoption study}} by Wynne Chin, Barbara Marcolin, and Peter Newsted (2003). This paper, published in \textit{Information Systems Research} (14-2: 189-217), is a derived publication from the previous reference.
+
+ \vspace{2mm}
+ \item \textbf{\textsf{Testing Moderating Effects in PLS Path Models: An Illustration of Available Procedures}} by Jorg Henseler and Georg Fassot (2010). As Chapter 30 of the \textit{Handbook of Partial Least Squares} (pp: 713-735), this article covers in great detail the main approaches that can be used for testing moderating effects in PLS Path Modeling.
+\end{itemize}
+
+

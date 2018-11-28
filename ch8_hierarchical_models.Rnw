@@ -1,0 +1,508 @@
+% !Rnw root = ../PLS_Path_Modeling_with_R.Rnw
+
+
+\chapter{PLS Path Models with Higher-Order Constructs}
+In this chapter we will talk about PLS Path Modeling applied to a particular type of models: the \textbf{Higher-Order Construct Models} also known as \textbf{Hierarchical Models}. As their name says, what makes these models so special is that they contain latent variables of ``higher-order''. A higher-order construct is the fancy term that some authors use to refer to a special class of latent variables: constructs that involve more than one dimension. Other fancy names for this type of constructs are \textit{higher-order factors}, \textit{hierarchially structured latent variables}, or the term I coined \textit{constructified constructs}.
+<<general_intelligence_model, echo=FALSE, message=FALSE>>=
+# load the package
+library(pathdiagram)
+
+G = latent("General\nability", x=0.25, y=0.5, rx=0.09, ry=0.06)
+V = latent("Verbal\nability", x=0.75, y=0.7, rx=0.09, ry=0.06, fill="gray80", col="gray30")
+N = latent("Numerical\nability", x=0.75, y=0.5, rx=0.09, ry=0.06, fill="gray80", col="gray30")
+S = latent("Spatial\nability", x=0.75, y=0.3, rx=0.09, ry=0.06, fill="gray80", col="gray30")
+@
+
+<<gen_int_sec_ord_diag, echo=FALSE, fig.keep='last', fig.width=6, fig.height=3.5, out.width='.75\\linewidth', out.height='.4\\linewidth', fig.align='center', fig.pos='h', fig.cap='Classical second-order construct: General Intelligence ability'>>=
+# PLOT
+op = par(mar = rep(0,4))
+wall(ylim=c(0.25, 0.83))
+# draw latent variables
+draw(G)
+draw(V)
+draw(N)
+draw(S)
+# arrows of inner model
+arrow(from=G, to=V, start="east", end="west", length=0.3, col="gray90", angle=20)
+arrow(from=G, to=N, start="east", end="west", length=0.2, col="gray90", angle=20)
+arrow(from=G, to=S, start="east", end="west", length=0.2, col="gray90", angle=20)
+# add text
+text(x=0.25, y=0.81, labels="Second Order\nConstruct", col="gray40")
+text(x=0.75, y=0.81, labels="First Order\nConstructs", col="gray40")
+# reset par
+par(op)
+@
+
+The conceptual idea behind these latent variables is that they are supposed to be at a higher level of abstraction. We know that latent variables represent abstract or theoretical concepts, but sometimes we need extra constructs representing other latent variables. Hence my oxymoronic term \textit{constructified constructs}. The classical example of a higher-order construct comes from the Psychometric literature with the \textit{special and general factor model} for measuring intelligence. Quite briefly, this model states that there is a \textit{General Intellegence Ability} that in turn comprises three special abilities: \textit{Verbal ability}, \textit{Numerical ability} and \textit{Spatial ability}. The General ability is the higher-order construct that is supposed to be reflected by the lower-order abilities (see the figure above).
+
+
+
+\section{\textit{Constructify-it}: How to model higher-order \\ constructs?}
+Graphically, a higher-order construct is typically represented as a latent variable that has no indicators, like in the following diagram. $LV_1$ is the higher-order construct in this case while $LV_2$, $LV_3$ and $LV_4$ are the lower-order constructs.
+<<hierarchical_example1, echo=FALSE, fig.keep='last', fig.width=4.5, fig.height=4, out.width='.7\\linewidth', out.height='.5\\linewidth', fig.align='center', fig.pos='h', fig.cap='Hierarchical model with a second order latent variable'>>=
+# A hierarchical model with a second order construct
+# load  pathdiagram
+library(pathdiagram)
+
+# latent variables
+LV1 = latent(expression(LV[1]), x=0.625, y=0.5)
+LV2 = latent(expression(LV[2]), x=0.35, y=0.8, fill="gray60")
+LV3 = latent(expression(LV[3]), x=0.35, y=0.5, fill="gray60")
+LV4 = latent(expression(LV[4]), x=0.35, y=0.2, fill="gray60")
+
+# manifest variables
+m1 = manifest(expression(mv[21]), x=0.15, y=0.87, width=0.08, fill="gray90")
+m2 = manifest(expression(mv[22]), x=0.15, y=0.73, width=0.08, fill="gray90")
+m3 = manifest(expression(mv[31]), x=0.15, y=0.57, width=0.08, fill="gray90")
+m4 = manifest(expression(mv[32]), x=0.15, y=0.43, width=0.08, fill="gray90")
+m5 = manifest(expression(mv[41]), x=0.15, y=0.27, width=0.08, fill="gray90")
+m6 = manifest(expression(mv[42]), x=0.15, y=0.13, width=0.08, fill="gray90")
+
+# plot
+op = par(mar = rep(0,4))
+wall(xlim = c(0.05, 0.7), ylim=c(0.05, 0.95))
+# LVs
+draw(LV1); draw(LV2); draw(LV3); draw(LV4)
+arrow(from=LV1, to=LV2, start="west", end="east", length=0.15, angle=25)
+arrow(from=LV1, to=LV3, start="west", end="east", length=0.15, angle=25)
+arrow(from=LV1, to=LV4, start="west", end="east", length=0.15, angle=25)
+# text
+text(x=0.625, y=0.61, labels="second order\nconstruct", col="#5f8bd7")
+text(x=0.35, y=0.91, labels="first order\nconstructs", col="gray50")
+# mvs
+draw(m1); draw(m2); draw(m3); draw(m4); draw(m5); draw(m6)
+arrow(from=LV2, to=m1, start="west", end="east", col="gray90")
+arrow(from=LV2, to=m2, start="west", end="east", col="gray90")
+arrow(from=LV3, to=m3, start="west", end="east", col="gray90")
+arrow(from=LV3, to=m4, start="west", end="east", col="gray90")
+arrow(from=LV4, to=m5, start="west", end="east", col="gray90")
+arrow(from=LV4, to=m6, start="west", end="east", col="gray90")
+par(op)
+@
+
+As you can tell, the second order construct $LV_1$ has no manifest variables connected to it ---this is how you would draw higher-order constructs in path diagrams. I should say that this diagram is an abstract representation for illustration purposes. The convention to represent latent variables of higher-order with no indicators is not something that you have to convert into martix format for \fplspm{}.
+
+
+\subsection{Two types of higher-order constructs}
+We can distinguish two types of higher-order (multidimensional) constructs based on the direction of the relationship between the lower and higher order latent variables. You can find these two general types under the fancy terms of \textit{molecular} and \textit{molar} models.  
+\begin{itemize}
+ \item The molecular view states that lower-order latent variables are conceived as a response to the higher-order construct, that is, the higher-order construct can be decomposed into ``atomistic parts or molecules''. 
+ \item In contrast, the molar view says that a higher-order construct is viewed as composed of lower-order latent variables.
+\end{itemize}
+The two types of paradigms are represented in the following diagram:
+<<molecular_molar, echo=FALSE>>=
+# molecular model (reflective second-order)
+E1 = latent(expression(LV[1]), x=0.15, y=0.5, rx=0.07, ry=0.06)
+E2 = latent(expression(LV[2]), x=0.4, y=0.7, rx=0.07, ry=0.06, fill="gray80", col="gray30")
+E3 = latent(expression(LV[3]), x=0.4, y=0.5, rx=0.07, ry=0.06, fill="gray80", col="gray30")
+E4 = latent(expression(LV[4]), x=0.4, y=0.3, rx=0.07, ry=0.06, fill="gray80", col="gray30")
+
+# molar model (formative second order)
+F1 = latent(expression(LV[1]), x=0.7, y=0.5, rx=0.07, ry=0.06)
+F2 = latent(expression(LV[2]), x=0.95, y=0.7, rx=0.07, ry=0.06, fill="gray80", col="gray30")
+F3 = latent(expression(LV[3]), x=0.95, y=0.5, rx=0.07, ry=0.06, fill="gray80", col="gray30")
+F4 = latent(expression(LV[4]), x=0.95, y=0.3, rx=0.07, ry=0.06, fill="gray80", col="gray30")
+@
+
+<<molecular_molar_diag, echo=FALSE, fig.keep='last', fig.width=5.5, fig.height=4, out.width='0.85\\linewidth', out.height='.45\\linewidth', fig.align='center', fig.pos='h', fig.cap='Two types of higher-order constructs: molecular and molar'>>=
+# plot
+op = par(mar = rep(0,4))
+wall(xlim = c(0.1, 1), ylim=c(0.25, 0.82))
+# mvs
+draw(E1); draw(E2); draw(E3); draw(E4)
+arrow(from=E1, to=E2, start="east", end="west", col="gray90", angle=17)
+arrow(from=E1, to=E3, start="east", end="west", col="gray90", angle=17)
+arrow(from=E1, to=E4, start="east", end="west", col="gray90", angle=17)
+text(x=0.15, y=0.58, labels="second order", col="#5f8bd7")
+text(x=0.4, y=0.47, labels="1st order", col="gray30", cex=0.8)
+text(x=0.4, y=0.67, labels="1st order", col="gray30", cex=0.8)
+text(x=0.4, y=0.27, labels="1st order", col="gray30", cex=0.8)
+text(x=0.25, y=0.8, labels="Molecular Model", col="gray50")
+# molar model
+draw(F1); draw(F2); draw(F3); draw(F4)
+arrow(from=F2, to=F1, start="west", end="east", col="gray90", angle=17)
+arrow(from=F3, to=F1, start="west", end="east", col="gray90", angle=17)
+arrow(from=F4, to=F1, start="west", end="east", col="gray90", angle=17)
+# text
+text(x=0.7, y=0.58, labels="second order", col="#5f8bd7")
+text(x=0.95, y=0.47, labels="1st order", col="gray30", cex=0.8)
+text(x=0.95, y=0.67, labels="1st order", col="gray30", cex=0.8)
+text(x=0.95, y=0.27, labels="1st order", col="gray30", cex=0.8)
+text(x=0.8, y=0.8, labels="Molar Model", col="gray50")
+#
+par(op)
+@
+
+Simply put, a ``constructified'' or higher-order construct is a latent variable that reflects or is reflected by other latent variables. A good way to think about higher-order variables is as multidimensional constructs. As such, they can be distinguished from unidimensional constructs, which are characterized by a single underlying dimension. Usually, the discussion and application of higher-order constructs is often limited to a second-order hierarchical structure, but you can find third, fourth or higer-order latent variables.
+
+
+\subsection{Modeling higher-order constructs in PLS-PM}
+In PLS Path Modeling we know that all latent variables must have at least one indicator for a model to be estimated. Models with latent variables of higher-order, the way they are customarily represented (with no manifest variables), are not allowed in the PLS-PM framework: an LV with no indicators has no place in PLS-PM. The way that path diagrams are considered in PLS is by having a block of indicators attached to the second order construct. So how do we fix this problem? There are three approaches that we can use to get the job done when working with hierarchical models:
+\begin{itemize}
+ \item Repeated Indicators Approach (poor man's approach)
+ \item Two-Step Approach (patch approach)
+ \item Hybrid Approach (give away approach)
+\end{itemize}
+
+\paragraph{Repeated Indicators Approach} 
+The Repeated Indicators Approach is the most popular approach when estimating higher order constructs in PLS-PM. Also known by the nicknames \textit{hierarchical component model} or \textit{superblock approach} it was originally proposed by Herman Wold in the early 1980s. Since then it has become the standard way in PLS to model higher-order constructs. The procedure is very simple and consists of taking the indicators of the lower-order constructs and using them as the manifest variables of the higher-order latent variable. You can think of this approach as the ``poor man's solution'' for when we need to get indicators  for the higher-order construct. Don't get me wrong. ``Poor man's'' does not mean improvised. What I'm saying is that -whether you want it or not- your higher-order constructs need indicators so that they can be estimated by PLS. The easiest and simplest solution is to use the manifest variables of the lower-order constructs. The ``toll'' to pay when using this approach is that all indicators of the lower-order and the higher-order factors must be treated in reflective way.
+
+\paragraph{Two-Step Approach}
+Another way of building a higher-order model is the Two-Step Approach which I prefer to call \textit{the patch approach}. The process behind this solution is a little bit tangled. In the first step we compute latent variable scores of the lower-order constructs without running a PLS-PM analysis. Then, in the second step, we run a PLS-PM analysis using the computed scores as indicators of the higher-order constructs. As you can imagine, the dodgy part is in the first step: how does one compute scores for the latent variables of lower-order? The answer: use a ``patchy'' solution like principal components analysis (PCA) or factor analysis. We can get a score for a first-order construct by taking the first principal component of its indicators. Then PCA scores of lower-order constructs are subsequently used as indicators for the higher-order construct in a separate PLS path model.
+
+\paragraph{Hybrid Approach}
+The third option for modeling hierarchical constructs is the Hybrid Approach. The idea behind this approach is to randomly split the manifest variables of the lower-order constructs so that half are assigned to their respective construct and the other half are assigned to the higher-order construct. I prefer to call this option the ``give away approach'' because some of the lower-order indicators are given away to measure the higher-order construct. The word \textit{hybrid} is simply used to indicate a compromise: in order to avoid having repeated indicators in the higher-order latent variables, we agree to use less indicators in the lower-order constructs.
+
+
+
+\subsection{Case Study: NFL data}
+The case study for this chapter is based on statistics of (American) football teams playing in the National Football League (NFL). To be more precise the data is from the 2010-2011 season and contains different variables regarding the offensive performance of each team.
+
+Before jumping into the structural model and the underlying theory, I need to make sure we are all on the same page. First, American football, known in the United States simply as football, is not what most people in the world think of when reading the word football (soccer). American football, is played between two teams of eleven players with the objective of scoring points by advancing the ball into the opposing team's end zone. There are two ways to advance the ball: either by running with it (attack by land) or throwing it to a teammate (attack by air). Running with the ball is also known as \textbf{rushing}; throwing the ball to a teammate is also known as \textbf{passing}. There are a number of different ways to score points, but let's stick with the main ones:
+\begin{itemize}
+ \item by carrying the ball over the opponent's goal line (this is a \textit{touchdown}: 6 points)
+ \item by catching a pass thrown over the opponent's goal line (this is a \textit{touchdown}: 6 points)
+ \item by kicking the ball through the opponent's goal posts after a touchdown (this is an extra point: 1 point)
+ \item by kicking the ball through the opponent's goal posts but not after a touchdown (this is a field goal: 3 points)
+\end{itemize}
+
+\paragraph{Team Units}
+Each team has 11 players on the field at a time; however, the total number of players in a team is 46. With so many players, each has a very specialized role and players are divided into three separate units: the \textbf{offense}, the \textbf{defense} and the \textbf{special teams}. 
+
+When a team takes possession of the ball the \textbf{offense} is responsible of the attack. Conversely, the team that does not have possesion of the ball uses it \textbf{defense} to contain the opponent's attack. The offense has four attempts, called downs, in which to advance the ball at least 10 yards toward their opponent's (the defense's) end zone. When the offense succeeds in gaining at least 10 yards, it gets a \textbf{first down}, meaning the team starts a new set of four downs to gain yet another 10 yards or to score. If the offense fails to gain a first down (10 yards) after four downs, the other team gets possession of the ball at the point where the fourth down ended, beginning with their first down to advance the ball in the opposite direction.
+
+\paragraph{Offense Strategy}
+Each team has a playbook of hundreds of plays for their different units. Ideally, each play is a scripted endeavor specifying the task to be performed by each player. The offense strategy is divided into \textbf{rushing} and \textbf{passing} plays. Some plays are very effective but conservative; they are likely to get only a few yards. Other plays are more risky but with the potential for long gains. Generally speaking, rushing plays are less risky than passing plays. However, there are relatively safe passing plays and risky running plays. 
+
+\paragraph{Offense Performance}
+Our case study will be focused on analyzing the Overall Scoring of the teams in terms of the Offense Performance and the Special Teams. To do that we are going to consider both the Rushing and the Passing components of the Offense's teams. To make things more interesting and relevant for our hierarchical modeling purposes, we will take into account the offense performanace as a second-order construct.
+<<offense_performance_model, echo=FALSE, fig.keep='last', fig.width=5.5, fig.height=3.5, out.width='.9\\linewidth', out.height='.45\\linewidth', fig.align='center', fig.pos='h', fig.cap='Offense Performance as a second-order construct'>>=
+# latent variables
+Spec = latent("Special", x=0.5, y=0.8, rx=0.08, ry=0.08, fill="gray65")
+Rush = latent("Rushing", x=0.2, y=0.2, rx=0.08, ry=0.08, fill="gray65")
+Pass = latent("Passing", x=0.2, y=0.6, rx=0.08, ry=0.08, fill="gray65")
+Off = latent("Offense", x=0.5, y=0.4, rx=0.08, ry=0.08)
+Scoring = latent("Scoring", x=0.8, y=0.6, rx=0.08, ry=0.08, fill="gray65")
+#
+op = par(mar = rep(0,4))
+wall(xlim = c(0.1, 0.9), ylim = c(0.15, 0.9))
+draw(Spec); draw(Rush); draw(Pass); draw(Off); draw(Scoring)
+arrow(from=Spec, to=Scoring, start="east", end="west", col="gray85", angle=17)
+arrow(from=Rush, to=Off, start="east", end="west", col="gray85", angle=17)
+arrow(from=Pass, to=Off, start="east", end="west", col="gray85", angle=17)
+arrow(from=Off, to=Scoring, start="east", end="west", angle=17)
+# text
+text(x=0.2, y=0.7, "1st order", col="gray70")
+text(x=0.2, y=0.3, "1st order", col="gray70")
+text(x=0.5, y=0.9, "1st order", col="gray70")
+text(x=0.5, y=0.5, "2nd order", col="#9dbafa")
+text(x=0.8, y=0.7, "1st order", col="gray70")
+par(op)
+@
+
+\subsubsection*{Offense Data}
+The data comes in the \plspm{} package under the name \code{offense}; this is how you can load it:
+<<load_offense, message=FALSE, size='small'>>=
+# load plspm
+library(plspm)
+
+# load offense dataset
+data(offense)
+
+# let's take a peek
+head(offense)
+@
+There are 17 variables in the data that involve the fowllowing blocks:
+
+\paragraph{Rushing Block} The first three variables define the Rushing block
+\begin{enumerate}
+ \item[1] \code{YardsRushAtt:} Yards per Rush Attempt
+ \item[2] \code{RushYards:} Rush Yards per game
+ \item[3] \code{RushFirstDown:} Rush First Downs per game
+\end{enumerate}
+
+\paragraph{Passing Block} The following three columns in the data (from 4 to 6) have to do with the Passing construct
+\begin{enumerate}
+ \item[4] \code{YardsPassComp:} Yards Pass Completion
+ \item[5] \code{PassYards:} Passed Yards per game
+ \item[6] \code{PassFirstDown:} Pass First Downs per game
+\end{enumerate}
+
+\paragraph{Spec Block} Columns 7 and 8 are the indicators of the Special Teams that account for the points accomplished by other units rather than the Offense
+\begin{enumerate}
+ \item[7] \code{FieldGoals:} Field Goals per game
+ \item[8] \code{OtherTDs:} Other Touchdowns (non-offense) per game
+\end{enumerate}
+
+\paragraph{Scoring Block} The following three columns in the data (from 9 to 11) involve the Scoring construct
+\begin{enumerate}
+ \item[9] \code{PointsGame:} Points per game
+ \item[10] \code{OffensTD:} Offense Touchdowns per game
+ \item[11] \code{TDGame:} Touchdowns per game
+\end{enumerate}
+
+The rest of the variables (columns 12 to 17) are additional variables that are included in the data ``just in case'' you are interested to play with.
+
+
+
+
+\section{Repeated Indicators: \textit{The Poor Man's Approach}}
+The first approach we will apply is the popular \textbf{repeated indicators} approach. As we previously mentioned, this procedure consists of measuring a higher-order construct with the indicators of the lower-order constructs that are associated with it. An important prerequisite for this poor man's solution is that all the manifest variables of the lower-order and the higher-order constructs should be treated in a reflective way. It should be noted that this approach is not foolproof. One of its disadvantages is the potential effect for biasing the parameter estimates. This possible bias arises from relating variables of the same type together via the PLS-PM algorithm. Why? Because the indicators in the exogeneous variables become the indicators of the endogenous variables.
+
+\subsection{Repeated Indicators example}
+In our model we have \code{Offense Performance} as a second-order construct that is supposed to reflect both the \code{Rushing Quality} and the \code{Passing Quality}. The way to model \code{Offense Performance} is by measuring it with the indicators of \code{Rushing Quality} and \code{Passing Quality}:
+\paragraph{Offense Block} Columns 1 to 6 will be the repeated indicators that we'll use to measure the Offense block
+\begin{enumerate}
+ \item[1] \code{YardsRushAtt:} Yards per Rush Attempt
+ \item[2] \code{RushYards:} Rush Yards per game
+ \item[3] \code{RushFirstDown:} Rush First Downs per game
+ \item[4] \code{YardsPassComp:} Yards Pass Completion
+ \item[5] \code{PassYards:} Passed Yards per game
+ \item[6] \code{PassFirstDown:} Pass First Downs per game
+\end{enumerate}
+
+
+\subsubsection{Applying \fplspm{}}
+As usual, we start by defining the inner model in matrix format and the outer model with the list of indicators and the vector of modes. In this example the latent variable of the \code{Special} teams will be treated in a formative way because of the nature of its manifest variables.
+<<nfl_poorsman_model>>=
+# path matrix
+n1 = c(0, 0, 0, 0, 0)
+n2 = c(0, 0, 0, 0, 0)
+n3 = c(0, 0, 0, 0, 0)
+n4 = c(0, 1, 1, 0, 0)
+n5 = c(1, 0, 0, 1, 0)
+nfl_path = rbind(n1, n2, n3, n4, n5)
+
+# adding row and column names
+rownames(nfl_path) = c("Special", "Rushing", "Passing", "Offense", "Scoring")
+colnames(nfl_path) = rownames(nfl_path)
+
+# list of blocks
+nfl_blocks = list(7:8, 1:3, 4:6, 1:6, 9:11)
+
+# vector modes
+nfl_modes = c("B", "A", "A", "A", "A")
+
+# apply plspm
+nfl_pls1 = plspm(offense, nfl_path, nfl_blocks, modes = nfl_modes)
+@
+
+Notice how the list \code{nfl\_blocks} is defined. The first element in the list refers to the \code{Special} teams and is associated with the column indices \code{7:8}. The next element has to do with the \code{Rushing} indicators which is associated with the column indices \code{1:3}. The \code{Passing} construct is associated with the indices \code{4:6}. Then we repeat the column indices \code{1:6} to form the block of indicators of \code{Offense}. Finally, the last element represents the \code{Scoring} construct that is formed by column indices \code{9:11}.
+
+Let's visualize the path coefficients with \code{plot()}:
+<<nlf_poormans_path_coeff, echo=c(1,3), fig.keep='last', fig.width=4.5, fig.height=3.7, out.width='.75\\linewidth', out.height='.45\\linewidth', fig.align='center', fig.pos='h', fig.cap='Inner model results of Repeated Indicators Approach'>>=
+# plot path coeffs
+op = par(mar = rep(0, 4))
+plot(nfl_pls1)
+par(op)
+@
+
+The sign of the path coeffients look fine. \code{Scoring} is positively influenced by the \code{Special} teams performance as well as by the \code{Offense} performance. As you can tell, the \code{Offense}'s path coefficient reflects the higher contribution to the \code{Scoring} capacity (which is what you would expect of any team's offense, that's their job). Regarding the \code{Rushing} and \code{Passing} qualities, they both have a positive impact on the \code{Offense} performance although a \code{Passing} quality is much more important for an effective attack.
+
+
+
+
+\section{Two-Step Option: \textit{The Patch Approach}}
+The second option for modeling a higher-order construct is the \textbf{two-step} approach. The first step involves computing scores for the lower-order constructs; the second step the lower-order latent scores are subsequently used as indicators of the higher-order construct in a PLS path model. This approach is not as elegant as the repeated indicators approach because the modeling process is not done in a single PLS-PM run but requires performing separate analysis, this is why I dub it the ``patch approach''. Nevertheless, the two-step approach may offer advantages when estimating higher-order constructs with formative indicators. However, the drawback comes within the two-step conception because the higher-order constructs analyzed in the second step are not taken into account when computing the scores at the first step (which is like reaping what we just sowed).
+
+\subsection{Two-Step example}
+So how do we apply the two-step approach with our Offense Performance model? Well, first we need to compute scores for the latent variables of first order: \code{Rushing} and \code{Passing}. One option is to get the scores by applying a Principal Component Analysis (PCA). For this purpose we can use the function \code{nipals()} of the package \code{plsdepot}. If you haven't installed \code{plsdepot} remember to do so first with the function \code{install.packages()}:
+<<instal_plsdepot_remind, eval=FALSE>>=
+# installing plsdepot
+install.packages("plsdepot")
+
+# load nipals
+library(plsdepot)
+@
+
+\subsubsection*{Step 1}
+We begin by performing a PCA on the indicators of the \code{Rushing} block. To see what's contained in the results, simply type the name of the object (\code{rush\_pca}) 
+<<pca_rushing_block, echo=c(-1)>>=
+library(plsdepot)
+# PCA of Rushing block
+rush_pca = nipals(offense[,1:3])
+
+# print rush_pca
+rush_pca
+@
+
+There a lot of interesting results returned by \code{nipals()} but right now we just care about the principal components that are contained in \code{\$scores}. Actually, we only need to select the first score (first column):
+<<pca_rush_component>>=
+# get first component
+rush1 = rush_pca$scores[,1]
+@
+
+We'll do exactly the same thing for the variables in the \code{Passing} block: apply \code{nipals()} and select the first component:
+<<pca_passing_block>>=
+# PCA of Passing block
+pass_pca = nipals(offense[,4:6])
+
+# first component
+pass1 = pass_pca$scores[,1]
+@
+
+At this point we should have the principal components stored in \code{rush1} and \code{pass1}. Let's take a quick look at the first values in the obtained components:
+<<rush1_and_pass1>>=
+# what do rush1 and pass1 look like?
+head(cbind(rush1, pass1))
+@
+
+\subsubsection*{Step 2}
+The  \code{rush1} and \code{pass1} components will be used in the second step of the \textit{patchy} approach as the indicators for \code{Offense}. What we have to do now is to prepare the required dataset for \fplspm{}. We cannot simply use the data \code{offense} because it does not contain  \code{rush1} and \code{pass1}. One solution is creating a new data frame, say \code{off\_twostep} with all the necessary indicators, like so:
+<<off_twostep_data>>=
+# dataset for two-step approach
+off_twostep = cbind(offense[,c(7:8, 1:6)], rush1, pass1, offense[,9:11])
+@
+
+Once we created the dataset with all the indicators, we have to prepare the extra ncessary ingredients of \fplspm{}. There is no need to change the inner matrix and the vector of modes previously defined. The only thing that we must redefine is the outer list because we have a new data frame with different column indices:
+<<nfl_patch_model>>=
+# list of blocks
+nfl_blocks2 = list(1:2, 3:5, 6:8, 9:10, 11:13)
+
+# apply plspm
+nfl_pls2 = plspm(off_twostep, nfl_path, nfl_blocks2, modes = nfl_modes)
+@
+
+Let's plot the inner model to check the path coefficients
+<<nlf_patchy_path_coeff, echo=c(1,3), fig.keep='last', fig.width=4.5, fig.height=3.7, out.width='.75\\linewidth', out.height='.45\\linewidth', fig.align='center', fig.pos='h', fig.cap='Inner model results of Two-Step Approach'>>=
+# plot path coeffs
+op = par(mar = rep(0,4))
+plot(nfl_pls2)
+par(op)
+@
+
+Not bad eh? Similar to the results obtained from the repeated indicators approach, \code{Scoring} is positively influenced by the \code{Special} teams performance and by the \code{Offense} performance. Once again, we observe the higher contribution that a team's offense has on the \code{Scoring} capacity. Also, the \code{Rushing} and \code{Passing} qualities have a postive impact on the \code{Offense} performance, with \code{Passing} having a higher importance.
+
+
+
+\subsubsection*{Some traps to be aware of}
+Before discussing our last approach for modeling higher-order constructs, let me show you a slightly different way to apply the two-step approach. In this example, instead of using the function \code{nipals()} to calculate the Principal Components, I'm going to use the function \code{prcomp()} that comes by default in R:
+<<pca_rush_and_pass>>=
+# PCA of Rushing block
+rush_prcomp = prcomp(offense[,1:3], scale.=TRUE)
+
+# select fisrt component
+rush_pc1 = rush_prcomp$x[,1]
+
+# PCA of Passing block
+pass_prcomp = prcomp(offense[,4:6], scale.=TRUE)
+
+# select fisrt component
+pass_pc1 = pass_prcomp$x[,1]
+@
+
+If we compare the \code{nipals()} components (\code{rush1} and \code{pass1}) against the \code{prcomp()} components (\code{rush\_pc1} and \code{pass\_pc1}) we get the following:
+<<rush_pass_nipals_vs_prcomp>>=
+# compare nipals components versus prcomp components
+head(cbind(rush1, pass1, rush_pc1, pass_pc1))
+@
+The scores are almost identical except that \code{pass1} has a different sign than \code{pass\_pc1}.  This is totally allright and initially there shouldn't be anything to worry about. In fact, it might be that when you replicate the analysis with your computer you get a different sign.
+
+But what about the PLS-PM analysis? Do the alternative scores affect the results? Let's figure it out. Again, we will define another data frame (\code{other\_twostep}) with the new latent variable scores:
+<<another_off_twostep, tidy=FALSE>>=
+# another dataset for two-step approach
+other_twostep = cbind(offense[,c(7:8, 1:6)], rush_pc1, pass_pc1, 
+                      offense[,9:11])
+
+# apply plspm
+other_pls2 = plspm(other_twostep, nfl_path, nfl_blocks2, modes = nfl_modes)
+@
+
+Ok, \fplspm{} did its job. Now let's plot the path coefficients
+<<another_patchy_path_coeff, echo=c(1,3), fig.keep='last', fig.width=4.5, fig.height=3.7, out.width='.75\\linewidth', out.height='.45\\linewidth', fig.align='center', fig.pos='h', fig.cap='Inner model results of Two-Step Approach'>>=
+# plot path coeffs
+op = par(mar = rep(0,4))
+plot(other_pls2)
+par(op)
+@
+
+Now everything looks different and like nonsensical. By changing the sign of one indicator we are getting some weird path coefficients. This is something that you should care about; that's why I wanted to show you a potential pitfall that might drive you nuts if you don't know what to expect. If you ever find yourself in a situation like this one, I suggest you to try different methods for computing the principal components because you can get different solutions as we've just seen.
+
+
+
+
+\section{Hybrid Option: \textit{The Give Away Approach}}
+The third approach we will discuss is the \textbf{hybrid} or ``give away'' approach. Basically, this option attempts to solve the issue of having repeated manifest variables when using the Repeated Indicators approach. The implementation of this method within PLS involves randomly splitting the indicators of the lower-order constructs so that half are assigned to their respective latent variables and the other half are assigned to the higher-order constructs. Proceeding in this way (giving away indicators of the lower-order constructs) we avoid having repeated items. 
+
+Simply put, under the \textit{give away approch} we are willing to ``sacrifice'' some of the indicators in the lower-order constructs to use them as indicators of the higher-order construct. Ideally, we would randomly split the manifest variables in \code{Rushing} and \code{Passing} so that half of them go to \code{Offense}. But we only have three indicators for \code{Rushing} and three indicators for \code{Passing}. So we will give away one indicator in each block and use them as manifest variables for \code{Offense}. For instance, we may take \code{RushYards} (column 2) and \code{PassYards} (column 5) and assigned them to \code{Offense}.
+
+
+\subsection{Hybrid Approach example}
+Continuing with the Offense Performance model, the application of the give-away approach is pretty straightforward. Again, of the four main ingredients for \fplspm{} we only need to define the list of \code{blocks} that indicates the columns in the dataset \code{offense} to form the blocks of indicators.
+<<nfl_give_away_model>>=
+# redefine list of blocks
+nfl_blocks3 = list(7:8, c(1,3), c(4,6), c(2,5), 9:11)
+
+# apply plspm
+nfl_pls3 = plspm(offense, nfl_path, nfl_blocks3, modes = nfl_modes)
+@
+
+Did you check the definition of the outer list \code{nfl\_blocks3}? The first element associated with \code{Special} hasn't changed. However, \code{Rushing} is being measured with columns 1 and 3; \code{Passing} is measured by indicators 4 and 6; and \code{Offense} is measured with columns 2 and 5. 
+
+If we plot the path coefficients we'll see that we are not getting the same results of the previous approaches but the path coefficients are not that different. Perhaps the most noticeable change is in the path coefficient between \code{Rushing} and \code{Offense} with a value of 0.3614; this value seems to be clearly lower than what we got with the repeated indicators and the two-step solutions. 
+<<nlf_giveaway_path_coeff, echo=c(1,3), fig.keep='last', fig.width=4.5, fig.height=3.7, out.width='.75\\linewidth', out.height='.45\\linewidth', fig.align='center', fig.pos='h', fig.cap='Inner model results of Hybrid Approach'>>=
+# plot path coeffs
+op = par(mar = rep(0,4))
+plot(nfl_pls3)
+par(op)
+@
+
+
+
+\section{Wrapping Up}
+It is interesting to compare the results obtained from the three discussed approaches. As we know, there are many things in a PLS path model that can be compared but I'm only going to focus on the path coefficients. One option is to extract them from the table of \code{\$effects}. For instance, \code{nfl\_pls1\$effects} looks like this:
+<<nfl_pls1_effects>>=
+# effects of nfl_pls1
+nfl_pls1$effects
+@
+
+We want only the direct effects (\code{\$effects\$direct}) but we don't want the entire column, just the coefficients that are active, that is, rows 4, 6, 8 and 10. So let's create a vector \code{aux} with the desired indices and then store the extracted path coefficients in a matrix \code{nlf\_paths}:
+<<comparing_hierarchical_apps>>=
+# useful row indices of effects
+aux = c(4,6,8,10)
+
+# select desired path coefficients of each approach
+paths1 = nfl_pls1$effects[aux, 2]
+paths2 = nfl_pls2$effects[aux, 2]
+paths3 = nfl_pls3$effects[aux, 2]
+
+# put them in a matrix
+nfl_paths = cbind(paths1, paths2, paths3)
+rownames(nfl_paths) = nfl_pls1$effects[aux, 1]
+
+# inspect nfl_paths
+nfl_paths
+@
+
+Finally, let's do a quick visual comparison with a barplot
+<<barplot_nfl_paths, echo=c(2,4,5,6), fig.keep='last', fig.width=9, fig.height=4, out.width='1\\linewidth', out.height='.5\\linewidth', fig.align='center', fig.pos='h', fig.cap='Barplot of path coefficients from the three approaches'>>=
+options(width = 50)
+# barplot
+op = par(mar=c(2,2.5,2,0))
+barplot(t(nfl_paths), beside=TRUE, border=NA, ylim=c(0,1), axes=FALSE,
+        # legend
+        legend.text = c("Repeat", "2-step", "hybrid"),
+        args.legend=list(x="top", title="Approach", bty="n", ncol=3))
+# add y-axis
+axis(side = 2, las = 2)
+par(op)
+@
+
+I know this is only a rough comparison but the barplot helps us to see that at least with our Offense Performance model, the three approaches provide very similar path coefficients. Except for the cofficient of \code{Rushing} on \code{Offense}, the rest of the three coefficients look practically the same. 
+
+
+
+\section{Reading List}
+\begin{itemize}
+ \item \textbf{\textsf{PLS Path modelling and multiple table analysis. Application to the cosmetic habits of women in Ile-de-France}} by Christiane Guinot, Julie Latreille, and Michel Tenenhaus (2001). This paper in \textit{Chemometrics and Intelligent Laboratory Systems} 58: 247--259, presents an interesting application of PLS-PM on Multiple Table Analysis. By using a hierarchical second-order factor model, the authors aim at obtaining a global score describing the use of cosmetic products by French women.
+
+ \vspace{2mm}
+ \item \textbf{\textsf{Latent Variable Path Modeling with Partial Least Squares}} by Jan-Bernd Lohmoller (1989). This is the classic reference for the Repeated Indicators approach. The Section 3.5 \textit{Split Principal Components} of Lohmoller's book is dedicated to describe several multi-block PLS models among which you can find the \textbf{Hierarchical Component Model} (a.k.a. repeated indicator approach). Not the first source to consult for novice PLS readers, but still an obliged one if you are doing serious research on PLS-PM.
+  
+ \vspace{2mm}
+ \item \textbf{\textsf{Using PLS Path Modeling for Assessing Hierarchical Construct Models: Guidelines and Empirical Illustration}} by Martin Wetzels, Gaby Odekerken-Schroder, and Claudia van Oppen. This paper published in \textit{MIS Quarterly} Vol. 33(1): 177--195, presents a thorough discussion for how to assess hierarchical models within PLS-PM.
+ 
+ \vspace{2mm}
+ \item \textbf{\textsf{Modeling Reflective Higher-Order Constructs using Three Approaches with PLS Path Modeling: A Monte Carlo Comparison}} (2007) by Bradley Wilson and Jorg Henseler. This short paper presented at the \textit{Australian and New Zealand Marketing Academy Conference} gives a nice summary of the approaches used in PLS-PM for modeling higher-order constructs and provides suggestions of when to use each approach.
+ 
+\end{itemize}

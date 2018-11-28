@@ -1,0 +1,203 @@
+\contentsline {chapter}{Preface}{ix}{chapter*.2}
+\contentsline {paragraph}{To independent readers}{xii}{section*.5}
+\contentsline {paragraph}{To teachers using this book}{xii}{section*.6}
+\contentsline {chapter}{\numberline {1}Introduction}{3}{chapter.1}
+\contentsline {section}{\numberline {1.1}PLS Path Modeling}{3}{section.1.1}
+\contentsline {section}{\numberline {1.2}R package \texttt {plspm}{}}{5}{section.1.2}
+\contentsline {subsection}{\numberline {1.2.1}Why R?}{5}{subsection.1.2.1}
+\contentsline {section}{\numberline {1.3}About Partial Least Squares}{6}{section.1.3}
+\contentsline {subsection}{\numberline {1.3.1}Short tale of PLS}{7}{subsection.1.3.1}
+\contentsline {subsection}{\numberline {1.3.2}Regressionists and Path-modelists}{7}{subsection.1.3.2}
+\contentsline {section}{\numberline {1.4}Structure of the book}{8}{section.1.4}
+\contentsline {paragraph}{Part I}{8}{section*.10}
+\contentsline {paragraph}{Part II}{9}{section*.11}
+\contentsline {section}{\numberline {1.5}R and \texttt {plspm}{}}{9}{section.1.5}
+\contentsline {subsection}{\numberline {1.5.1}Installing \texttt {plspm}{}}{11}{subsection.1.5.1}
+\contentsline {subsection}{\numberline {1.5.2}Some Extra Details}{12}{subsection.1.5.2}
+\contentsline {paragraph}{Data for Examples:}{12}{section*.13}
+\contentsline {paragraph}{Code Examples:}{12}{section*.14}
+\contentsline {paragraph}{R style flavors}{12}{section*.15}
+\contentsline {paragraph}{About this book}{13}{section*.16}
+\contentsline {section}{\numberline {1.6}Reading List}{13}{section.1.6}
+\contentsline {paragraph}{Books on PLS Path Modeling}{13}{section*.17}
+\contentsline {paragraph}{Books on R}{14}{section*.18}
+\contentsline {chapter}{\numberline {2}Getting Started with PLS-PM}{15}{chapter.2}
+\contentsline {section}{\numberline {2.1}Case Study: Index of Success}{15}{section.2.1}
+\contentsline {subsection}{\numberline {2.1.1}Of latent and manifest variables}{16}{subsection.2.1.1}
+\contentsline {subsection}{\numberline {2.1.2}Measuring Success, Attack and Defense}{20}{subsection.2.1.2}
+\contentsline {paragraph}{Block of Attack}{21}{section*.23}
+\contentsline {paragraph}{Block of Defense}{21}{section*.24}
+\contentsline {paragraph}{Block of Success}{21}{section*.25}
+\contentsline {subsection}{\numberline {2.1.3}Path Model}{21}{subsection.2.1.3}
+\contentsline {subsection}{\numberline {2.1.4}Inner and Outer models}{22}{subsection.2.1.4}
+\contentsline {section}{\numberline {2.2}Applying PLS-PM with the R package \texttt {plspm}{}}{23}{section.2.2}
+\contentsline {subsection}{\numberline {2.2.1}Preparing the ingredients for \texttt {plspm()}{}}{24}{subsection.2.2.1}
+\contentsline {subsection}{\numberline {2.2.2}Running \texttt {plspm()}{}}{26}{subsection.2.2.2}
+\contentsline {subsection}{\numberline {2.2.3}Plotting results}{29}{subsection.2.2.3}
+\contentsline {section}{\numberline {2.3}Reading List}{31}{section.2.3}
+\contentsline {chapter}{\numberline {3}Setting the PLS-PM Framework}{33}{chapter.3}
+\contentsline {section}{\numberline {3.1}PLS-PM Frame of Mind}{33}{section.3.1}
+\contentsline {section}{\numberline {3.2}PLS Path Modeling Specs}{35}{section.3.2}
+\contentsline {section}{\numberline {3.3}Formal Model: \textit {What we want}}{35}{section.3.3}
+\contentsline {subsection}{\numberline {3.3.1}The Structural Model}{36}{subsection.3.3.1}
+\contentsline {paragraph}{1) Linear Relationships}{36}{section*.32}
+\contentsline {paragraph}{2) Recursive Models}{36}{section*.33}
+\contentsline {paragraph}{3) Regression Specification}{36}{section*.34}
+\contentsline {subsection}{\numberline {3.3.2}The Measurement Model}{37}{subsection.3.3.2}
+\contentsline {paragraph}{1a) Reflective Way}{37}{section*.35}
+\contentsline {paragraph}{1b) Formative Way}{37}{section*.36}
+\contentsline {paragraph}{2) Linear Relationships}{37}{section*.37}
+\contentsline {paragraph}{3) Regression Specification}{38}{section*.38}
+\contentsline {subsection}{\numberline {3.3.3}The Weight Relations}{38}{subsection.3.3.3}
+\contentsline {section}{\numberline {3.4}Operative Model: \textit {How to get what we want}}{39}{section.3.4}
+\contentsline {subsection}{\numberline {3.4.1}Stage 1: Iterative Process}{41}{subsection.3.4.1}
+\contentsline {paragraph}{Centroid scheme}{44}{section*.44}
+\contentsline {paragraph}{Factor scheme}{44}{section*.45}
+\contentsline {paragraph}{Path scheme}{44}{section*.46}
+\contentsline {paragraph}{Mode A}{46}{section*.49}
+\contentsline {paragraph}{Mode B}{46}{section*.50}
+\contentsline {subsection}{\numberline {3.4.2}Stage 2: Path Coefficients}{46}{subsection.3.4.2}
+\contentsline {subsection}{\numberline {3.4.3}Stage 3: Loadings}{46}{subsection.3.4.3}
+\contentsline {subsection}{\numberline {3.4.4}Wrapping up}{46}{subsection.3.4.4}
+\contentsline {section}{\numberline {3.5}Reading List}{47}{section.3.5}
+\contentsline {chapter}{\numberline {4}Interpreting PLS-PM Results}{49}{chapter.4}
+\contentsline {section}{\numberline {4.1}Reminder of Our Success Index Model}{50}{section.4.1}
+\contentsline {subsection}{\numberline {4.1.1}PLS-PM with \texttt {plspm}{}}{50}{subsection.4.1.1}
+\contentsline {subsection}{\numberline {4.1.2}The function \texttt {plspm()}{}}{51}{subsection.4.1.2}
+\contentsline {paragraph}{Inner Matrix:}{52}{section*.53}
+\contentsline {paragraph}{Blocks List:}{52}{section*.54}
+\contentsline {paragraph}{Modes:}{53}{section*.55}
+\contentsline {section}{\numberline {4.2}Handling PLS-PM results}{54}{section.4.2}
+\contentsline {section}{\numberline {4.3}Measurement Model Assessment: \\ Reflective Indicators}{55}{section.4.3}
+\contentsline {subsection}{\numberline {4.3.1}All for one and one for all}{55}{subsection.4.3.1}
+\contentsline {subsection}{\numberline {4.3.2}Unidimensionality of indicators}{56}{subsection.4.3.2}
+\contentsline {subsection}{\numberline {4.3.3}Loadings and Communalities}{62}{subsection.4.3.3}
+\contentsline {subsection}{\numberline {4.3.4}Cross-loadings}{64}{subsection.4.3.4}
+\contentsline {section}{\numberline {4.4}Measurement Model Assessment: \\ Formative Indicators}{67}{section.4.4}
+\contentsline {section}{\numberline {4.5}Structural Model Assessment}{67}{section.4.5}
+\contentsline {subsection}{\numberline {4.5.1}Coefficients of determination $R^2$}{68}{subsection.4.5.1}
+\contentsline {subsection}{\numberline {4.5.2}Redundancy}{68}{subsection.4.5.2}
+\contentsline {subsection}{\numberline {4.5.3}GoF}{69}{subsection.4.5.3}
+\contentsline {section}{\numberline {4.6}Validation}{70}{section.4.6}
+\contentsline {subsection}{\numberline {4.6.1}Bootstrapping}{70}{subsection.4.6.1}
+\contentsline {section}{\numberline {4.7}Reading List}{72}{section.4.7}
+\contentsline {chapter}{\numberline {5}Running a PLS-PM Analysis}{75}{chapter.5}
+\contentsline {section}{\numberline {5.1}Modeling Customer Satisfaction}{75}{section.5.1}
+\contentsline {subsection}{\numberline {5.1.1}ECSI Model}{76}{subsection.5.1.1}
+\contentsline {subsection}{\numberline {5.1.2}Case Study: Satisfaction in Education}{77}{subsection.5.1.2}
+\contentsline {section}{\numberline {5.2}Preliminary Exploration}{81}{section.5.2}
+\contentsline {subsection}{\numberline {5.2.1}Looking at the data}{82}{subsection.5.2.1}
+\contentsline {subsection}{\numberline {5.2.2}Seeing the forest, not just the trees}{84}{subsection.5.2.2}
+\contentsline {section}{\numberline {5.3}PLS-PM Round 1}{86}{section.5.3}
+\contentsline {section}{\numberline {5.4}PLS-PM Round 2}{90}{section.5.4}
+\contentsline {section}{\numberline {5.5}PLS-PM Round 3}{94}{section.5.5}
+\contentsline {subsection}{\numberline {5.5.1}Checking unidimensionality}{94}{subsection.5.5.1}
+\contentsline {subsection}{\numberline {5.5.2}Loadings and Communalities}{95}{subsection.5.5.2}
+\contentsline {subsection}{\numberline {5.5.3}Path Coefficients}{97}{subsection.5.5.3}
+\contentsline {subsection}{\numberline {5.5.4}Structural Regressions}{99}{subsection.5.5.4}
+\contentsline {subsection}{\numberline {5.5.5}Effects}{100}{subsection.5.5.5}
+\contentsline {subsubsection}{Visualizing the Effects}{101}{section*.73}
+\contentsline {subsection}{\numberline {5.5.6}Inner Model Summary}{103}{subsection.5.5.6}
+\contentsline {subsection}{\numberline {5.5.7}GoF}{104}{subsection.5.5.7}
+\contentsline {subsection}{\numberline {5.5.8}Bootstrap Validation}{105}{subsection.5.5.8}
+\contentsline {subsection}{\numberline {5.5.9}Inspecting scores of latent variables}{108}{subsection.5.5.9}
+\contentsline {section}{\numberline {5.6}Guidelines for a PLS-PM analysis}{111}{section.5.6}
+\contentsline {paragraph}{Urban Legend}{111}{section*.75}
+\contentsline {paragraph}{Rule of thumb}{111}{section*.76}
+\contentsline {paragraph}{Consistency at Large}{112}{section*.77}
+\contentsline {paragraph}{\#1 Get to know your data}{112}{section*.79}
+\contentsline {paragraph}{\#2 Talk to the ``experts''}{112}{section*.80}
+\contentsline {paragraph}{\#3 Read papers}{112}{section*.81}
+\contentsline {paragraph}{\#4 Learn to lose}{113}{section*.82}
+\contentsline {paragraph}{\#5 Be cautious}{113}{section*.83}
+\contentsline {paragraph}{\#6 Practice, practice, practice}{113}{section*.84}
+\contentsline {section}{\numberline {5.7}Reading List}{113}{section.5.7}
+\contentsline {paragraph}{ECSI Model in Education}{113}{section*.85}
+\contentsline {paragraph}{PLS-PM analysis}{114}{section*.86}
+\contentsline {chapter}{\numberline {6}Comparing Groups}{117}{chapter.6}
+\contentsline {section}{\numberline {6.1}The million dollar question}{117}{section.6.1}
+\contentsline {section}{\numberline {6.2}Group Comparison Approaches}{119}{section.6.2}
+\contentsline {subsection}{\numberline {6.2.1}Bootstrap t-test}{120}{subsection.6.2.1}
+\contentsline {subsection}{\numberline {6.2.2}Permutation Procedure}{121}{subsection.6.2.2}
+\contentsline {subsection}{\numberline {6.2.3}Case Study: College GPA}{122}{subsection.6.2.3}
+\contentsline {paragraph}{High School Readiness}{125}{section*.92}
+\contentsline {paragraph}{Introductory Courses}{125}{section*.93}
+\contentsline {paragraph}{Intermediate Courses}{125}{section*.94}
+\contentsline {paragraph}{Graduation}{125}{section*.95}
+\contentsline {subsection}{\numberline {6.2.4}PLS-PM Analysis: GPA Model}{125}{subsection.6.2.4}
+\contentsline {subsection}{\numberline {6.2.5}Female and Male Student Models}{128}{subsection.6.2.5}
+\contentsline {section}{\numberline {6.3}Comparing Groups: Bootstrap t-test}{129}{section.6.3}
+\contentsline {section}{\numberline {6.4}Comparing Groups: Permutation test}{131}{section.6.4}
+\contentsline {section}{\numberline {6.5}Reading List}{133}{section.6.5}
+\contentsline {chapter}{\numberline {7}Moderating Effects}{135}{chapter.7}
+\contentsline {section}{\numberline {7.1}Moderator Variables}{135}{section.7.1}
+\contentsline {section}{\numberline {7.2}Moderating effects in PLS-PM}{136}{section.7.2}
+\contentsline {subsection}{\numberline {7.2.1}Moderator variables as constructs}{137}{subsection.7.2.1}
+\contentsline {subsection}{\numberline {7.2.2}Case Study: Simplified Customer Satisfaction}{137}{subsection.7.2.2}
+\contentsline {section}{\numberline {7.3}Product Indicator Approach}{138}{section.7.3}
+\contentsline {subsection}{\numberline {7.3.1}Example}{139}{subsection.7.3.1}
+\contentsline {subsubsection}{Step 2}{141}{section*.98}
+\contentsline {section}{\numberline {7.4}Two-Stage Path Modeling Approach}{143}{section.7.4}
+\contentsline {subsection}{\numberline {7.4.1}Example}{144}{subsection.7.4.1}
+\contentsline {section}{\numberline {7.5}Two-Stage Regression Approach}{147}{section.7.5}
+\contentsline {subsection}{\numberline {7.5.1}Example}{148}{subsection.7.5.1}
+\contentsline {section}{\numberline {7.6}Categorical Variable Approach}{151}{section.7.6}
+\contentsline {subsection}{\numberline {7.6.1}Example}{152}{subsection.7.6.1}
+\contentsline {section}{\numberline {7.7}Reading List}{155}{section.7.7}
+\contentsline {chapter}{\numberline {8}PLS Path Models with Higher-Order Constructs}{157}{chapter.8}
+\contentsline {section}{\numberline {8.1}\textit {Constructify-it}: How to model higher-order \\ constructs?}{158}{section.8.1}
+\contentsline {subsection}{\numberline {8.1.1}Two types of higher-order constructs}{159}{subsection.8.1.1}
+\contentsline {subsection}{\numberline {8.1.2}Modeling higher-order constructs in PLS-PM}{160}{subsection.8.1.2}
+\contentsline {paragraph}{Repeated Indicators Approach}{160}{section*.110}
+\contentsline {paragraph}{Two-Step Approach}{160}{section*.111}
+\contentsline {paragraph}{Hybrid Approach}{161}{section*.112}
+\contentsline {subsection}{\numberline {8.1.3}Case Study: NFL data}{161}{subsection.8.1.3}
+\contentsline {paragraph}{Team Units}{161}{section*.113}
+\contentsline {paragraph}{Offense Strategy}{162}{section*.114}
+\contentsline {paragraph}{Offense Performance}{162}{section*.115}
+\contentsline {paragraph}{Rushing Block}{163}{section*.117}
+\contentsline {paragraph}{Passing Block}{164}{section*.118}
+\contentsline {paragraph}{Spec Block}{164}{section*.119}
+\contentsline {paragraph}{Scoring Block}{164}{section*.120}
+\contentsline {section}{\numberline {8.2}Repeated Indicators: \textit {The Poor Man's Approach}}{164}{section.8.2}
+\contentsline {subsection}{\numberline {8.2.1}Repeated Indicators example}{165}{subsection.8.2.1}
+\contentsline {paragraph}{Offense Block}{165}{section*.121}
+\contentsline {subsubsection}{Applying \texttt {plspm()}{}}{165}{section*.122}
+\contentsline {section}{\numberline {8.3}Two-Step Option: \textit {The Patch Approach}}{167}{section.8.3}
+\contentsline {subsection}{\numberline {8.3.1}Two-Step example}{167}{subsection.8.3.1}
+\contentsline {section}{\numberline {8.4}Hybrid Option: \textit {The Give Away Approach}}{172}{section.8.4}
+\contentsline {subsection}{\numberline {8.4.1}Hybrid Approach example}{172}{subsection.8.4.1}
+\contentsline {section}{\numberline {8.5}Wrapping Up}{173}{section.8.5}
+\contentsline {section}{\numberline {8.6}Reading List}{175}{section.8.6}
+\contentsline {chapter}{\numberline {9}Detecting Classes with REBUS-PLS}{177}{chapter.9}
+\contentsline {section}{\numberline {9.1}Diversity in Data}{177}{section.9.1}
+\contentsline {subsection}{\numberline {9.1.1}Unobserved Classes}{178}{subsection.9.1.1}
+\contentsline {section}{\numberline {9.2}What is REBUS?}{179}{section.9.2}
+\contentsline {subsection}{\numberline {9.2.1}The REBUS Approach}{179}{subsection.9.2.1}
+\contentsline {subsection}{\numberline {9.2.2}Case Study: Success Index Model}{181}{subsection.9.2.2}
+\contentsline {subsection}{\numberline {9.2.3}Global PLS Path Model}{182}{subsection.9.2.3}
+\contentsline {section}{\numberline {9.3}Applying REBUS}{188}{section.9.3}
+\contentsline {paragraph}{Class 1 Teams}{191}{section*.130}
+\contentsline {paragraph}{Class 2 Teams}{192}{section*.131}
+\contentsline {paragraph}{Class 3 Teams}{192}{section*.132}
+\contentsline {subsection}{\numberline {9.3.1}Local Models}{193}{subsection.9.3.1}
+\contentsline {subsection}{\numberline {9.3.2}Quality of REBUS models}{198}{subsection.9.3.2}
+\contentsline {subsection}{\numberline {9.3.3}Final Comments}{201}{subsection.9.3.3}
+\contentsline {section}{\numberline {9.4}Reading List}{201}{section.9.4}
+\contentsline {paragraph}{References about FIMIX-PLS:}{202}{section*.134}
+\contentsline {chapter}{\numberline {A}Historical Overview of PLS-PM}{205}{appendix.A}
+\contentsline {section}{\numberline {1}Preliminaries}{205}{section.A.1}
+\contentsline {section}{\numberline {2}Herman Wold}{208}{section.A.2}
+\contentsline {subsection}{\numberline {2.1}The Econometrician}{209}{subsection.A.2.1}
+\contentsline {subsection}{\numberline {2.2}The Least Squares Affair}{210}{subsection.A.2.2}
+\contentsline {subsection}{\numberline {2.3}The Philosopher of Science}{213}{subsection.A.2.3}
+\contentsline {section}{\numberline {3}Pre-PLS Era}{214}{section.A.3}
+\contentsline {section}{\numberline {4}Soft Modeling}{217}{section.A.4}
+\contentsline {section}{\numberline {5}PLS-PM Related Timeline}{218}{section.A.5}
+\contentsline {paragraph}{1950s}{218}{section*.148}
+\contentsline {paragraph}{1960s}{219}{section*.149}
+\contentsline {paragraph}{1970s}{219}{section*.150}
+\contentsline {paragraph}{1980s}{219}{section*.151}
+\contentsline {paragraph}{1990s}{220}{section*.152}
+\contentsline {paragraph}{2000s}{220}{section*.153}
+\contentsline {section}{\numberline {6}Reading List}{221}{section.A.6}

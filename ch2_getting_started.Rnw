@@ -1,0 +1,503 @@
+% !Rnw root = ../PLS_Path_Modeling_with_R.Rnw
+
+
+\chapter{Getting Started with PLS-PM}
+In this chapter we will cover the basic concepts that are essential for a firm grasp on PLS Path Modeling. Rather than jumping into the technical aspects of the PLS-PM algorithm, I prefer to give a hands-on introduction with a simple yet interesting example of how to apply PLS-PM. The objective is to set the stage so that you are prepared for the content discussed in the rest of the book. The theoretical details and the nitty-gritty of the PLS-PM engine will wait until the next chapter. I have tried to keep everything as simple and understandable as possible. But at the same time, I have tried to cover as many aspects as possible, especially from the Structural Equation Modeling point of view. However, I have taken the liberty of allowing me a number of descriptions that don't necessarilly satisfy the formal material discussed in other textbooks.
+
+
+
+\section{Case Study: Index of Success}
+For this example our goal will be to obtain an \textit{Index of Success} using data of Spanish professional football teams. The data comes from the professional Spanish Football League, \textit{La Liga}, and it consists of 14 variables measured on 20 teams. I collected and manually curated data from the 2008-2009 season from different websites like \textit{LeagueDay.com}, \textit{BDFutbol}, \textit{ceroacero.es}, \textit{statto.com} and \textit{LFP}. The resulting dataset comes with the package \plspm{} under the name \texttt{spainfoot}. To get access to the data, you must first call the package \plspm{} and then use the function \code{data()} in your R console:
+<<echo=FALSE>>=
+options(width=65)
+@
+
+<<load_spainfoot, message=FALSE>>=
+# load package plspm
+library(plspm)
+
+# load data spainfoot
+data(spainfoot)
+@
+
+To get an idea of what the data looks like we can use the \texttt{head()} function which will show us the first \texttt{n} rows in \texttt{spainfoot}
+<<head_spainfoot>>=
+#first 5 rows of spainfoot
+head(spainfoot, n=5)
+@
+
+The description of each variable is given in the following table:
+
+\begin{table}[h]
+ \caption{Description of variables in data \code{spainfoot}} 
+ \centering
+ \begin{tabular}{l l}
+  \hline
+  Variable & Description \\
+  \hline
+  \code{GSH} & total number of goals scored at home  \\
+  \code{GSA} & total number of goals scored away \\
+  \code{SSH} & percentage of matches with scores goals at home \\
+  \code{SSA} & percentage of matches with scores goals away \\
+  \code{GCH} & total number of goals conceded at home \\
+  \code{GCA} & total number of goals conceded away \\
+  \code{CSH} & percentage of matches with no conceded goals at home \\
+  \code{CSA} & percentage of matches with no conceded goals away \\
+  \code{WMH} & total number of won matches at home \\
+  \code{WMA} & total number of won matches away \\
+  \code{LWR} & longest run of won matches \\
+  \code{LRWL} &longest run of matches without losing \\
+  \code{YC} & total number of yellow cards \\
+  \code{RC} & total number of red cards \\
+  \hline
+ \end{tabular}
+ \label{tab:spainfoot}
+\end{table}
+
+
+\subsection{Of latent and manifest variables}
+One of the most common applications of PLS Path Modeling is the calculation of indices to quantify some key concept or notion of importance. Common PLS examples of indices may include \textit{Index of Satisfaction}, \textit{Index of Motivation}, \textit{Index of Usability}, or in our case an \textit{Index of Success}. The issue with these four concepts (\textit{satisfaction}, \textit{motivation}, \textit{usability}, \textit{success}), is that they are things that cannot be measured directly. I could ask you how satisfied you were with the food you had in the last restaurant you visited. Or I could ask you how motivated you were to start reading this book. But even though I could ask you those questions, that doesn't mean I'm able to measure your satisfaction or your motivation. In fact, I'm not sure whether I would ever be able to measure such things, at least in a precise quantitative form. I cannot take a blood sample from you and measure your level of satisfaction; there is no device like a thermometer or a baumanometer that I can use to measure the amount of motivation you have. However, I can use a set of other questions that in some way reflect how happy or how sad you are, and then combine this information and summarize it to create an \textit{index of satisfaction}. Likewise, I can gather information about the results of the matches played by the Spanish teams, and then combine it to get an \textit{index of success}.
+
+
+\subsubsection*{Latent Variables}
+As you can imagine, \textit{satisfaction}, \textit{motivation}, \textit{usability} and \textit{success} are only four examples of an infinite number of other concepts that cannot be measured directly. Admittedly, sometimes we must face the fact that the variables of interest in our models cannot be observed nor measured directly. These concepts receive the special name of \textbf{latent variables} but they are also known as constructs, composites, hypothetical variables, theoretical concepts, intangibles, and factors.
+
+These variables are very common in social sciences and behavioral sciences (e.g., psychology, sociology, economy) in which there are many concepts of theoretical nature. For instance, psychologists speak of \textit{intelligence}, \textit{commitment}, and \textit{self-esteem}. Sociologists refer to \textit{social structure}, \textit{social stratification}, and \textit{social status}. Economists speak of \textit{utility}, \textit{economic development}, and \textit{organizational performance}. But we can also find unobserved entities in the biological sciences. For example, in ecology we might encounter concepts like \textit{soil fertility}, \textit{territory quality}, and \textit{habitat structure}.
+
+The interesting part is that when we work with theoretical concepts and constructs (i.e., developing theories and models) we tend to conceive expected causal relationships on them. For example, let's consider the following actions:
+\begin{itemize}
+ \item A marketing manager proposes new return policies to increase \textit{customer satisfaction}.
+ \item A group of high school teachers decide to increase the extracurricular activities to improve students' \textit{academic achievement}.
+ \item A scientist suggests planting native flowers to regenerate the \textit{habitat structure} of pollinator insects.
+ \item A coach establishes a training scheme to improve the \textit{defensive performance} of his team.
+\end{itemize}
+
+\vspace{2mm}
+The actions above illustrate courses of action that are undertaken as a result of expected relationships between two or more theoretical concepts. The marketing manager believes that changing the actual product return policies will meet customers' needs, who, in turn, are expected to be more satisfied. The teachers believe that setting more extracurricular activities will motivate students and increase their academic performance. The scientist believes that planting native flowers will regenerate the natural habitat of pollinators and hence recover their population. The coach believes that setting a new training scheme will make the defenders faster, and this in turn will improve their defensive skills. 
+
+Despite its wide use, there is no single general definition of a latent variable. You are free to research the related literature on structural models and latent variables, and draw your own conclusions. In this book, I consider latent variables to be:
+\begin{itemize}
+ \item hypothetical variables (but I honestly don't care if they are real or not)
+ \item either impossible or very difficult to observe or measure (cannot be measured directly)
+ \item regarded as a data reduction device (convenient means of summarizing a number of variables into many fewer factors)
+ \item are taken as underlying variables that help explain the association between two or more observable variables
+\end{itemize}
+
+
+\subsubsection*{Our toy model}
+As it is typical with structural models, we usually rely on some kind of theory to propose a model. It can be a very complex theory or an extremely simple one. In this case we are not going to reinvent the wheel, so let's define a simple model based on a basic yet useful theory:
+
+\vspace{2mm}
+\begin{quotation} \noindent
+\textit{the better the quality of the \textbf{Attack}, as well as the quality of the \textbf{Defense}, \\ the more \textbf{Success}.}
+\end{quotation}
+
+\vspace{2mm}
+Our simple theory involves two hypotheses. In one of them we are supposing that if a team improves its attack, it should be more successful and hence win more matches. The other hypothesis is that if a team improves its defense, it should also be more successful, or at least it should avoid losing matches.
+
+Our theory could also be expressed in a more abstract form like this:
+$$ Success = f(Attack, Defense) $$
+This is simply a conceptual means to say that Success is a function of Attack and Defense. But we could go further by specifying a linear function and expressing our theory with an equation like this one:
+$$ Success = b_1 Attack + b_2 Defense $$
+
+In addition to expressing our model in text and mathematical format, we can also display our model in a graphical format using what is called a \textbf{path diagram} ---this is why is called PLS \textit{path modeling}--- These diagrams help us to represent in a visual way the relationships stated in our models. In this example, the following diagram depicts the relation \textbf{success} depending on the quality of the \textbf{attack} as well as on the quality of the \textbf{defense}:
+<<simple_success_diagram, echo=FALSE, message=FALSE>>=
+# load the package
+library(pathdiagram)
+
+# structural model
+ATTACK = latent("Attack", x=0.35, y=0.75, rx=0.07, ry=0.06)
+DEFENSE = latent("Defense", x=0.35, y=0.25, rx=0.07, ry=0.06)
+SUCCESS = latent("Success", x=0.65, y=0.5, rx=0.07, ry=0.06)
+@
+
+<<plot_success_diagram, echo=FALSE, fig.keep='last', fig.width=4.5, fig.height=3.5, out.width='.7\\linewidth', out.height='.4\\linewidth', fig.align='center', fig.pos='h', fig.cap='Diagram depicting our simple model'>>=
+# PLOT
+op = par(mar = rep(0,4))
+wall(xlim=c(0.2, 0.8), ylim=c(0.2, 0.8))
+# draw latent variables
+draw(ATTACK)
+draw(DEFENSE)
+draw(SUCCESS)
+# arrows of inner model
+arrow(from=ATTACK, to=SUCCESS, start="east", end="west", angle=20)
+arrow(from=DEFENSE, to=SUCCESS, start="east", end="west", angle=20)
+#
+par(op)
+@
+
+
+
+
+\subsubsection*{Manifest Variables}
+Although the essence of latent variables is that they cannot be directly measured, that does not mean they are nonsense or useless. To make them operative, latent variables are indirectly measured by means of variables which can be perfectly observed-measured. These types of variables are called \textbf{manifest variables} (MVs), also known as \textbf{indicators} or \textbf{items}. We assume that manifest variables contain information that reflect or indicate one aspect of the construct; hence we use the information contained in indicators to obtain an approximate representation of the latent variable.
+
+
+\subsubsection*{Formative and Reflective Indicators}
+Once we have assumed that latent variables can only be observed and measured indirectly through the use of manifest variables, we need to consider the ways in which latent variables are indirectly measured. Latent variables can be measured in two ways:
+\begin{itemize}
+ \item through their consequences or effects reflected on their indicators
+ \item through different indicators that are assumed to cause the latent variables
+\end{itemize}
+
+In the first case, called \textit{reflective way}, manifest variables are considered as being caused by the latent variables. The second case is known as \textit{formative way} because the latent construct is supposed to be formed by its indicators. The main difference between the reflective and formative ways has to do with the causal-effect relationships between the indicators and the constructs (look at the direction of the arrows). The formative and reflective approaches for measuring a latent construct are illustrated in the next figure trough the Attack construct.
+
+<<measure_success, echo=FALSE, message=FALSE>>=
+# structural model
+Att = latent("Attack", x=0.45, y=0.5, rx=0.07, ry=0.06)
+# define formative block
+formative = list(
+  f1 = manifest("Hours of training", x=0.15, y=0.6, width=0.16, height=0.08),
+  f2 = manifest("Calories in diet", x=0.15, y=0.5, width=0.16, height=0.08),
+  f3 = manifest("Massages & rest", x=0.15, y=0.4, width=0.16, height=0.08))
+# define reflective block
+reflective = list(
+  r1 = manifest("Number of corners", x=0.75, y=0.6, width=0.16, height=0.08),
+  r2 = manifest("Shots on goal", x=0.75, y=0.5, width=0.16, height=0.08),
+  r3 = manifest("Goals scored", x=0.75, y=0.4, width=0.16, height=0.08))
+@
+
+<<measure_success_diagram, echo=FALSE, fig.keep='last', fig.width=7.5, fig.height=2.5, out.width='.9\\linewidth', out.height='.35\\linewidth', fig.align='center', fig.pos='h', fig.cap='A latent variable measured by formative and reflective indicators'>>=
+# PLOT
+op = par(mar = rep(0,4))
+wall(xlim=c(0.1, 0.8), ylim=c(0.3, 0.7))
+# draw latent variables
+draw(Att)
+# draw manifest variables
+for (i in 1:3) {
+  draw(formative[[i]])
+  arrow(from=formative[[i]], to=Att, start="east", end="west", length=0.15)
+  draw(reflective[[i]])
+  arrow(from=Att, to=reflective[[i]], start="east", end="west", length=0.15)
+}
+# text
+text(x=0.1, y=0.67, labels="CAUSES", col="gray55", pos=4)
+text(x=0.75, y=0.67, labels="EFFECTS", col="gray55")
+text(x=0.07, y=0.32, labels="Formative Indicators", col="gray55", pos=4)
+text(x=0.67, y=0.32, labels="Reflective Indicators", col="gray55", pos=4)
+#
+par(op)
+@
+
+Suppose that a researcher is studying a team trying to measure its quality of attack. She can use two approaches:
+\begin{itemize}
+ \item ask about different statistics \textbf{reflecting} the attack
+ \item ask about possible practices \textbf{affecting} the attack 
+\end{itemize}
+
+Different effects might be evaluated, for example: the number of corner shots in every match, the number of shots on goal, or the number of goals scored. These are typical indicators of how good or bad the attack of a team is. The better the attack, the more number of any of these indicators. Conversely, the researcher might ask about the hours of training in the field, about the kind of food and the number of calories in the players diet, or the amount of time receiving massages and resting periods. The statistics about shots and goals can be considered as \textbf{reflective indicators} because they reflect the attack; patterns of training and care-taking practices can be seen as \textbf{formative indicators} because they are thought to contribute in the quality of attack. 
+
+
+\subsection{Measuring Success, Attack and Defense}
+We have proposed a model in which the Overall Success depends on the Quality of the Attack as well as on the Quality of the Defense. These are our three latent variables. Now we need to establish a set of indicators for each of the three constructs.
+
+\paragraph{Block of Attack} If you check the available variables in the data \code{spainfoot}, you will see that the first four columns have to do with scored goals, which in turn can be considered to reflect the Attack of a team. We are going to take those variables as indicators of Attack:
+\begin{itemize}
+ \item GSH number of goals scores at home
+ \item GSA number of goals scores away
+ \item SSH percentage of matches with scores goals at home
+ \item SSA percentage of matches with scores goals away
+\end{itemize}
+
+\paragraph{Block of Defense} The following four columns in the data (from 4 to 8) have to do with the Defense construct
+\begin{itemize}
+ \item GCH number of goals conceded at home
+ \item GCA number of goals conceded away
+ \item CSH percentage of matches with no conceded goals at home
+ \item CSA percentage of matches with no conceded goals away
+\end{itemize}
+
+\paragraph{Block of Success} Finally, columns 9 to 12 can be grouped in a third block of variables, the block associated with Success
+\begin{itemize}
+ \item WMH number of won matches at home
+ \item WMA number of won matches away
+ \item LWR longest run of won matches
+ \item LRWL longest run of matches without losing
+\end{itemize}
+
+
+
+\subsection{Path Model}
+To be honest, our example is very simple because that's how textbook examples are. In this case, we don't require too much thought to decide what kind of measurement (reflective or formative) should be considered for the manifest variables. As you can tell, each block of variables reflects to some extent the latent construct they are associated with. Bear in mind that many times is not always clear whether an indicator should be treated as formative or reflective. In such cases we might need the assistant of an expert in the field we are working in to decide the type of measurement to be used.
+
+We already saw a simple diagram with the relationships between the latent constructs. But now we need to take a step forward: we need to put all the pieces together and get the \textit{whole enchilada} diagram with both latent and manifest variables. To do this we use a \textbf{path diagram} or an arrow diagram. The function of these diagrams is to have a graphic representation of the relationships among all the variables present in our model. These types of diagrams can be drawn following a dozen of established rules and conventions. Through my experience, however, I've realized that I just need three of those principles for drawing my PLS path diagrams: 
+\begin{enumerate}
+ \item manifest variables are represented in a \textbf{rectangular} form
+ \item latent variables are represented in an \textbf{elliptical} form
+ \item relationships between variables are represented with \textbf{straight arrows}
+\end{enumerate}
+The graphical display of our complete model is as follows:
+
+<<spainfoot_model, echo=FALSE, message=FALSE>>=
+# define Attack block
+attack = list(
+  att1 = manifest("GSH", x=0.15, y=0.9, width=0.09, height=0.08),
+  att2 = manifest("GSA", x=0.15, y=0.8, width=0.09, height=0.08),
+  att3 = manifest("SSH", x=0.15, y=0.7, width=0.09, height=0.08),
+  att4 = manifest("SSA", x=0.15, y=0.6, width=0.09, height=0.08))
+ATTACK = latent("Attack", x=0.35, y=0.75, rx=0.08, ry=0.06)
+
+# define Defense block
+defense = list(
+  def1 = manifest("GCH", x=0.15, y=0.4, width=0.09, height=0.08),
+  def2 = manifest("GCA", x=0.15, y=0.3, width=0.09, height=0.08),
+  def3 = manifest("CSH", x=0.15, y=0.2, width=0.09, height=0.08),
+  def4 = manifest("CSA", x=0.15, y=0.1, width=0.09, height=0.08))
+DEFENSE = latent("Defense", x=0.35, y=0.25, rx=0.08, ry=0.06)
+
+# define Success block
+success = list(
+  suc1 = manifest("WMH", x=0.85, y=0.65, width=0.09, height=0.08),
+  suc2 = manifest("WMA", x=0.85, y=0.55, width=0.09, height=0.08),
+  suc3 = manifest("LWR", x=0.85, y=0.45, width=0.09, height=0.08),
+  suc4 = manifest("LRWL", x=0.85, y=0.35, width=0.09, height=0.08))
+SUCCESS = latent("Success", x=0.65, y=0.5, rx=0.08, ry=0.06)
+@
+
+<<spainfoot_model_diagram, echo=FALSE, fig.keep='last', fig.width=6, fig.height=4, out.width='.9\\linewidth', out.height='.5\\linewidth', fig.align='center', fig.pos='h', fig.cap='Path Diagram depicting our simple model'>>=
+# PLOT
+op = par(mar = rep(0,4))
+wall(xlim=c(.1,.9), ylim=c(0.05, 0.95))
+# draw latent variables
+draw(ATTACK)
+draw(DEFENSE)
+draw(SUCCESS)
+# draw manifest variables
+for (i in 1:4) {
+  draw(attack[[i]])
+  arrow(from=ATTACK, to=attack[[i]], start="west", end="east")
+  draw(defense[[i]])
+  arrow(from=DEFENSE, to=defense[[i]], start="west", end="east")
+  draw(success[[i]])
+  arrow(from=SUCCESS, to=success[[i]], start="east", end="west")
+}
+# arrows of inner model
+arrow(from=ATTACK, to=SUCCESS, start="east", end="west")
+arrow(from=DEFENSE, to=SUCCESS, start="east", end="west")
+#
+par(op)
+@
+
+
+
+
+\subsection{Inner and Outer models}
+A full path model is comprised by two submodels: the structural model also known as \textbf{inner model} and the measurement model also known as \textbf{outer model}. The inner model is the part of the model that has to do with the relationships between latent variables. 
+<<spainfoot_inner_model_diag, echo=FALSE, fig.keep='last', fig.width=5, fig.height=3, out.width='.75\\linewidth', out.height='.3\\linewidth', fig.align='center', fig.pos='h', fig.cap='Inner model: only relationships between latent variables'>>=
+# PLOT
+op = par(mar = rep(0,4))
+wall(xlim=c(.1,.9), ylim=c(0.2, 0.8))
+# draw latent variables
+draw(ATTACK)
+draw(DEFENSE)
+draw(SUCCESS)
+# arrows of inner model
+arrow(from=ATTACK, to=SUCCESS, start="east", end="west", angle=20)
+arrow(from=DEFENSE, to=SUCCESS, start="east", end="west", angle=20)
+#
+text(x=0.35, y=0.5, labels="Inner Model", col="gray50", cex=1.2)
+#
+par(op)
+@
+
+The outer model is the part of the model that has to do with the relationships between each latent variable and its block of indicators
+<<spainfoot_outer_model_diag, echo=FALSE, fig.keep='last', fig.width=6.5, fig.height=4, out.width='.85\\linewidth', out.height='.45\\linewidth', fig.align='center', fig.pos='h', fig.cap='Outer model: relationships between each construct and its indicators'>>=
+# PLOT
+op = par(mar = rep(0,4))
+wall(xlim=c(.1,.9), ylim=c(0.05, 0.95))
+# draw latent variables
+draw(ATTACK)
+draw(DEFENSE)
+draw(SUCCESS)
+# draw manifest variables
+for (i in 1:4) {
+  draw(attack[[i]])
+  arrow(from=ATTACK, to=attack[[i]], start="west", end="east")
+  draw(defense[[i]])
+  arrow(from=DEFENSE, to=defense[[i]], start="west", end="east")
+  draw(success[[i]])
+  arrow(from=SUCCESS, to=success[[i]], start="east", end="west")
+}
+#
+text(x=0.5, y=0.9, labels="Outer Model", col="gray50", cex=1.35)
+#
+par(op)
+@
+
+
+
+\section{Applying PLS-PM with the R package \plspm{}}
+Finally we have our full structural model and its beautiful path diagram. Now what? What do we calculate in a PLS Path Model? Well, there are a lot things that can be (and that are actually) calculated in a PLS path model. But the most important ones, or at least the ones you have to remember, are the estimation of the latent variable scores and the quantification of the relationships in the model. For each arrow, we will obtain an associated numeric value representing the ``strength'' and ``direction'' of the relationship. For each latent construct, we will obtain a score. In some sense, we will get not only an \textit{Index of Success} but also an \textit{Index of Attack} and an \textit{Index of Defense}.
+
+
+\subsection{Preparing the ingredients for \fplspm{}}
+In order to perform a PLS-PM analysis the next step is to prepare the ingredients to start cooking our PLS path model with the function \fplspm{}. This function is pretty much the only function that you need to run the analysis. The tricky part, however, is to get the right ingredients in the right format to be plugged inside \fplspm{}. At least we need three mandatory ingredients: 1) a data set, 2) an inner model, and 3) an outer model. We already have the data in the data frame \code{spainfoot}. So let's talk about how to specify an inner model and an outer model for \fplspm{}.
+
+
+\subsubsection*{Inner model matrix}
+As we already mention, the inner or structural model represents the relationships between the latent variables. Looking at the diagram of the inner model, we can think of it as a flowchart representing a causal process. Moreover, we can think of the inner model as a network and by doing so we can represent it in matrix format. This is exactly what the second ingredient is for \fplspm{}: the \code{path\_matrix}. This is basically an R \code{matrix}, but not any kind of matrix. The \code{path\_matrix} must be a \textit{lower triangular boolean matrix}. In other words, it must be a square matrix (same number of rows and columns), the elements in the diagonal and above it must be zeros, and the elements below the diagonal can be either zeros or ones. Here's one way in which the inner matrix could be defined:
+<<spainfoot_inner_matrix>>=
+# rows of the inner model matrix
+Attack = c(0, 0, 0)
+Defense = c(0, 0, 0)
+Success = c(1, 1, 0)
+
+# path matrix created by row binding
+foot_path = rbind(Attack, Defense, Success)
+
+# add column names (optional)
+colnames(foot_path) = rownames(foot_path)
+@
+What we are doing is creating three vectors that will be the rows of the argument \code{path\_matrix}. Then we use the function \code{rbind()} that creates a matrix by ``stacking'' the row vectors. And finally we use the row names of the matrix \code{foot\_path} as its column names. To see how the inner matrix looks like just type its name in the R console:
+
+<<print_foot_inner>>=
+# let's see it
+foot_path
+@
+The way in which you should read this matrix is by ``columns affecting rows''. A number one in the cell $i,j$ (i-th row and j-th column) means that column $j$ affects row $i$. For instance, the one in the cell 3,1 means that \texttt{Attack} affects \texttt{Success}. The zeros in the diagonal of the matrix mean that a latent variable cannot affect itself. The zeros above the diagonal imply that PLS-PM only works with recursive models (no loops in the inner model).
+
+A nice feature available in \plspm{} is the function \code{innerplot()} that allows us to visualize the inner matrix in a path diagram format. This is specially useful when we want to visually inspect the model defined for \code{path\_matrix}.
+<<innerplot_spainfoot, fig.width=4.5, fig.height=2.5, out.width='.65\\linewidth', out.height='.4\\linewidth', fig.align='center', fig.pos='h', fig.cap='Visualizing the path diagram of the inner model with innerplot', echo=c(1,3)>>=
+# plot the path matrix
+op = par(mar = rep(0,4))
+innerplot(foot_path)
+par(op)
+@
+
+
+\subsubsection*{Outer model list}
+The third ingredient is the outer model. The way in which the outer model is defined is by using a \texttt{list} containing vectors. Basically, the idea is to indicate the set of manifest variables that form each block. In other words, we tell \fplspm{} what variables of the data are associated with what latent variables. The best thing is to explain this with an example.
+<<spainfoot_outer_model>>=
+# define list of indicators:
+# what variables are associated with what latent variables
+foot_blocks = list(1:4, 5:8, 9:12)
+@
+The list above contains three elements, one per each block of indicators. Each element is a vector of indices. Thus, the first block corresponding to the latent variable \texttt{Attack} is associated with the first four columns of the data set. The second block, associated to \texttt{Defense}, is formed by columns from 5 to 8. And \texttt{Success} is associated with columns from 9 to 12. 
+
+
+\subsubsection*{Vector of modes}
+By default, \fplspm{} assumes that the measurement of the latent variables is in reflective mode, known as \textit{mode A} in the PLS-PM world. However, I strongly recommend you to explicitly define a vector of \code{modes}. This is indicated by using a character vector with as many letters as latent variables:
+<<spainfoot_modes>>=
+# all latent variables are measured in a reflective way
+foot_modes = c("A", "A", "A")
+@
+An alternative type of measurement is the formative mode, known as \textit{mode B}. So, if you had some latent variables in mode B, say \texttt{Success}, you would have to specify this as follows:
+<<spainfoot_modes2>>=
+# Success in formative mode B
+foot_modes2 = c("A", "A", "B")
+@
+
+
+\subsection{Running \fplspm{}}
+Now that we have all the necessary ingredients we are ready to run our first PLS path model with the all-mighty function \fplspm{}. The default usage of the function is: 
+
+\code{plspm(Data, path\_matrix, blocks, modes = NULL)}
+
+The function \fplspm{} has more parameters but right now we have sufficient with the \code{Data}, \code{path\_matrix}, \code{blocks} and \code{modes}. The first argument \code{Data} corresponds to the dataset \code{spainfoot}. The second parameter is the path matrix \code{foot\_path}. Then we have the list of blocks \code{foot\_blocks}, and finally the vector of modes \code{foot\_modes}. You have to respect the order in which the first three arguments are passed to \fplspm{}, otherwise you are going to get a nasty error message. Enter the following command to run the PLS-PM analysis:
+<<first_spainfoot_plspm>>=
+# run plspm analysis
+foot_pls = plspm(spainfoot, foot_path, foot_blocks, modes = foot_modes)
+@
+Congratulations! You just run your first PLS Path Modeling analysis in R.
+
+Here is how you would normally do all the previous steps in a single piece of code:
+<<foot_plspm_single_piece>>=
+# rows of the path matrix
+Attack = c(0, 0, 0)
+Defense = c(0, 0, 0)
+Success = c(1, 1, 0)
+
+# path matrix (inner model)
+foot_path = rbind(Attack, Defense, Success)
+
+# add column names
+colnames(foot_path) = rownames(foot_path)
+
+# blocks of indicators (outer model)
+foot_blocks = list(1:4, 5:8, 9:12)
+
+# vector of modes (reflective)
+foot_modes = c("A", "A", "A")
+
+# run plspm analysis
+foot_pls = plspm(spainfoot, foot_path, foot_blocks, modes = foot_modes)
+@
+
+Initially, the definition of a pls path model for \fplspm{} might seem a little bit elaborate, especially for users accustomed to define their PLS path models using a graphic interface. Switching to \plspm{} may require thinking out of the box, but the invested effort has its dividends. One of the immediate rewards is that you stop wasting your time in mouse clicks and dragging objects to draw a path diagram. 
+
+
+\subsubsection*{\fplspm{} output}
+What we get in \code{foot\_pls} is an object of class \code{"plspm"}. Everytime you type an object of this class you will get a display with the following list of results:
+<<inspect_foot_pls>>=
+# what's in foot_pls?
+foot_pls
+@
+
+How do you know what class of object is \code{foot\_pls}? Use the function \code{class()} to get the answer:
+<<class_foot_pls>>=
+# what class of object is foot_pls?
+class(foot_pls)
+@
+
+If you want to inspect the matrix of path coefficients contained in \code{\$path\_coefs} simply type in your R console:
+<<peeking_coefs_foot_pls>>=
+# path coefficients
+foot_pls$path_coefs
+@
+
+In the same manner, if you want to check the inner model results contained in \code{\$inner\_model}, just type:
+<<peeking_inner_model_foot_pls>>=
+# inner model
+foot_pls$inner_model
+@
+
+
+In addition, there is a \code{summary()} method that you can apply to any obect of class \code{"plspm"}. This function gives a full summary with the standard results provided in most software for PLS Path Modeling. I won't display the bunch of stuff that \code{summary()} provides but I recommend you to check it out in your computer:
+<<apply_summary_footpls, eval=FALSE>>=
+# summarized results
+summary(foot_pls)
+@
+
+
+\subsection{Plotting results}
+With \plspm{} you can visualize some results using the function \code{plot()}. By default, this function displays the results of the inner model, that is, the path coefficients:
+<<plot_inner_foot_pls, fig.width=4.5, fig.height=3, out.width='.7\\linewidth', out.height='.4\\linewidth', fig.align='center', fig.pos='h', echo=c(1,3)>>=
+# plotting results (inner model)
+op = par(mar = rep(0,4))
+plot(foot_pls)
+par(op)
+@
+
+In order to check the results of the outer model, let's say the loadings, you need to use the parameter \code{what} (\code{what="loadings"}) of the \code{plot()} function:
+<<plot_loadings_foot_pls, fig.width=6, fig.height=2.5, out.width='1\\linewidth', out.height='.45\\linewidth', fig.align='center', fig.pos='h', echo=c(1,3)>>=
+# plotting loadings of the outer model
+op = par(mar = rep(0,4))
+plot(foot_pls, what = "loadings", arr.width = 0.1)
+par(op)
+@
+
+
+\subsubsection*{Show me the Index}
+I promised you that we were going to get an \textit{Index of Success} for the teams in the Spanish football league. The way in which this is achieved in PLS Path Modeling is with the obtained latent variable scores contained in \code{\$scores}. Using the functions \code{head()} and \code{tail()} you can take a look at the first and last \code{n=5} rows, respectively:
+<<peeking_scores_foot_pls>>=
+# show me the first scores
+head(foot_pls$scores, n=5)
+
+# show me the last scores
+tail(foot_pls$scores, n=5)
+@
+
+Before you draw any conclusions from the obtained results, we still need to do some adjustments to the model. After all, the negative path coefficient of \code{Defense} on \code{Success} does not correspond to one of the hypotheses stated in the theory: \textit{the better the quality of the Defense, the more Success}.
+
+We need to make a stop before getting our hands full with all the stuff that is estimated in a PLS path model. I know we are just starting and we have yet to talk about all the provided results by \fplspm{} and how to interpret them. But let me end this chapter at this point while there is still (I hope so) some free space in your brain disk because in the next chapter we will discuss the bolts and nuts behind the PLS-PM methodology, and I guarantee you that is going to get a little bit dense.
+
+
+
+\section{Reading List}
+\begin{itemize}
+ \item \textbf{\textsf{The Partial Least Squares Approach for Structural Equation Modeling}} by Wynne Chin. This chapter in the book \textit{Modern methods for business research} (edited by G. A. Marcoulides), provides an interesting review of the PLS approach from a SEM standpoint. Without heavy mathematical notation and targeted to a business and marketing audience, Chin explains PLS-PM in an approachable way for non-statisticians. Good reading for getting started with PLS-PM.
+ \vspace{2mm}
+ \item \textbf{\textsf{A Primer for Soft Modeling}} by R. Frank Falk and Nancy B. Miller (1992) Published by The University of Akron Press (Ohio), this is a short manuscript that aims to be an introductory level textbook for PLS Path Modeling.
+\vspace{2mm}
+ \item \textbf{\textsf{The Partial Least Squares (PLS) Approach to Causal Modelling: Personal Computer Adoption and Use as an Illustration}} by Barclay D., Higgins C. and Thompson R. (1995). This paper, in the Special Issue on Research Methodology of \textit{Technology Studies (Vol 2, Num 2: 285 - 309)}, describes an application of PLS-PM on Information Systems without using much mathematical notation. Good introduction if you are afraid of cryptic math equations.
+\end{itemize}

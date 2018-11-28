@@ -1,0 +1,260 @@
+% !Rnw root = ../PLS_Path_Modeling_with_R.Rnw
+
+
+\chapter{Introduction}
+This book provides a hands-on introduction to Partial Least Squares Path Modeling using the R package \plspm{}. Although there are a few texts that cover the theoretical aspects of PLS Path Modeling (PLS-PM) with some applications to real data, there are virtually no textbooks that teach how to use PLS Path Modeling and how to handle its broad range of applications with the existing PLS-PM software. The goal of this book is to introduce you to the world of PLS-PM using \plspm{} and \textbf{R} through practical examples; teach you the basics so that you can analyze your own data; and even turn you into a confident PLS-PM user who can try out different analysis options.
+
+
+\section{PLS Path Modeling}
+Let's face it once and for all: \textit{Partial Least Squares Path Modeling} is a name that does not provide many clues about what it is or what it can do. Simply put, Partial Least Squares Path Modeling is a statistical data analysis methodology that exists at the intersection of Regression Models, Structural Equation Models, and Multiple Table Analysis methods. If you were to review the extensive literature about PLS Path Modeling, chances are that you would find some variation of the following descriptions:
+
+\begin{itemize}
+ \item PLS-PM is the Partial Least Squares approach to Structural Equation Modeling.
+ \item PLS-PM is a statistical method for studying complex multivariate relationships among observed and latent variables.
+ \item PLS-PM is a data analysis approach for studying a set of blocks of observed variables in which each block can be summarized by a latent variable and that linear relations exist between latent variables.
+\end{itemize}
+
+The first description above is the most common on PLS Path Modeling. In most cases, PLS Path Modeling is usually referred to as the PLS approach to Structural Equation Modeling (SEM). However, around the small but growing PLS community, the term Path Modeling is preferred over Structural Equation Modeling, although both terms are often used interchangeably. My preferred description is the one that views PLS-PM from a broader conceptual perspective for analyzing multiple relationships between blocks of variables. Under this framework, we establish the relationships among the blocks by taking into account some previous knowledge (e.g. theory) of the phenomenon under analysis. In addition, we assume that each block of variables plays the role of a theoretical concept represented in the form of a latent (unobserved) variable.
+
+Personally, I try to avoid using the term SEM for two main reasons. The first reason has to do with the connotations behind Structural Equation Modeling where the dominating approach is based on Covariance Structure Analysis (sometimes also referred to as LISREL). Because of the overwhelming market share of LISREL, PLS-PM occupies a small niche within the SEM community. For the same reason, CSA purists perceive PLS-PM as an awkward methodology that distorts the SEM ideals (for the record, I have nothing against the CSA community and the \textit{Lisrelites}). The second reason has to do with the broad range of applications outside the SEM spectrum that can be targeted with the flexible PLS-PM standpoint. 
+
+Though I don't use SEM often, I sometimes may use the term SEM-PLS because it helps people to have some reference that allows them to get a better idea of the method. What I prefer to use is the term \textbf{PLS Path Modeling} to give the methodology its own territory. Yes, you can apply PLS for SEM applications, but there are also many other types of problems that can be treated via PLS-PM that don't fit within the SEM framework.
+
+
+\subsubsection*{The Network Analogy}
+It is not easy to explain PLS Path Modeling in simple terms to newcomers but I'll give my best shot. First, imagine that you have a network of variables. Usually, the connections in the network are assumed to represent some cause-effect process. But you can think of it as a flow chart where the process flows in one direction (no loops allowed). Having defined the network, one of the goals is to quantify the connections or relationships among the variables. 
+
+The interesting part comes with the subtlety that each of the connected variables are obtained by combining a set of other variables. Although this is the interesting part it is also the tricky part, but the main idea to keep in mind is the network of connected variables. PLS Path Modeling quantifies the relationships by considering the network as a \textit{system of multiple interconnected linear regressions}. Still don't get it? That's why I wrote this book as my bold yet humble attempt to help people not only understand Partial Least Squares Path Modeling but also to show them how to apply it in R. 
+
+
+
+\section{R package \plspm{}}
+R is a free open source software for data analysis, statistical computing, and graphics. In turn, \plspm{} is an R package dedicated to Partial Least Squares Path Modeling analysis. The \plspm{} project timidly began in the fall of 2005 as part of my PhD work. One of the initial goals was to create a package to estimate PLS path models in R. Almost four years later, the first R package for PLS-PM was created and the first version was released on April, 2009. Two months later, with the collaboration of Laura Trinchera, REBUS-PLS for detecting classes was added to \plspm{}. Since then, various features and new capabilities have been implemented in the package, and its development continues every year.
+
+There are a number of other softwares for PLS Path Modeling: perhaps the most well known are \textit{SmartPLS} (by Christian Ringle, Sven Wende and Alexander Will) and the PLSPM module from \textit{XLSTAT} (by Addinsoft). In addition, there's also \code{semPLS} which is another R package (by Armin Monecke). 
+
+One of the main differences of \plspm{} to other PLS-PM software is the lack of a graphical interface to draw path diagrams. This may be a surprise for readers that are used to working with other programs in which you are able to define a model with a combination of mouse clicks and dragging objects. While \plspm{} might not be the optimal choice if what you're looking for is using a mouse to define the models, it does not mean that it is less advantegeous. On the contrary, you will be surprised by how fast it is to define a model and run a PLS-PM analysis with \plspm{}. The other major difference is that you need to know a little bit about R and feel comfortable typing commands. But this is precisely what makes \plspm{} stronger by taking full advantage of the data analysis options and programming capabilities of R. 
+
+
+\subsection{Why R?}
+The main reason for choosing R is that it is an extremely powerful program for manipulating and analyzing data. R's unstoppable popularity has made it \textit{the} software for statistics and analytics in many disciplines, and it is increasingly taught at many universities. The second major reason for selecting R is that it's platform independent ---you can use it under Windows, Mac or Unix--- And is free. You don't have to spend a cent in licenses, renew contracts, negotiate upgrades, or pay for maintenance. Commercial software vendors may provide support and offer some type of guarantee, but that's secondary. You just can't beat the price and functionality of R.
+
+R is enriched by the fact that many people (me among them) from all over the world contribute and share their own work in the form of packages for almost whatever method you can think of. No other commercial software has that advantage of offering the latest state-of-the-art methods. Likewise, R has unrivaled help resources, both online and physical. There are many online forums, email lists, interest groups, forums, blogs, and websites full of rich information about R. In addition, many R books of excellent quality are increasingly published every year. What I really value about R is that it is open source: you can see the guts of the code. It's not a black box, so you can actually see what's behind the functions you are using. In addition, being a free software, R has no rival for reaching the marginalized academic places of the world. Just think about those students, professors and researchers from developing countries that would be left further behind without resources such as R. As the Spanish say, \textit{bueno, bonito y barato}, which means ``good, beautiful and inexpensive'', Why use anything else?
+
+
+
+
+\section{About Partial Least Squares}
+You have probably heard the term \textbf{Partial Least Squares} a few times before reading this book. If you are like me, those three words might be intimidating the first time you hear them. You are probably familiar with \textit{least squares}, but what about the \textit{partial}? Partial Least Squares even sounds like a spell out of Harry Potter's world. 
+
+So, what exactly is Partial Least Squares? Well, it depends on who you talk to. Perhaps the most popular answer is to equate PLS as a regression analysis technique. This is too narrow and somewhat misleading, especially because there are so many methods, techniques, and algorithms that share this brand. It is true that PLS has to do with regression analysis but it is much more than that. From the broadest point of view, PLS is a family ---I would say a big family--- of data analysis methods. However, this is perhaps the main obstacle to defining what PLS is. These methods are designed for dealing with a wide range of data analysis tasks such as exploration, visualization, explanation, prediction, classification, and study of structural systems. In its purest data analysis sense, PLS can be viewed as a set of methods for analyzing multiple relationships between various blocks of variables (or tables of data). If we consider a block of variables as a data table, the difference between the various PLS methods depends on the number of tables and the type of relationships between variables.
+
+The perception of PLS methods is not exempt of misconceptions, misunderstandings, and misinterpretations. One initial obstacle has to do with the terminology and jargon: \textit{latent structures}, \textit{projections}, \textit{component-based}, \textit{soft modeling}, \textit{scores}, \textit{loadings}, \textit{path coefficients}, \textit{path diagrams}, just to mention a few terms. There is also a widespread use of acronyms: PLS, PLSR, PLSPM, NIPALS, and many more. However, once you have surpassed the initial phase of adaptation, PLS methods open a new way of dealing with many statistical problems. Think of PLS like a set of tools that you can use for different purposes. Well applied, PLS can be a very handy and useful set of tools. However, you have to keep in mind that there is no single best approach to analyze data, and there is also no single method that works for all problems. PLS is not the exception. In this sense, PLS data analysis is both an art and a science that require not only mathematical principles, but it also requires some intuition and skills that are developed over time with practice. 
+
+
+
+\subsection{Short tale of PLS}
+I have dedicated an entire appendix at the end of the book to the historical overview of PLS Path Modeling. However, let me offer you a brief summary to start making things a bit more clear. The development of PLS methods as we know them took place over a period of approximately 20 years. Its origins can be traced back to the mid 1960s where the first PLS analytical tools were developed by Herman Wold at the Uppsala University, Sweden. Throughout the 1970s, Wold's team refined and polished different techniques that gave rise to a series of methods more or less unified under a common umbrella: a set of approaches whose estimation was based on iterative algorithms of least squares regressions. Briefly, Herman Wold and his group developed PLS as a multi-tool to handle different types of problems that could be solved by applying least squares. In other words, rather than a single technique, the set of PLS methods was developed as a toolkit to tackle several data analysis problems and solving them by applying a number of adapted least squares procedures.
+
+In the 1980s, the evolution of the PLS methods experienced an interesting metamorphosis led by Svante Wold (son of Herman Wold) with the application of the PLS principles to the analysis of chemical data. Prior to this event, the application of PLS methods was focused on economics and social sciences without really catching the attention of social researchers and related practitioners. However, the application to chemical data opened an unexplored venue for some of the PLS tools and were quickly accepted with great success. This developmental branch took the shape of the techniques associated to what is known as PLS Regression.
+
+Not all of the PLS tools shared the same luck as the PLS Regression techniques. During the 1990s, the less successful PLS Path Modeling (PLS-PM) approach remained in an almost complete oblivion. Fortunately, PLS-PM was kept active by a handful of practitioners, mainly in the USA, saving it from extinction. Then, in the late 1990s, PLS Path Modeling caught the attention of a group of european statisticians and analysts under guidance of Michel Tenenhaus. With an authentic curatorial task, they slowly repositioned the general framework of PLS methods on the data analysis map.    
+
+In the last decade (2000-2010), the PLS analysis methods were subjected to a great effort of international diffusion which continues today. As a result, new proposals and developments have been appearing in all the different PLS areas. In addition, several programs and multiple software have been released that allow users to apply the variety of PLS related methods. This reflects their great modeling potential, versatility, and analytical capabilities. 
+
+
+
+\subsection{Regressionists and Path-modelists}
+Nowadays, there are two main populations within the PLS world. PLS users can be roughly separated in two populations, let me call them: the \textit{regressionists} and the \textit{path-modelists}. The regressionists are comprised by users of PLS regression methods. The path-modelists are related to Path Modeling approaches (SEM and multiple table analysis). Of course, this is a simplistic view, but reflects what I've seen in congresses, seminars, talks, and in the PLS literature. You are either identified as a regressionist or as a path-modelist. The regressionists typically work with bio-chemical and life sciences data that involve analytical problems from disciplines such as chemometrics, sensometrics, and biometrics in general. In constrast, the path-modelists usually work with data from social siences like psychometrics, marketing, information technology, and economics.
+
+I was introduced to PLS techniques from a regressionist standpoint but got involved with the path-modelists for my PhD research. I suppose that makes me one of those rare hybrids in the middle of both traditions. Although both groups try to take ownership of the brand name PLS, I prefer to be generalist, looking at the forest instead of the trees. It's undeniable that the projects you get involved with, the fields of research you work in, and the type of data you analyze, shape you as a regressionist or as a path-modelist. But you don't have to take party for one group and break links with the other.
+
+
+
+
+\section{Structure of the book}
+Although this book is an introductory book for PLS Path Modeling it is not a comprehensive reference nor the definitive PLS-PM book; for that there are great resources written by PLS gurus that describe the bells and whistles of PLS. This book can be divided in two major parts. Part I (Chapters 2 - 5) sets the fundamentals of PLS Path Modeling and is organized as a progressive series of topics, each designed to build upon concepts introduced earlier. This first part follows a concise learning path that is essential for a firm grasp on PLS Path Modeling. Part II (Chapters 6 - 9) covers topics at the next level in the PLS-PM learning scale. The chapters in the second part are self-contained and you could read them independently from one another or in a different order than the way they are numbered.
+
+\paragraph{Part I}
+\begin{enumerate}[leftmargin=*]
+ \item[] \textbf{Chapter 2} provides the essentials you need to know about PLS Path Modeling. A basic hands-on introduction is also provided on how to perform a PLS-PM analysis with \plspm{}
+ 
+  \item[] \textbf{Chapter 3} introduces the theoretical framework behind PLS-PM and describes the model specifications as well as the algorithm. 
+  
+  \item[] \textbf{Chapter 4} describes how to interpret and diagnose the results from a PLS-PM analysis, specifically with the output provided by \plspm{}.
+
+  \item[] \textbf{Chapter 5} shows you how to run a PLS-PM analysis from beginning to end with an adapted model on customer satisfaction applied to educational services.
+\end{enumerate}
+
+\paragraph{Part II}
+\begin{enumerate}[leftmargin=*]
+  \item[] \textbf{Chapter 6} introduces the topic of comparing groups in PLS Path Modeling, and describes two common approaches for comparing two models: 1) the bootstrap $t$-test, and 2) the permutation test.
+
+  \item[] \textbf{Chapter 7} describes testing moderating effects with three types of approaches: 1) product-indicator, 2) two-stage approach, and 3) categorical variable approach.
+
+  \item[] \textbf{Chapter 8} describes higher-order contructs with three methods: 1) repeated indicators approach, 2) two-step approach, and 3) hybrid approach.
+
+  \item[] \textbf{Chapter 9} is dedicated to the issue of detecting classes with the REBUS methodology.
+  
+  \item[] \textbf{Appendix A} contains a historical overview of PLS-PM
+
+\end{enumerate}
+
+
+
+
+
+\section{R and \plspm{}}
+This book assumes that you have familiarity with the software environment \textbf{R}. The official website of the R project, \texttt{\href{http://www.r-project.org}{www.r-project.org}}, is the best place to look for information about R. It includes links to the Comprehensive R Archive Network, better known as \textbf{CRAN}, where you can download R. Since R is available for Linux, MacOS X, and Windows, there is no excuse for not installing it. 
+
+Although I'm assuming that you have some knowledge on how to work with R, I'm going to begin with some basics on how to start using the R language. For information on downloading and installing R check the CRAN webpage: \\ \texttt{\href{http://cran.r-project.org}{http://cran.r-project.org}}. 
+
+If you come across any problem or if you want to know more about the installation process, you can look for tutorials in youtube and/or ask google (or your preferred search engine).
+
+R comes with a bunch of stuff, including a simple graphical user interface (GUI). Now, if you were expecting a highly visual interface and drag-and-drop features, I'm afraid you will be disappointed. Instead, what you get with the GUI is both the R environment and the R console at the same time. This means that you have to type commands in. In the CRAN website you have a variety of contributed documentation at: \\ 
+\texttt{\href{http://cran.r-project.org/other-docs.html}{http://cran.r-project.org/other-docs.html}}
+
+For R newbies and rookies good places to start are: 
+\begin{itemize}
+ \item R for Beginners (by Emmanuel Paradis) \\ 
+ \texttt{\href{http://cran.r-project.org/doc/contrib/Paradis-rdebuts\_en.pdf}{http://cran.r-project.org/doc/contrib/Paradis-rdebuts\_en.pdf}}
+ \item Kickstarting R (compiled by Jim Lemon) \\ 
+ \texttt{\href{http://cran.r-project.org/doc/contrib/Lemon-kickstart/index.html}{http://cran.r-project.org/doc/contrib/Lemon-kickstart/index.html}}
+\end{itemize}
+
+There is no single best solution for working with R. Some people may prefer to work with R from the command line. Others might be perfectly happy working with the default GUI that comes with the versions for windows or Mac. I learned R the hard way by using a text editor with no syntax highlighting and worked like that for seven years. But you don't have to be a stubborn martyr like me. Be smart and use one of the free \textit{integrated development environments} (IDE) developed for R. Here are some interesting IDEs that you can explore:
+\begin{itemize}
+ \item RStudio \texttt{\href{http://www.rstudio.org}{http://www.rstudio.org}}
+ \item StatET \texttt{\href{http://www.walware.de/goto/statet}{http://www.walware.de/goto/statet}}
+ \item ESS (Emacs Speaks Statistics) \texttt{\href{http://ess.r-project.org}{http://ess.r-project.org}}
+\end{itemize}
+I use RStudio and I couldn't be happier (not to mention more productive) I highly recommend it. But you can use whatever other IDE fits your needs and preferences.
+
+New versions of R are released every six months, once in April and again in October. This is important to know because from time to time you must update your R version.
+
+
+\subsubsection*{Installing packages}
+By default, R comes with many packages (a.k.a. libraries) that allow you to perform a variety of analysis and tasks. However, there are many other additional R packages that don't come with the default version but that you will probably want to add. To install a package we use the function \texttt{install.packages()}. For instance, to install the package \code{colortools}, open R and type in your R console:
+<<install_package_colortools, error=FALSE, message=FALSE>>=
+# installing colortools (this is a comment!)
+install.packages("colortools")
+@
+When you install a package you will have to choose a CRAN mirror, so choose one that is closest to your geographical location. What we are doing with the function \texttt{install.packages()} is saying that we want to install the package \code{colortools}. Note that comments are indicated with the symbol \#, that is, anything that appears after \# won't be executed. I use comments a lot and you will see that almost all the R commands in this book have their corresponding comments. In this way you can better read the R code and understand what I'm doing.
+
+Once a package has been installed, you need to load it in your current R session. To do this, use the function \texttt{library()} and call it like this:
+<<load_package_colortools, error=FALSE, message=FALSE>>=
+# loading colortools (this is another comment!)
+library(colortools)
+@
+
+For those readers using R for the first time, you should know that R is case-sensitive. This means that the commands in this book should be entered exactly, using the same capital (uppercase) and small (lowercase) letters provided in the examples. If a command is \code{library} (lowercase) but you type \code{Library} or \code{LIBRARY}, it will not work.
+
+
+
+\subsection{Installing \plspm{}}
+\plspm{} is an R package for performing Partial Least Squares Path Modeling (PLS-PM) analysis. \plspm{} is available for free on CRAN at: \\ 
+\texttt{\href{http://cran.r-project.org/web/packages/plspm/index.html}{http://cran.r-project.org/web/packages/plspm/index.html}}.
+
+The main version of the package is the one hosted in CRAN. Install it like you would install any other package in R by using the function \code{install.packages()}:
+<<install_package_plspm, message=FALSE, error=FALSE, eval=FALSE>>=
+# installing the package "plspm"
+install.packages("plspm")
+@
+
+Once \plspm{} has been installed, you can use \code{library()} to load the package: 
+<<load_library_plspm, message=FALSE>>=
+# load package "plspm"
+library("plspm")
+@
+
+\plspm{} comes with a number of functions that perform various types of analysis. The main function, which has the same name as the package, is the function \fplspm{} that is designed for running a full PLS-PM analysis. In this book \plspm{} refers to the R package and \fplspm{} refers to the function.
+
+For a description of \fplspm{} and its arguments, use the function \code{help()} like so:
+<<help_function_plspm, message=FALSE, error=FALSE>>=
+# asking for help about function plspm
+help(plspm)
+@
+When you use the function \code{help()} a window with documentation about the topic you are asking help about for will open. This documentation is the information contained in the technical manual of the package and is also available in pdf format at: \\
+\texttt{\href{http://cran.r-project.org/web/packages/plspm/plspm.pdf}{http://cran.r-project.org/web/packages/plspm/plspm.pdf}}
+
+More friendly documentation and tutorials about \plspm{} can be found at: \\
+\texttt{\href{http://www.gastonsanchez.com/plspm}{www.gastonsanchez.com/plspm}}. 
+
+\plspm{} is still evolving; ongoing refinements, new features and fixing bugs are being enhanced regularly. Even as this book was being written, \plspm{} has evolved, and you can expect it to keep doing so.
+
+
+
+
+\subsection{Some Extra Details}
+Although most of the case studies in this book are simple examples, all the data used is real and the models should be fairly applicable. The hypotheses, the relationships, and the conceptualizations behind every model are mine and you shouldn't take them as the final word. You might agree or disagree with my conclusions and interpretation of the results. That's fine with me; we can sit down and order a beer or a coffee to discuss the material in more detail. For this book at least, the journey is more important than the results.
+
+\paragraph{Data for Examples:} Almost all the data for the case studies in the book come with the package \plspm{}. This means they are already available and you don't need to import anything. There is only one case study where you need to download a data set and import it in R (see Chapter 5).
+
+\paragraph{Code Examples:} Most of the code examples in the book are shown with input and output in a highlighted format like this one:
+<<r_code_example>>=
+# stupid example
+x = 2
+y = 3
+# sum
+z = x + y
+# easy peasy
+z
+@
+Much of the code in the examples reflects my personal taste for working with R, which might not be the same as yours. Also, I've chosen clarity over shortness and efficiency. Many of the examples could be executed in a more synthesized or efficient way. However, I decided to use relatively verbose code to help explain how things are done. I prefer to use two or three times more lines of code, writing function arguments explicitely, and commenting the main steps, to try to help readers understand what I'm doing.
+
+
+\paragraph{R style flavors}
+There have been efforts of different groups to establish some style guidelines and advices for writing code in R. One of the most popular flavors is the Google's R Style Guide available at: \\
+\texttt{\href{http://google-styleguide.googlecode.com/svn/trunk/google-r-style.html}{http://google-styleguide.googlecode.com/svn/trunk/google-r-style.html}} \\
+According to Google's guidelines (and many other authors), I should use the assignment symbol \code{'<-'} instead of the equal symbol \code{'='}. 
+<<>>=
+# I used to do this
+x <- 3
+# now I do this
+y = 3
+@
+I do not regard the symbol \code{'='} as bad for assignment, but you can use whatever you like. 
+
+\paragraph{About this book}
+This textbook was entirely written using the \code{Sweave} and \code{knitr} ``combo'' with RStudio. \code{Sweave} is an R package developed by Friedrich Leisch that allows to embed the R code for complete data analyses in LaTeX documents. \code{knitr} is an R package developed by Yihui Xie that allows you to produce dynamic reports with R while adding more capabilities to \code{Sweave}. RStudio supports the powerful and flexible system of \code{Sweave} and \code{knitr} for creating dynamic reports and reproducible research using LaTeX.
+
+I know that R can be tricky to learn and, unless you are a programming geek, will take you some time to get used to. But the good news is that you should be able to reproduce all the examples in your machine by simply copy-pasting the R code in this book. In this way, you learn how to apply PLS-PM methods using some bits of text and code in R. Of course, you'll be most successful with this book if you have some familiarity with R.
+
+
+
+
+
+\section{Reading List}
+Instead of having a long boring list of references at the end of the book, I've decided to provide at the end of every chapter a suggested reading list with the main references of the discussed material. So here is the reading list for the content in this chapter.
+
+\paragraph{Books on PLS Path Modeling}
+There are many resources about PLS Path Modeling: articles, papers, special editions of journals, book chapters, encyclopedia's entries, symposium proceedings, textbooks, handbooks, and websites. The following books are my suggestion of resources that talk about PLS in general. In the next chapters I will offer other references depending on the topic we are discussing.
+
+\begin{itemize}
+ \vspace{2mm}
+ \item \textbf{\textsf{Handbook of Partial Least Squares}} edited by Esposito Vinzi V., Chin W.W., Henseler J., and Wang H. (2010). As part of the Springer Handbooks series on computational statistics, this volume gives a comprehensive overview of PLS methods with an emphasis on Marketing applications. If you can aford it, it's worthwhile the investment.
+ 
+ \vspace{2mm}
+ \item \textbf{\textsf{La R\'{e}gression PLS: Th\'{e}orie et Pratique}} by Michel Tenenhaus (1998). This would be \textit{the} best-selling PLS book \dots if it wasn't written in French. It's the ideal textbook for a PLS course for French speakers and a good excuse to start learning French.
+ 
+ \vspace{2mm}
+ \item \textbf{\textsf{Systems under indirect observation: causality, structure, prediction. Vol II}} edited by Karl Joreskog and Herman Wold (1982). If you can have access to this book with green cover you must definitely check it out. Perhaps the only compendium by Wold \textit{et al} with all the material of what we would officially call PLS Path Modeling.
+\end{itemize}
+
+
+\paragraph{Books on R}
+As with PLS-PM resources, the same can be said about R, although there is much more material about R than PLS-PM. My recommended list of books is for readers that have little or no experience with R. These are in my opinion good textbooks that will help you gain and improve your R data manipulation skills.
+
+\begin{itemize}
+ \vspace{2mm}
+ \item \textbf{\textsf{Beginning R: An Introduction to Statistical Programming}} by Larry Pace (2012). A hands-on book showing how to use the R language, write and save R scripts, build and import data files, and more.
+
+\vspace{2mm}
+ \item \textbf{\textsf{A Beginners's Guide to R}} by Alain F. Zuur, Elena N. Ieno, and Erik Meesters (2009). The text covers a variety of tasks that can sometimes frustrate beginners: how to download and install R, import and manage data, elementary plotting, an introduction to functions, and common beginner mistakes.
+ 
+ \vspace{2mm}
+ \item \textbf{\textsf{Using R for Data Management, Statistical Analysis and Graphics}} by Nicholas J. Horton and Ken Kleinman (2011). This book covers many common tasks such as data management (how to get your data in R), how to summarize and get descriptive statistics.
+
+ \vspace{2mm}
+ \item \textbf{\textsf{Data Manipulation with R}} by Phil Spector (2008). This book presents a wide array of methods applicable for reading data into R, and efficiently manipulating of data.
+\end{itemize}

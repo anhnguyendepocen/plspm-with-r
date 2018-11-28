@@ -1,0 +1,443 @@
+% !Rnw root = ../PLS_Path_Modeling_with_R.Rnw
+
+
+\chapter{Comparing Groups}
+In the previous chapters we've been discussing a lot of information related to the basics of PLS Path Modeling. But now it's time to take it to the next level. In this and the following chapters, we are going to review some of the topics that cover a range of additional modeling tasks like group comparisons, higher-order constructs, moderating effects, and class detection. As we move forward, you may feel the need to reread parts of the material exposed in the earlier sections. That's totally fine and there's nothing to worry about that; PLS Path Modeling is not something you learn in a couple of days after reading one book. The present chapter is dedicated to \textit{multi-group comparison} or \textit{multiple group analysis}. To start moving into deep water we'll begin with the challenging question of how to compare groups in PLS-PM.
+
+
+\section{The million dollar question}
+Let's face it: often, estimating one single PLS path model is not enough. I'm not referring to 
+play with one model under slightly different configurations. I'm talking about dealing with information from different groups in data. For instance, when we work with survey data it is almost inevitable to have demographic information like the gender or age of the respondants. When you have groups for females and males, you ask yourself about possible differences between the two genders. This is an issue that has to do with the comparison of path models which leads us to the fundamental question of: 
+\begin{quote}
+\textit{Given two structural models, how can they be compared?}
+\end{quote}
+
+Why is this question so important? Because given the complexity of path models in general, the truth is that there is no simple answer for it. In fact, path models may be different at so many levels that there are many ways in which they can be compared. Broadly speaking we have four major types of differences:
+
+\begin{itemize}
+ \item \textbf{Differences at the causal network level}: this refers to differences in the assumed causal-effect network linking the latent variables. Take for example the case of teenagers and adult consumers; while two latent variables may be positively correlated for teenagers, the same latent variables may be uncorrelated for adults. In other words, the two latent variables would be connected in the teenagers model but not in the model of adults.
+ 
+ \item \textbf{Differences at the structural level}: this involves differences in magnitude of the structural coefficients (i.e. the path coefficients). For instance, there may be two groups of customers: in one group satisfaction is driven by the perceived value of the product they consume, whereas satisfaction in the other group is driven by the perceived quality.
+ 
+ \item \textbf{Differences at the measurement level}: this refers to the way in which the latent variables are defined by their indicators. While one indicator may be appropriate for some construct in one model, the same indicator may not be appropriated in another model.
+ 
+ \item \textbf{Differences at the latent variables level}: this implies that the mean value (or other distribution characteristic) of latent variables across models may be different. For example, the mean value of Satisfaction may vary across groups in terms of marital status (e.g, single, married, divorced, etc).
+\end{itemize}
+
+\vspace{2mm}
+In principle, none of the above levels is better or worse than the others. You can legitimately ask whether two models are different at the latent variables' distribution level. For instance, let's say we have a model about perception of gay marriage in the USA based on survey data, and that we have information on the political affiliation of the respondants. We could calculate a model for democrats and another model for republicans, and then compare the differences among the latent variables of each model. We could also look into possible differences in the indicators used in each model. Maybe there is a manifest variable that, for whatever reason, is only applicable to democrats. However, given that the main attractive feature of path models is in the inner part with the estimation of path coefficients, the traditional approach to compare path models focuses on differences at the structural level.
+
+It's not hard to understand why people put an emphasis on comparing models by taking into account differences only at the structural level. The rationale for focusing on the structural coefficients involves the goals in path modeling with latent variables: estimate the linear relationships among constructs. Hence, we pay attention to the differences in the magnitude of the cause-effect relationships among constructs.
+
+Of course, this standpoint is not without its weak points. The main limitation is that the rest of potential differences (network level, measurement level, and construct distributions level) are practically ignored. By paying attention to only differences in path coefficients, the structural network has to be the same across groups, otherwise we would be comparing completely different models. Also, to have a fair comparison of path coefficients across groups, no differences at the measurement level should be desirable; implying that the indicators has to be the same among models. Finally, regarding the option of comparing models at the latent variables level is often relegated to subsequent analyses of a more exploratory and descriptive nature.
+
+
+
+\section{Group Comparison Approaches}
+For the sake of convenience and following the tradition within the PLS-PM framework, I'll give priority to group differences at the structural level. This implies focusing on the path coefficients, although most of what we say could be applied to other parameters (outer weights, loadings, R2, gof index). In addition, I will suppose that we have a categorical variable defining the groups. The default example would be having the categorical variable gender; but you could also have things like ethnic group, income level, education level, geographic region, culture, etc.
+
+\subsubsection*{Multi-group analysis? Not really. Just bi-group analysis}
+Even though comparing groups is also called as ``multi-group comparison'' or ``multiple group analysis'', the truth is that most of the time the analysis focuses on only two groups. Why? Because it's so much easier! Thus, in practice we should talk about bi-group analysis instead of multi-group analysis. This, of course, is not exactly what we want when our categorical variable has more than two categories. When this happens, the suggestion is to break down your analysis in groups of two. Say you have a variable Size with three categories \textit{small}, \textit{medium} and \textit{large}. To do a multigroup analysis considering all the three categories you would need to compare:
+\begin{itemize}
+ \item[] small -vs- medium and large
+ \item[] medium -vs- small and large
+ \item[] large -vs- small and medium
+\end{itemize}
+
+
+\subsubsection*{Two major approaches}
+PLS Path Modeling approaches for comparing groups can be classified in two major categories: 1) resampling methods and 2) moderating effects.
+\begin{itemize}
+ \item \textbf{Resampling methods}, as the name implies, involve performing some type of resampling procedure to test the difference between groups. The most popular options are the \textit{bootstrap t-test} and the \textit{permutation procedure}. These approaches are discussed in this chapter.
+ \item \textbf{Moderating effects} implies treating the group variable (e.g. gender) as a \textit{moderator variable} and then apply one of the techniques used for testing moderating effects. Since moderating effects are not limited to only categorical variables, this approach has its own dedicated chapter (see chapter 7).
+\end{itemize}
+
+The resampling methods of this chapter (bootstrapping and permutation) apply computing power to relax some of the conditions needed for traditional inference. However, the main notions of statistical inference remain the same so we can answer the fundamental question: ``What would happen if we applied this method many times?'' Using these methods we can get sampling distributions of statistics that show what would happen if we took many samples under the same conditions.
+
+
+\subsection{Bootstrap t-test}
+This resampling approach for comparing groups involves using a \textit{t}-test based on bootstrap resamples. The procedure consists of separating the data into groups and then running bootstrap samples with replacement for each group. Path coefficients are calculated in each resampling and the standard error estimates are treated in a parametric sense via a \textit{t}-test. Because we use a parametric \textit{t}-test as well as bootstrap resamples, this method is also referred to as a \textit{resampling parametric approach}. 
+
+To illustrate the basic idea of the bootstrap $t$-test, suppose we have two groups $G_1$ and $G_2$ with sample sizes of $n_1$ and $n_2$, respectively. Let's imagine that we want to compare a given path coefficient between both groups: $\beta_{ji}^{G_1}$ against $\beta_{ji}^{G_2}$. The question is: Are the path coefficients similarly enough to be considered the same? To find out whether the path coefficients are similar we do the following:
+
+\begin{enumerate}
+ \item Calculate a PLS path model for each group to obtain path coefficients $\beta_{ji}^{G_1}$ and $\beta_{ji}^{G_2}$.
+ \item Separate the data into groups and run bootstrap samples for each group.
+ \item For each sample, calculate a PLS path model to obtain resampling path coefficients.
+ \item After running all the resamples (say 200 times), calculate the standard error estimates.
+ \item Use the standard error estimates in a parametric sense via a $t$-test.
+\end{enumerate}
+
+\vspace{2mm}
+The formula that we use for the $t$-test statistic is:
+$$ t = \frac{Path_{ji}^{G_1} - Path_{ji}^{G_2}}
+{\left( \sqrt{\frac{1}{n_1}+\frac{1}{n_2}} \right) Sp}  $$
+which follows a \textit{t}-distribution with $n_1 + n_2 - 2$ degrees of freedom
+
+As you can see from the previous formula, there is a special term in the denominator: $Sp$; this is the estimator of the pooled variance and is obtained as follows:
+$$ Sp = \sqrt{\frac{(n_1-1)^2}{(n_1 + n_2 - 2)} SE_{G_1}^2 + 
+\frac{(n_2-1)^2}{(n_1 + n_2 - 2)} SE_{G_2}^2}  $$
+where $SE_{G_1}$ and $SE_{G_2}$ are the bootstrap Standard Errors of each group.
+
+Keep in mind that the bootstrap procedure still depends on the assumptions of a $t$-test which relies on two major conditions: normal distributed data and similar sample size of groups. It is true that $t$ procedures are useful in practice because they are robust. However, when the data have less symmetric distributions, and the size of the groups are very different, the application of the bootstrap $t$-test wil be limited. This is often the case when we have data like opinions from customer satisfaction studies in which the distribution of the variables are strongly skewed. Unless our samples are quite large, you can expect the performance of the test to be deficient.
+
+ 
+
+
+\subsection{Permutation Procedure}
+Another type of resampling approach is based on randomization or permutation procedures. Compared to bootstrap samples (which are drawn with replacement), permutation resamples are drawn without replacement. The basic premise of this kind of test is to use the assumption that it is possible that all of the groups are equivalent, and that every member of the group is the same before sampling began. From this, one can calculate a statistic and then observe the extent to which this statistic is special by seeing how likely it would be if the group assignments had been jumbled/mixed.
+
+Again, to illustrate the basic idea of a permutation test, suppose we have two groups $G_1$ and $G_2$ with path coefficients $\beta_{ji}^{G_1}$ and $\beta_{ji}^{G_2}$, and sample sizes of $n_1$ and $n_2$, respectively. The permutation test is designed to determine whether the observed difference between the path coefficients is large enough to reject the null hypothesis $H_0$ that the two groups can be considered identical. The test proceeds as follows:
+
+\begin{enumerate}
+ \item First, we calculate the test statistic for the data. In our case the test statistic is the difference of path coefficients between the two groups.
+ \item Then we combine the observations of groups $G_1$ and $G_2$ into a single large group.
+ \item Next, the data are permuted (divided or rearranged) repeatedly in a manner consistent with the random assignment procedure. Each permutation implies:
+ \begin{itemize}
+  \item dividing data in two groups of size $n_1$ and $n_2$
+  \item estimating the PLS models for each group
+  \item calculating and recording the test statistic
+  \item[] The set of calculated differences is the distribution of possible differences
+under the null hypothesis that group label does not matter.
+ \end{itemize}
+ \item Then, we sort the recorded differences and we check if the original test statistic is contained within say the middle 95\% of the sorted values. If it does not, we reject the null hypothesis of identical groups at the 5\% significance level.
+\end{enumerate}
+
+The main attractive of the permutation procedure is that is a distribution-free test that requires no parametric assumptions. Among the advantages of permutation tests we have that: 1) they do not require specific population shapes such as Normality; 2) they apply to a variety of statistics, not just to statistics that have a simple distribution under the null hypothesis; 3) they can give very accurate P-values, regardless of the shape and size of the population (if enough permutations are used).
+
+
+
+\subsection{Case Study: College GPA}
+The case study for this chapter is based on data of college students (from a university in California, USA) with undergraduate degrees in life sciences majors. The dataset comes with the package \plspm{} under the name \code{college}. To load the data in your R session use the \code{data()} function:
+<<load_college, message=FALSE, size='small'>>=
+# only if you haven't load plspm
+library(plspm)
+
+# load data college
+data(college)
+
+# what does the data look like
+head(college, n=5)
+@
+
+The following table gives the description of each variable:
+
+\begin{table}[h]
+ \caption{Description of variables in data \code{college}} 
+ \centering
+ \begin{tabular}{l l}
+  \hline
+  Variable & Description \\
+  \hline
+  \code{HS\_GPA} & High School GPA  \\
+  \code{SAT\_Verbal} & Verbal SAT score \\
+  \code{SAT\_Math} & Math SAT score \\
+  \code{Biology1} & Introductory Biology \\
+  \code{Chemistry1} & Introductory Chemistry \\
+  \code{Math1} & Calculus 1 \\
+  \code{Physics1} & Introductory Physics \\
+  \code{Biology2} & Intermediate Biology \\
+  \code{Chemistry2} & Intermediate Chemistry \\
+  \code{Math2} & Calculus 2 \\
+  \code{Physics2} & Intermediate Physics \\
+  \code{FinalGPA} & Graduation GPA \\
+  \code{Gender} & Gender \\
+  \hline
+ \end{tabular}
+ \label{tab:college}
+\end{table}
+
+In addition to \code{head()}, we can also use the function \code{str()} to get a detailed description of the structure of the data:
+<<str_college, size='small'>>=
+# what's the structure?
+str(college)
+@
+As you can see, \code{college} is a \code{data.frame} containing 352 observations and 13 variables. The function \code{str()} also displays the storage mode of each variable as well as the first ten values of each variable. This is useful when we want to not only take a quick glance at the data but also to know the kind of treatment R is giving to the variables. Notice that \code{Gender} is being treated as a \code{factor} (i.e. a categorical variable). This is the grouping variable that we will take into account to perform a group analysis: comparing the performance between female and male students.
+
+
+
+
+\subsubsection*{Your high school performance predicts your college GPA?}
+It is often said that your performance in high school will be one of the key factors affecting your performance in college. Particularly in the United States, the high school GPA (Grade Point Average) is taken as \textit{the} indicator of how well a student will do in college. When high school students apply to college, besides submitting their GPA they also need to submit the obtained scores in the SAT test (formerly called the \textit{Scholastic Assessment Test}). The SAT test is a standardized test for college admissions in the USA and is intended to assess a student's academic readiness for college. Before 2006, the SAT test was divided in a Math section and a Verbal section.
+
+\subsubsection*{Toy Model}
+We are going to play with a toy model based on a simple progressive sequence depicted in the diagram shown below. Basically, the premise behind the model is: ``how well a student does in college (Final GPA) is affected by how well she does in the intermediate and introductory courses, as well as how well prepared she was in high school''.
+<<gpa_dummy_model, echo=FALSE, fig.keep='last', fig.width=7, fig.height=4, out.width='.85\\linewidth', out.height='.45\\linewidth', fig.align='center', fig.pos='h', fig.cap='College GPA Model'>>=
+library(pathdiagram)
+
+# latent variables
+Ready = latent("High School\nReadiness", x=0.2, y=0.7, rx=0.12, ry=0.1)
+Intro = latent("Introductory\nCourses", x=0.2, y=0.3, rx=0.12, ry=0.1)
+Inter = latent("Intermediate\nCourses", x=0.8, y=0.3, rx=0.12, ry=0.1)
+Final = latent("Final\nGPA", x=0.8, y=0.7, rx=0.12, ry=0.1)
+
+# plot
+op = par(mar = rep(0, 4))
+wall(xlim = c(0, 1), ylim = c(0.2, 0.8))
+# draw LVs
+draw(Ready); draw(Intro); draw(Inter); draw(Final)
+arrow(from=Ready, to=Intro, start="south", end="north", angle=20)
+arrow(from=Ready, to=Inter, start="east", end="west", angle=20)
+arrow(from=Ready, to=Final, start="east", end="west", angle=20)
+arrow(from=Intro, to=Inter, start="east", end="west", angle=20)
+arrow(from=Intro, to=Final, start="east", end="west", angle=20)
+arrow(from=Inter, to=Final, start="north", end="south", angle=20)
+par(op)
+@
+
+
+\subsubsection*{Defining the complete path model}
+The manifest variables in \code{college} can be grouped in four blocks as follows: 
+
+\paragraph{High School Readiness}
+\begin{itemize}
+ \item[] High School GPA
+ \item[] High School Math SAT Scores
+ \item[] High School Verbal SAT Scores
+\end{itemize}
+
+\paragraph{Introductory Courses}
+\begin{itemize}
+ \item[] Biology 1: Evolution \& Ecology
+ \item[] Chemistry 1: General Chemistry
+ \item[] Physics 1: Introductory Physics I
+ \item[] Math 1: Calculus I
+\end{itemize}
+
+\paragraph{Intermediate Courses}
+\begin{itemize}
+ \item[] Biology 2: Molecular \& Cell Biology
+ \item[] Chemistry 2: Organic Chemistry 
+ \item[] Physics 2: Introductory Physics II
+ \item[] Math 2: Calculus II
+\end{itemize}
+
+\paragraph{Graduation}
+\begin{itemize}
+ \item[] Final GPA
+\end{itemize}
+
+\vspace{2mm}
+The entire model is represented in the following path diagram:
+<<gpa_model, echo=FALSE>>=
+# latent variables
+HS = latent("High School\nReadiness", x=0.3, y=0.7, rx=0.12, ry=0.1)
+BC = latent("Introductory\nCourses", x=0.3, y=0.3, rx=0.12, ry=0.1)
+AC = latent("Intermediate\nCourses", x=0.7, y=0.3, rx=0.12, ry=0.1)
+G = latent("Final\nGPA", x=0.7, y=0.7, rx=0.12, ry=0.1)
+
+# manifest variables
+gps = list(
+  x1 = manifest("HS GPA", x=0, y=0.8, width=0.16),
+  x2 = manifest("Math SAT", x=0, y=0.7, width=0.16),
+  x3 = manifest("Verbal SAT", x=0, y=0.6, width=0.16),
+  x4 = manifest("Bio 1", x=0, y=0.45, width=0.16),
+  x5 = manifest("Chem 1", x=0, y=0.35, width=0.16),
+  x6 = manifest("Physics 1", x=0, y=0.25, width=0.16),
+  x7 = manifest("Math 1", x=0, y=0.15, width=0.16),
+  x8 = manifest("Bio 2", x=1, y=0.45, width=0.16),
+  x9 = manifest("Chem 2", x=1, y=0.35, width=0.16),
+  x10 = manifest("Physics 2", x=1, y=0.25, width=0.16),
+  x11 = manifest("Math 2", x=1, y=0.15, width=0.16),
+  x12 = manifest("Final GPA", x=1, y=0.7, width=0.16)
+)
+@
+
+<<gpa_model_diagram, echo=FALSE, fig.keep='last', fig.width=8, fig.height=4.5, out.width='.95\\linewidth', out.height='.5\\linewidth', fig.align='center', fig.pos='h', fig.cap='College GPA Model'>>=
+# plot
+op = par(mar = rep(0, 4))
+wall(xlim = c(-0.1, 1.1), ylim = c(0.1, 0.85))
+# draw LVs
+draw(HS); draw(BC); draw(AC); draw(G)
+arrow(from=HS, to=BC, start="south", end="north", angle=20)
+arrow(from=HS, to=AC, start="east", end="west", angle=20)
+arrow(from=HS, to=G, start="east", end="west", angle=20)
+arrow(from=BC, to=AC, start="east", end="west", angle=20)
+arrow(from=BC, to=G, start="east", end="west", angle=20)
+arrow(from=AC, to=G, start="north", end="south", angle=20)
+# draw mvs
+for (i in 1:3) {
+  draw(gps[[i]])
+  arrow(from=HS, to=gps[[i]], start="west", end="east")
+}
+for (i in 4:7) {
+  draw(gps[[i]])
+  arrow(from=BC, to=gps[[i]], start="west", end="east")
+}
+for (i in 8:11) {
+  draw(gps[[i]])
+  arrow(from=AC, to=gps[[i]], start="east", end="west")
+}
+draw(gps[[12]])
+arrow(from=G, to=gps[[12]], start="east", end="west")
+#
+par(op)
+@
+
+
+
+\subsection{PLS-PM Analysis: GPA Model}
+Let's start by performing a PLS-PM analysis on all 352 students. The first step is to define the required parameters for the \code{plspm()} function: the path model matrix, the list of \code{blocks} for the outer model, and the vector of modes.
+<<college_plspm_ingredients>>=
+# path matrix (inner model)
+HighSchool = c(0, 0, 0, 0)
+Intro = c(1, 0, 0, 0)
+Medium = c(1, 1, 0, 0)
+Graduation = c(1, 1, 1, 0)
+gpa_path = rbind(HighSchool, Intro, Medium, Graduation)
+
+# list of blocks (outer model)
+gpa_blocks = list(1:3, 4:7, 8:11, 12)
+
+# vector of reflective modes
+gpa_modes = rep("A", 4)
+@
+
+Once we define the main ingredients, let's apply \fplspm{} asking for bootstrap validation with the argument \code{boot.val=TRUE}
+<<college_plspm, tidy=FALSE>>=
+# apply plspm
+gpa_pls = plspm(college, gpa_path, gpa_blocks, modes = gpa_modes, 
+                boot.val = TRUE)
+@
+
+Let's see the results of the inner model
+<<gpa_inner_model, fig.width=4.5, fig.height=3.5, out.width='.7\\linewidth', out.height='.5\\linewidth', fig.align='center', fig.pos='h', fig.cap='Inner model with path coefficients', echo=c(1,3)>>=
+# plot path coefficients
+op = par(mar=rep(0, 4))
+plot(gpa_pls)
+par(op)
+@
+As you can see from the path diagram, High School Readiness (\code{HighSchool}) has a positive effect on the Introductory courses (\code{Intro}) but it has a negative effect on the Intermediate courses (\code{Medium}) and on the Final GPA (\code{Graduation}). On the other hand, \code{Intro} has positive coefficients on both \code{Medium} and \code{Graduation}. In turn, \code{Medium} has also a positive effect on \code{Graduation}. To assess how relevant these results are we should check the bootstrapped path coefficients:
+<<gpa_boot_coeffs>>=
+# bootstrapped path coefficients
+gpa_pls$boot$paths
+@
+It turns out that the effect of \code{HighSchool} on the Intermediate courses (\code{Medium}) is not that important since its bootstrap confidence interval contains the zero. The rest of path coefficients are significantly different from zero although the negative value of \code{HighSchool} on \code{Graduation} is very small. 
+
+From the obtained results, we may say that a student's final GPA has not that much to do with how well prepared she was in high school. It seems that how well students do in college is definitely more affected by how they do along the different courses they take. Only at the introductory level courses, the high school readiness has an important influence.
+
+
+
+\subsection{Female and Male Student Models}
+Given that we have information about the gender of the students, we may want to examine whether there is a difference between females and males. To do that, the next step is to calculate PLS Path Models separately for female and male students. First let's get a model for the females. We already have the inner model matrix, the outer model list, and the modes vector; the extra ingredient we need for \fplspm{} is the dataset involving only female students. This is how we can estimate the model for the girls:
+<<gpa_female_plspm>>=
+# select data of female students
+female = college[college$Gender=="FEMALE",]
+
+# female students plspm
+female_gpa_pls = plspm(female, gpa_path, gpa_blocks, modes = gpa_modes)
+@
+
+Now let's calculate a model for the male students:
+<<gpa_male_plspm>>=
+# select data of male students
+male = college[college$Gender=="MALE",]
+
+# male students plspm
+male_gpa_pls = plspm(male, gpa_path, gpa_blocks, modes = gpa_modes)
+@
+
+In order to compare both models, we can examine the path coefficients of the structural models:
+<<gpa_fem_male_models, fig.width=6.5, fig.height=4, out.width='1\\linewidth', out.height='.55\\linewidth', fig.align='center', fig.pos='h', fig.cap='Path Coefficients of Female and Male Students', echo=c(1,3,5)>>=
+# plot path coefficients
+op = par(mfrow=c(1,2), mar=c(1,1,2,1.1))
+plot(female_gpa_pls, box.size=.14)
+title("Female", col.main="gray50", cex.main=1)
+plot(male_gpa_pls, box.size=.14)
+title("Male", col.main="gray50", cex.main=1)
+par(op)
+@
+
+Numerically, we have different path coefficients between both models. This is what we would expect to happen in real life because of differences in the data. But the important question is \textit{how different the path coefficients really are?}. Let's take the effect of \texttt{HighSchool} on \texttt{Intro} for example. It has a value of 0.4278 in Female students and 0.5 in Male students. For some people this might be a considerable difference while for others it might be something negligible. We definitely need to perform some group analysis to get a verdict.
+
+
+
+\section{Comparing Groups: Bootstrap t-test}
+\plspm{} comes with the function \code{plspm.groups()} that allows us to apply the bootstrap approach and the permutation approach to compare groups in PLS Path Modeling. The standard usage of \code{plspm.groups()} is:
+
+\texttt{plspm.groups(pls, group, method, reps)}
+
+The first argument \code{pls} is an object of class \code{"plspm"}; \code{group} must be a categorical variable (codified as an R \code{factor}) with two levels indicating the groups to be compared; \code{method} indicates the applied approach; and \code{reps} is the number of resamples (100 by default). 
+
+In order to apply the bootstrap procedure we use the parameter \code{method="bootstrap"}:
+<<gpa_bootstrap_test>>=
+# apply plspm.groups bootstrap
+gpa_boot = plspm.groups(gpa_pls, college$Gender, method = "bootstrap")
+
+# see the results
+gpa_boot
+@
+The first part of the output is a description with the specified parameters: \code{scaled} and \code{scheme} belong to the arguments specified in \code{pls}; the \code{method} and the \code{replicates} belong to the selected approaches and the number of resamples. 
+
+The second part is the data frame contained in \code{\$test}. The first column \code{global} shows the path coefficients of the global model; the second and third columns show the path coefficients of the compared groups (\code{FEMALE} and \code{MALE}, respectively). The fourth column \code{diff.abs} is the absolute difference of path coefficients between female and male studetns. Then we have the columns \code{t.stat}, \code{deg.fr}, and \code{p.value} that contain the statistic of the $t$-test with its degrees of freedom and the associated p-value. The last column \code{sig.05} is just an auxiliary label to indicate whether the difference in path coefficients is significant at the 5\% level. As we can see from the obtained results, none of the path coefficients between females and males are significantly different.
+
+
+
+\section{Comparing Groups: Permutation test}
+In order to apply the permutation procedure we have to specify the parameter \code{method = } \code{"permutation"} inside the function \code{plspm.groups()}:
+<<gpa_permutation_test>>=
+# apply plspm.groups premutation
+gpa_perm = plspm.groups(gpa_pls, college$Gender, method = "permutation")
+
+# see the results
+gpa_perm
+@
+The output in this case is very similar to the bootstrap procedure except that that data frame \code{\$test} only contains the p-value. As we the bootstrap $t$-test, none of the path coefficients' differences are significant (at the 5\% level).
+
+
+\subsection*{Show me the numbers}
+Finally, we can get an additional visualization of the differences in path coefficients between females by creating a barplot like this one:
+<<female_male_barplot, fig.width=6.5, fig.height=4.25, out.width='.85\\linewidth', out.height='.625\\linewidth', fig.align='center', fig.pos='h', fig.cap='Barplot of path coefficients between female and male students', echo=FALSE>>=
+# setting figure margins
+op = par(mar = c(8.8, 4, 2, 2))
+# path coefficients between female and male students
+barplot(t(as.matrix(gpa_boot$test[,2:3])), border=NA, col=c("#FEB24C","#74A9CF"), 
+        beside=TRUE, las=2, ylim=c(-0.1,1), col.axis="gray30", cex.names=0.8, cex.axis=0.8)
+# add horizontal line
+abline(h=0, col="gray50")
+# add itle
+title("Path coefficients of Female and Male Students", 
+      cex.main=0.95, col.main="gray30")
+# add legend
+legend("top", legend=c("female","male"), pt.bg=c("#FEB24C","#A6BDDB"), ncol=2,
+       pch=22, col=c("#FEB24C","#74A9CF"), bty="n", text.col="gray40")
+# reset margins
+par(op)
+@
+
+
+<<female_male_barplot_code, fig.keep='none', echo=-c(1,2,11,12), tidy=FALSE>>=
+# setting figure margins
+op = par(mar = c(8.8, 4, 2, 2))
+# path coefficients between female and male students
+barplot(t(as.matrix(gpa_boot$test[,2:3])), border = NA, beside = TRUE, 
+        col = c("#FEB24C","#74A9CF"), las = 2, ylim = c(-0.1, 1), 
+        cex.names = 0.8, col.axis = "gray30", cex.axis = 0.8)
+# add horizontal line
+abline(h = 0, col = "gray50")
+# add itle
+title("Path coefficients of Female and Male Students", 
+      cex.main = 0.95, col.main = "gray30")
+# add legend
+legend("top", legend = c("female", "male"), pt.bg = c("#FEB24C", "#A6BDDB"), 
+       ncol = 2, pch = 22, col = c("#FEB24C", "#74A9CF"), bty = "n", 
+       text.col = "gray40")
+# reset margins
+par(op)
+@
+
+
+
+\section{Reading List}
+\begin{itemize}
+ \vspace{2mm}
+ \item \textbf{\textsf{Multi-Group analysis with PLS}} by Wynne Chin (2000) In his outdated but still active website, Wynne Chin describes the bootstrap t-test for multi-group comparisons. Available online in the section \textit{Frequently Asked Questions - Partial Least Squares \& PLS-Graph} at: \\ 
+ \texttt{\href{http://disc-nt.cba.uh.edu/chin/plsfaq/multigroup.htm}{http://disc-nt.cba.uh.edu/chin/plsfaq/multigroup.htm}}
+
+ \vspace{2mm}
+ \item \textbf{\textsf{An Introduction to a Permutation Based Procedure for Multi-Group PLS Analysis}} by Wynne Chin and Jens Dibbern (2010). Published as Chapter 7 of the \textit{Handbook of Partial Least Squares}, this article provides a basic introduction to the permutation approach for multi-group comparison. Wynne and Jens also provide a simple example application of cross-cultural analysis with an Information System model. 
+ 
+ \vspace{2mm}
+ \item \textbf{\textsf{Use of ULS-SEM and PLS-SEM to Measure a Group Effect in a Regression Model Relating Two Blocks of Binary Variables}} by Michel Tenenhaus, Emmanuelle Mauger and Christiane Guinot (2010). Published as Chapter 5 of the \textit{Handbook of Partial Least Squares}, this article proposes an interesting alternative way for comparing groups. Although the discussed example in this article uses a covariance-based structural modeling approach (ULS-SEM with AMOS 6.0), the methodology can be adapted to PLS-PM. 
+ 
+\end{itemize}

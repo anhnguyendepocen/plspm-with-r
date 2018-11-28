@@ -1,0 +1,572 @@
+% !Rnw root = ../PLS_Path_Modeling_with_R.Rnw
+
+
+\chapter{Interpreting PLS-PM Results}
+In chapter 2 we saw a basic PLS Path Modeling application using \plspm{} with the \textit{Spanish Football Success Index}. As you will recall, our model is based on a very simple theory:
+\begin{quotation} \noindent
+\textit{the better the quality of the \textbf{Attack}, as well as the quality of the \textbf{Defense}, the more \textbf{Success}.}
+\end{quotation}
+
+<<success_model_reminder, echo=FALSE, message=FALSE>>=
+# load the package
+library(pathdiagram)
+
+# define Attack block
+attack = list(
+  att1 = manifest("GSH", x=0.15, y=0.9, width=0.09, height=0.08),
+  att2 = manifest("GSA", x=0.15, y=0.8, width=0.09, height=0.08),
+  att3 = manifest("SSH", x=0.15, y=0.7, width=0.09, height=0.08),
+  att4 = manifest("SSA", x=0.15, y=0.6, width=0.09, height=0.08))
+ATTACK = latent("Attack", x=0.35, y=0.75, rx=0.075, ry=0.07)
+
+# define Defense block
+defense = list(
+  def1 = manifest("GCH", x=0.15, y=0.4, width=0.09, height=0.08),
+  def2 = manifest("GCA", x=0.15, y=0.3, width=0.09, height=0.08),
+  def3 = manifest("CSH", x=0.15, y=0.2, width=0.09, height=0.08),
+  def4 = manifest("CSA", x=0.15, y=0.1, width=0.09, height=0.08))
+DEFENSE = latent("Defense", x=0.35, y=0.25, rx=0.075, ry=0.07)
+
+# define Success block
+success = list(
+  suc1 = manifest("WMH", x=0.85, y=0.65, width=0.09, height=0.08),
+  suc2 = manifest("WMA", x=0.85, y=0.55, width=0.09, height=0.08),
+  suc3 = manifest("LWR", x=0.85, y=0.45, width=0.09, height=0.08),
+  suc4 = manifest("LRWL", x=0.85, y=0.35, width=0.09, height=0.08))
+SUCCESS = latent("Success", x=0.65, y=0.5, rx=0.075, ry=0.07)
+@
+
+
+<<success_inner_model_reminder, echo=FALSE, fig.keep='last', fig.width=5, fig.height=3.5, out.width='.7\\linewidth', out.height='.4\\linewidth', fig.align='center', fig.pos='h', fig.cap='Diagram depicting the structural part of the Success model'>>=
+# PLOT
+op = par(mar = rep(0,4))
+wall(xlim=c(0.2, 0.8), ylim=c(0.2, 0.8))
+# draw latent variables
+draw(ATTACK)
+draw(DEFENSE)
+draw(SUCCESS)
+# arrows of inner model
+arrow(from=ATTACK, to=SUCCESS, start="east", end="west", angle=20)
+arrow(from=DEFENSE, to=SUCCESS, start="east", end="west", angle=20)
+#
+par(op)
+@
+
+
+Defining a PLS path model and applying the function \fplspm{} are just the first steps of a PLS Path Modeling analysis. The next thing to do is even more important: examining the obtained results and evaluating the quality of the model. In this chapter we are going to review some general guidelines for applying PLS-PM, and we will discuss the bells and whistles of how to interpret the output and diagnose the results.
+
+
+
+\section{Reminder of Our Success Index Model}
+As mentioned in the last two chapters, a PLS path model is comprised by two submodels: the structural model also known as \textbf{inner model} and the measurement model also known as \textbf{outer model}. The inner model is the part of the model that has to do with the relationships between latent variables. The outer model is the part of the model that has to do with the relationships between each latent variable and its block of indicators. The graphical display of the complete Success Model is shown in the next diagram:
+<<success_path_diagram_reminder, echo=FALSE, fig.keep='last', fig.width=6, fig.height=4, out.width='.85\\linewidth', out.height='.5\\linewidth', fig.align='center', fig.pos='h', fig.cap='Path Diagram depicting our simple model'>>=
+# PLOT
+op = par(mar = rep(0,4))
+wall(xlim=c(.1,.9), ylim=c(0.05, 0.95))
+# draw latent variables
+draw(ATTACK)
+draw(DEFENSE)
+draw(SUCCESS)
+# draw manifest variables
+for (i in 1:4) {
+  draw(attack[[i]])
+  arrow(from=ATTACK, to=attack[[i]], start="west", end="east")
+  draw(defense[[i]])
+  arrow(from=DEFENSE, to=defense[[i]], start="west", end="east")
+  draw(success[[i]])
+  arrow(from=SUCCESS, to=success[[i]], start="east", end="west")
+}
+# arrows of inner model
+arrow(from=ATTACK, to=SUCCESS, start="east", end="west")
+arrow(from=DEFENSE, to=SUCCESS, start="east", end="west")
+#
+par(op)
+@
+
+
+
+\subsection{PLS-PM with \plspm{}}
+I'm assuming that you already installed the package \plspm{} as described in Chapter 1. The data for our model comes with \plspm{} under the name \texttt{spainfoot}. Remember that you need to use the function \code{library()} to load the package in your current R session. To get access to the data, simply load it with the function \code{data()}:
+<<echo=FALSE>>=
+options(width = 70)
+@
+
+<<load_spainfoot_reminder, message=FALSE>>=
+# load package plspm
+library(plspm)
+
+# load data spainfoot
+data(spainfoot)
+@
+
+
+\subsection{The function \fplspm{}}
+The main function of the \plspm{} package is the function with the same name \fplspm{}. This function has 12 arguments that can be broken down in three main sets according to their purpose. The first set has to do with the parameters that you use to define a PLS Path Model. The second set of parameters are related with the PLS algorithm. The last group of parameters are additional options like validation and recovering the data matrix used in the computations:
+
+\begin{itemize}
+ \item \textbf{Parameters to define the PLS Path Model}
+  \begin{itemize}
+   \item[] \code{Data} (where you have the data)
+   \item[] \code{path\_matrix} (defines the inner model)
+   \item[] \code{blocks} (list defining the blocks of variables of the outer model)
+   \item[] \code{scaling} (list defining the measurement scale of variables for non-metric data)
+   \item[] \code{modes} (vector defining the measurement mode of each block)
+  \end{itemize}
+
+ \item \textbf{Parameters related to the PLS-PM algorithm}
+  \begin{itemize}
+   \item[] \code{scheme} (inner path weighting scheme)
+   \item[] \code{scaled} (indicates whether the data should be standardized)
+   \item[] \code{tol} (tolerance threshold for checking convergence of the iterative stage in the PLS algorithm)
+   \item[] \code{maxiter} (maximum number of iterations)
+   \item[] \code{plscomp} (indicates the number of PLS components ---per block--- when handling non-metric data)
+  \end{itemize}
+
+ \item \textbf{Additional parameters}
+  \begin{itemize}
+   \item[] \code{boot.val} (indicates whether bootstrap validation must be performed)
+   \item[] \code{br} (number of bootstrap resamples)
+   \item[] \code{plsr} (indicates whether path coefficients should be calculated by pls regression)
+   \item[] \code{dataset} (indicates whether the data matrix should be retrieved)
+  \end{itemize}
+\end{itemize}
+ 
+\vspace{2mm}
+Even though there are 14 parameters to play with, most of the times you would probably need to tweak just a few of them. In fact, the most important ingredients are the first three arguments: \code{Data}, \code{path\_matrix}, and \code{blocks}. These ingredients don't have default settings so you must provide values for each of them. The rest of parameters come with predefined values which you can change depending on your needs and preferences. To see the specific details of each parameter you can consult the technical documentation with the function \code{help()}
+<<get_help_plspm, eval=FALSE>>=
+# information about the function plspm()
+help(plspm)
+@
+
+
+
+\subsubsection*{Preparing the ingredients for \fplspm{}}
+A PLS path model has to be specified with the mqndqtory arguments \code{Data}, \code{path\_matrix}, and \code{blocks}. In addition, it is recomended to specify the argument \code{modes} as well. Just like we did in chapter 2, here's how the ingredients for \fplspm{} can be prepared to cook our PLS path model:
+
+\paragraph{Inner Matrix:} 
+This is the inner model defined in matrix format
+<<foot_inner_reminder>>=
+# rows of the path matrix
+Attack = c(0, 0, 0)
+Defense = c(0, 0, 0)
+Success = c(1, 1, 0)
+
+# creating the matrix by binding rows
+foot_path = rbind(Attack, Defense, Success)
+
+# add column names (optional)
+colnames(foot_path) = rownames(foot_path)
+
+# let's see it
+foot_path
+@
+Remember that you should read this matrix by ``columns affecting rows''. The one in the cell 3,1 means that \code{Attack} affects \code{Success}. The zeros in the diagonal of the matrix mean that a latent variable cannot affect itself. The zeros above the diagonal imply that PLS-PM only works wiht non-recursive models (no loops in the inner model).
+
+\paragraph{Blocks List:}
+This is a \code{list} to tell \fplspm{} what variables of the data set are associated with what latent variables:
+<<foot_outer_reminder>>=
+# list indicating what variables are associated with what latent variables
+foot_blocks = list(1:4, 5:8, 9:12)
+@
+Note that \code{foot\_blocks} contains three elements, one per each block of variables (i.e. each latent variable). Each element is a vector of indices. This means that \texttt{Attack} is associated with the first four columns of the data set. \texttt{Defense} is formed by the variables in columns 5 to 8. And \code{Success} is defined with variables in columns 9 to 12.
+
+
+\paragraph{Modes:} 
+By default, \fplspm{} assumes that the measurement of the latent variables is in reflective mode (\textit{mode A}). However, I strongly recommend you to explicitly define a vector of \code{modes}. This is done by using a character vector with as many letters as latent variables:
+<<foot_modes_reminder>>=
+# all latent variables are measured in a reflective way
+foot_modes = rep("A", 3)
+@
+
+
+
+\subsubsection*{Running \fplspm{}}
+With our four main ingredients in place, we can apply the function \fplspm{} to get our PLS Path Model. Putting all the pieces together, here's how you would normally do it in a single piece of code:
+<<foot_plspm_reminder>>=
+# rows of the path matrix
+Attack = c(0, 0, 0)
+Defense = c(0, 0, 0)
+Success = c(1, 1, 0)
+
+# inner model matrix
+foot_path = rbind(Attack, Defense, Success)
+
+# add column names
+colnames(foot_path) = rownames(foot_path)
+
+# blocks of indicators (outer model)
+foot_blocks = list(1:4, 5:8, 9:12)
+
+# vector of modes (reflective)
+foot_modes = rep("A", 3)
+
+# run plspm analysis
+foot_pls = plspm(spainfoot, foot_path, foot_blocks, modes = foot_modes)
+@
+
+
+
+
+\section{Handling PLS-PM results}
+Defining a pls path model and applying the function \fplspm{} to estimate the parameters is probably the easiest part. It may take you some time to get used to working with the \code{path\_matrix}, the \code{blocks} list and the vector \code{modes}. R has different ways ---and functions--- to define matrices, lists and vectors, so I encourage you to look for documentation related with these types of objects. From what I've seen with other people, after runing a couple of examples I bet you will feel very comfortable playing with \fplspm{}. The real challenge has to do with handling the results provided not only by \plspm{} but by any other PLS Path Modeling software. 
+
+We know that a PLS path model consists of a structural or inner model and a measurement or outer model. You always have to keep this in mind because the assessment of a PLS path model requires the analysis and interpretation of both the structural and the measurement models. By the way, there are a lot of things to examine in a PLS path model and the diagnose follows a two-stage process: (1) the assessment of the measurement model, and (2) the assessment of the structural model. I strongly advice you to respect this order because we must first check that we are really measuring what we are assuming to measure, before any conclusions can be drawn regarding the relationships among the latent variables. Although you could skip the checking order for exploratory purposes, this sequence has to be respected when carrying out a complete assessment in order to prepare a report with the main results. 
+
+\subsubsection*{List of results}
+After applying the \fplspm{} function we can check the content of the object \code{foot\_pls}. If you type \code{foot\_pls} you'll see the list of results contained in it:
+<<print_foot_pls>>=
+# what's in foot_pls?
+foot_pls
+@
+
+The important thing to keep in mind is that \code{foot\_pls} is an object of class \code{"plspm"}. So everytime we type an object of this class we will get a display with the list of results. In addition, there is a \code{summary()} method that you can apply to any obect of class \code{"plspm"}. This function gives a full summary with the standard results provided in most software for PLS Path Modeling. I won't display the output provided by \code{summary()} but here's how you would use it:
+<<apply_summary_foot_pls, eval=FALSE>>=
+# summarized results
+summary(foot_pls)
+@
+
+
+
+
+
+\section{Measurement Model Assessment: \\ Reflective Indicators}
+It is important to differentiate the assessment of the measurement model depending on whether the indicators' nature is reflective or formative. While the evaluation of formative blocks can be relatively straightforward, the same cannot be said about reflective blocks. The evaluation of reflective indicators has its roots in the so-called \textit{Test Theory} developed in psychology, more specifically in the branch of psychometrics. As you may know, psychometrists spend a lot of time designing tests that are full of tricky questions, multiple choices, and random exercises. They also have created a full vocabulary packed of terms like reliability, validity, consistency, reproducibility, accuracy, and precision, that are heavily applied in Structural Equation Modeling in general, and to a lesser extent in PLS-PM. 
+
+This is the reason why, when people use PLS-PM as an approach for Structural Equation Modeling, you always stumble upon a specialized terminology like content validity, indicator reliability, construct reliability, convergent validity, and discriminant validity. Everytime I see or hear any of those concepts I get chills so I'm not going to describe them. Talk to your psychometrist friend and see whether she is able to explain you in plain language the meaning of all that gibberish.
+
+
+\subsection{All for one and one for all}
+To assess the quality of a reflective block we need to understand the key ideas behind a reflective measurement model: it is supposed that reflective indicators are measuring the same underlying latent variable, hence they are reflections of the construct. On one hand, reflective indicators need to have \textbf{strong mutual association}. In other words, they need to have strong ties. If one of them goes up, the rest will also increase their values. If one of them goes down, the rest will decrease their values too. Shortly, they will be highly correlated. On the other hand, reflective indicators need to \textbf{get along with its latent variable}; they must show sings of membership and belonging to one and only one latent variable: they need to be loyal to its construct. If one indicator loads higher on another construct, this could be evidence of treason. We don't want traitor indicators, we want loyal indicators. Let's put it simply: good reflective indicators follow the three musketeers' motto \textit{Unus pro omnibus, omnes pro uno} (all for one and one for all).
+
+Basically, we must evaluate three aspects of reflective measures:
+\begin{itemize}
+ \item Unidimensionality of the indicators
+ \item Check that indicators are well explained by its latent variable
+ \item Assess the degree to which a given construct is different from other constructs
+\end{itemize}
+
+
+\subsection{Unidimensionality of indicators}
+When you have a block of reflective indicators it is supposed that those indicators will reflect, to some extent, the latent variable that they are associated with. Actually, it is assumed that the latent variable is the cause of its indicators. This means that if a construct changes (increases or decreases), then the indicators associated with it will also change in the same direction. Thus, it is logical to suppose that the indicators are closely related in such a way that they are in one dimensional space. 
+
+Think of it in a geometrical sense. If you have a bunch of variables that are supposed to be measuring some aspect of the same thing (the same latent variable) you would expect those variables to roughly point in the same direction. This is what unidimensionality implies. The reflective indicators must be in a space of one dimension since they are practically indicating the same latent variable. 
+
+In PLS-PM we have three main indices to check unidimensionality: \begin{itemize}
+ \item Calculate the Cronbach's alpha
+ \item Calculate the Dillon-Goldstein's rho
+ \item Check the first eigenvalue of the indicators' correlation matrix
+\end{itemize}
+
+\vspace{2mm}
+These metrics are provided by \fplspm{} and they are found under the name \texttt{\$unidim}. To check the blocks' unidimensionality results simply type:
+<<unidim1>>=
+# unidimensionality
+foot_pls$unidim
+@
+This is a table with the unidimensionality metrics for each block of indicators. The first column shows the type of measurement. In this case all the blocks are reflective. The second column indicates the number of manifest variables in each block (4 in our example). The third column contains the Cronbach's alpha, the fourth column is the Dillon-Goldstein's rho, and the fifth and sixth columns are the first and second eignevalues, respectively.
+
+
+\subsubsection*{Cronbach's alpha}
+The Cronbach's alpha is a coefficient that is intended to evaluate how well a block of indicators measure their corresponding latent construct. You can think of it as an \textit{average inter-variable correlation} between indicators of a reflective construct. If a block of manifest variables is unidimensional, they have to be highly correlated, and consequently we expect them to have a high average inter-variable correlation. It is important to keep in mind that the computation of the Cronbach's alpha requires the observed variables to be standardized and positively correlated. 
+<<cronbach_alpha>>=
+# cronbach's alpha
+foot_pls$unidim[,3,drop=FALSE]
+@
+In our example, the \code{Attack} block has an alpha of 0.89, \code{Defense} has an alpha of 0.00, and \code{Success} has an alpha of 0.91. As a rule of thumb, a cronbach's alpha greater than 0.7 is considered acceptable. According to this rule \code{Attack} and \code{Success} are good blocks, but not \code{Defense}. This provides us a warning sign that something potentially wrong is occurring with the manifest variables of \code{Defense}.
+
+
+\subsubsection*{Dillon-Goldstein's rho}
+Another metric used to assess the unidimensionality of a reflective block is the Dillon-Goldstein's rho which focuses on the variance of the sum of variables in the block of interest. As a rule of thumb, a block is considered as unidimensional when the Dillon-Goldstein's rho is larger than 0.7. This index is considered to be a better indicator than the Cronbach's alpha because it takes into account to which extent the latent variable explains its block of indicators.
+<<dillon_goldstein>>=
+# dillon-goldstein rho
+foot_pls$unidim[,4,drop=FALSE]
+@
+Note that \code{Attack} and \code{Success} have rho's values greater than 0.9. In contrast, the construct \code{Defense} shows a very small value of 0.026, which again is a sign that there is an issue with the indicators in this block.
+
+
+\subsubsection*{First eigenvalue}
+The third metric involves an eigen-analysis of the correlation matrix of each set of indicators. The use of this metric is based on the importance of the first eigenvalue. If a block is unidimensional, then the first eigenvalue should be ``much more'' larger than 1 whereas the second eigenvalue should be smaller than 1.
+<<first_eigenvalue>>=
+# eigenvalues
+foot_pls$unidim[,5:6]
+@
+In other words, the evaluation of the first eigenvalue is performed in regards to the rest of the eigenvalues in order to have an idea of how unidimensional is a block of indicators.
+
+
+\subsection*{Houston we have a problem}
+According to the metrics in the unidimensionality results, there is an issue with the \code{Defense} block. To see what's happening we can plot the loadings using the function \code{plot()} by setting the argument \code{what="loadings"}:
+<<plot_loadings2, fig.width=6, fig.height=3, out.width='1\\linewidth', out.height='.5\\linewidth', fig.align='center', fig.pos='h', echo=c(1,3)>>=
+# plotting loadings
+op = par(mar = rep(0, 4))
+plot(foot_pls, what = "loadings")
+par(op)
+@
+As you can see from the plot, the indicators \texttt{CSA} and \texttt{CSH} have red arrows indicating that they have negative loadings (negative correlations). This can be confirmed if we check the outer model results contained in \code{\$outer\_model}:
+<<foot_pls_outer_model_issue>>=
+# outer model results
+foot_pls$outer_model
+@
+
+To get those results associated to the block \code{Defense}, simply use the \code{subset()} function indicating the selection of \code{block == "Defense"}
+<<foot_pls_loadings_defense>>=
+# Defense outer model results
+subset(foot_pls$outer_model, block == "Defense")
+@
+Note that we have a weird phenomenon with the signs of the outer weights and the signs of the loadings. You can visualize the weights by using \code{plot()} and specifying the argument \code{what = "weights"} like this:
+<<plot_weights, fig.width=6, fig.height=3, out.width='1\\linewidth', out.height='.5\\linewidth', fig.align='center', fig.pos='h', echo=c(1,3)>>=
+# plotting weights
+op = par(mar = rep(0, 4))
+plot(foot_pls, what = "weights")
+par(op)
+@
+We have mixed signs: half of the \code{Defense} indicators are positive weights while the other half have negative weights. This is the cause that the Cronbach's alpha and the Dillon-Goldstein's rho are inadequate. Remember that Cronbach's alpha require all indicators in reflective block to be positively correlated. Moreover, this is also the cause that the path coefficient between \code{Defense} and \code{Success} is negative. This is contradictory because it would mean that the more \textit{Quality Defense}, the less \textit{Success}. In fact, this ``anomaly'' of inverted and mixed signs of indicators is not that uncommon. 
+
+Even though \code{GCH} and \code{GCA} have to do with Defense, they are measuring ``lack'' of Defense. If a team has high values of \code{GCH} and \code{GCA}, it means that they conceded a lot of goals, hence having a poor defense quality. Briefly, \code{GCH} and \code{GCA} are pointing in the opposite direction.  We need to do something to try to fix this problem. The solution is to change the sign of \code{GCH} and \code{GCA} so that instead of conceded goals they reflect ``avoided goals''. 
+
+
+\subsubsection*{Changing \code{Defense} indicators}
+One way to have modified the variables \code{GCH} and \code{GCA} with negative signs is by adding two more variables (columns) to the data frame \code{spainfoot}. This can be done like this: 
+<<create_ngch_ngca>>=
+# add two more columns NGCH and NGCA
+spainfoot$NGCH = -1 * spainfoot$GCH
+spainfoot$NGCA = -1 * spainfoot$GCA
+@
+We are adding a new column \code{NGCH} to \code{spainfoot} calculated as a negative \code{GCH}. This represents \textit{Negative Conceded Goals at Home}. Likewise, we are adding another new column \code{NGCA} (\textit{Negative Goals Conceded Away}) calculated as a negative \code{GCA}. I know that \textit{negative goals conceded at home} and \textit{negative goals conceded away} are not avoided goals, but the idea is to have indicators that are positively related to the \code{Defense} construct. Use either the function \code{names()} or the function \code{colnames()} to check the names of the variables in the data:
+<<colnames_spainfoot>>=
+# check column names
+names(spainfoot)
+@
+
+
+With the updated data, we have to re-run the \fplspm{} function and we also have to modify the list of blocks with the new indicators \code{NGCH} and \code{NGCA}. You can define the list of \code{blocks} either with numeric vectors or with string vectors. Here's how to define the list of \code{blocks} under both options:
+<<new_blocks, tidy=FALSE>>=
+# new list of blocks (with column positions of variables)
+new_blocks_pos = list(1:4, c(15,16,7,8), 9:12)
+
+# new list of blocks (with names of variables)
+new_blocks_str = list(
+  c("GSH", "GSA", "SSH", "SSA"), 
+  c("NGCH", "NGCA", "CSH", "CSA"), 
+  c("WMH", "WMA", "LWR", "LRWL"))
+@
+
+Let's apply \fplspm{} using the list of blocks with the names of the indicators \code{new\_blocks\_str}, and plot the obtained loadings:
+<<rerun_plspm, fig.width=6, fig.height=3, out.width='1\\linewidth', out.height='.5\\linewidth', fig.align='center', fig.pos='h', fig.cap='Changed Loadings'>>=
+# re-apply plspm
+foot_pls = plspm(spainfoot, foot_path, new_blocks_str, modes = foot_modes)
+
+# plot loadings
+plot(foot_pls, "loadings")
+@
+
+Now we are talking! As you can tell, all the indicators in \code{Defense} have blue arrows. If we check again the unidimensionality we should see better results:
+<<unidim2>>=
+# unidimensionality
+foot_pls$unidim
+@
+
+
+\subsection{Loadings and Communalities}
+The next thing to examine are the loadings and the communalities that are contained in \texttt{\$outer\_model}. The loadings are correlations between a latent variable and its indicators. In turn, communalities are squared correlations.
+<<outer_loadings>>=
+# loadings and communalities
+foot_pls$outer_model
+@
+
+In versions of \plspm{} later than 0.4, what we get in \code{foot\_pls\$outer\_model} is a data frame. This allows us to have the output ready for the package \code{ggplot2} and take advatange of its wide range of graphics posibilities. The data frame \code{foot\_pls\$outer\_model} constains five columns. The first column corresponds to the \code{block} which is codified as a \code{factor} (i.e. categorical variable). The second column contains the outer weights. The third column are the loadings (correlations). Loadings greater than 0.7 are acceptable. To see why they are acceptable we use the communalities in the fourth column. Communalities are just squared loadings. They represent the amount of variablity explained by a latent variable. A loading grater than 0.7 means that more than $0.7^2 \approx 50\%$ of the variablity in an indicator is captured by its latent construct. The fifth column are the redundancies; we'll talk about them later in this chapter.
+
+\subsubsection*{Communality}
+Communality is calculated with the purpose to check that indicators in a block are well explained by its latent variable. Communalities are simply squared loadings and they measure the part of the variance between a latent variable and its indicator that is common to both. To see why, we need to assume that each indicator represents an error measurement of its construct. The relation:
+$$ mv_{jk} = loading_{jk}LV_{j} + error_{jk}$$
+implies that the latent variable $LV_j$ explains its indicator $mv_{jk}$, so we have to evaluate how well the indicators are explained by its latent variable. To do this, we examine the loadings which indicate the amount of variance shared between the construct and its indicators. The communality for the $jk$-th manifest variable of the $j$-th block is calculated as:
+$$ Com(LV_j, mv_{jk}) = cor^2(LV_j, mv_{jk}) = loading_{jk}^2 $$
+Looking at the previous formula, communality measures how much of a given manifest variable's variance is reproducible from the latent variable. In other words, the part of variance between a construct and its indicators that is common to both. One expects to have more shared variance between an LV and its mv than error variance, that is:
+$$ loading^2_{jk} > var(error_{jk}) $$
+Indicators with low communality are those for which the model is ``not working'' and the researcher may use this information to drop such variables from the analysis.
+
+For instance, let's check what's going on with the \code{Defense} block. The manifest variable \code{GCH} has a loading of 0.4837 which is less than the recommended 0.7. In turn, its communality is small with a value of 0.2339. We should seriously consider whether it makes sense to keep this variable in our model. Although this indicator has some contribution to the \textit{Quality of Defense}, it doesn't seem to be very happy in the \code{Defense} block. If we don't want to have an uncomfortable indicator, the best option is to remove it from the model. For convenience and illustration purposes I'm going to keep \code{GCH} in our exmple, but if you find yourself in the middle of a similar issue, you should talk to the experts and discuss whether to keep or remove unhappy reflective indicators that don't reflect enough.
+
+
+\subsection{Cross-loadings}
+Besides checking the loadings of the indicators with their own latent variables, we must also check the so-called \textit{cross-loadings}. That is, the loadings of an indicator with the rest of latent variables. The reason for doing so is that we need to be sure that we don't have traitor indicators. The data frame of cross-loadings are in \code{\$crossloadings}: 
+<<cross_loadings>>=
+# cross-loadings
+foot_pls$crossloadings
+@
+
+We need to look at the list of results as if it were a super matrix. The way to read the cross-loadings is by looking at this super matrix block by block paying attention to the sections in the diagonal. These sections are the loadings of each block with its construct. A given loading in one of these sections must be greater than any other loading in its row. For example, let's consider the first section that corresponds to the first column in the \code{Attack} block. \code{GSH} has a loading value of 0.9380. This value must be greater than any other value in that first row. The cross-loadings of \code{GSH} with \code{Defense} is 0.5159; the cross-loading of \code{GSH} with \code{Success} is 0.8977. Clearly, 0.9380 is greater than 0.5159 and 0.8977.
+
+An alternative way to examine the table of cross-loadings is by visualizing them with some bar-charts like those shown in the figure below:
+<<foot_pls_xloads_ggplot, fig.width=8, fig.height=6, out.width='1\\linewidth', out.height='.75\\linewidth', fig.align='center', fig.pos='h', echo=FALSE, message=FALSE>>=
+# load ggplot2 and reshape
+library(ggplot2)
+library(reshape)
+
+# reshape crossloadings data.frame for ggplot
+xloads = melt(foot_pls$crossloadings, id.vars = c("name", "block"),
+              variable_name = "LV")
+
+# bar-charts of crossloadings by block
+ggplot(data = xloads,
+       aes(x = name, y = value, fill = block)) +
+  geom_hline(yintercept = 0, color = "gray75") + 
+  geom_hline(yintercept = 0.5, color = "gray70", linetype = 2) +   
+  geom_bar(stat = 'identity', position = 'dodge') +
+  facet_wrap(block ~ LV) +
+  theme(axis.text.x = element_text(angle = 90),
+        line = element_blank(),
+        plot.title = element_text(size=12)) +
+  ggtitle("Crossloadings")
+@
+
+To get the previous bar-charts we need to use the packages \code{ggplot2} and \code{reshape} (by Hadley Wickham). Once you have installed both packages, the first step is to reformat the data frame of crossloadings. This operation involves using the \code{melt()} function: 
+<<foot_pls_xloads_melt, eval=FALSE, tidy=FALSE>>=
+# load ggplot2 and reshape
+library(ggplot2)
+library(reshape)
+
+# reshape crossloadings data.frame for ggplot
+xloads = melt(foot_pls$crossloadings, id.vars = c("name", "block"),
+              variable_name = "LV")
+@
+The reshaped (i.e. melted) data \code{xloads} is just another \code{data.frame} with the same information as \code{foot\_pls\$crossloadings}. The only difference is in the arrangement of the values so they can meet the required shape for \code{ggplot()}.
+
+After reshaping the data, we can use \code{ggplot()} to produce the bar-charts. To do this, we tell \code{ggplot()} to add bars with \code{geom\_bar()}. Note the use of the parameters \code{stat = 'identity'} and \code{position = 'dodge'}. We also add some horizontal lines as visual references with \code{geom\_hline()}. Then we indicate that we want a panel display with \code{facet\_wrap()} by crossing the loadings of \code{block} with the rest of latent variables (\code{LV}). Finally, we use \code{theme()} to a have a better positioning of the x-axis labels, the size of the title, as well as hiding the grid lines:
+<<foot_pls_xloads_plot, eval=FALSE, tidy=FALSE>>=
+# bar-charts of crossloadings by block
+ggplot(data = xloads,
+       aes(x = name, y = value, fill = block)) +
+  # add horizontal reference lines
+  geom_hline(yintercept = 0, color = "gray75") + 
+  geom_hline(yintercept = 0.5, color = "gray70", linetype = 2) +
+  # indicate the use of car-charts
+  geom_bar(stat = 'identity', position = 'dodge') +
+  # panel display (i.e. faceting)
+  facet_wrap(block ~ LV) +
+  # tweaking some grahical elements
+  theme(axis.text.x = element_text(angle = 90),
+        line = element_blank(),
+        plot.title = element_text(size = 12)) +
+  # add title
+  ggtitle("Crossloadings")
+@
+
+\vspace{3mm}
+Keep in mind that cross-loadings allow us to we evaluate the extent to which a given construct differentiates from the others. The whole idea is to verify that the shared variance between a construct and its indicators is larger than the shared variance with other constructs. In other words, no indicator should load higher on another construct than it does on the construct it intends to measure. Otherwise, it is a traitor indicator. If an indicator loads higher with other constructs than the one it is intended to measure, we might consider its appropriateness because it is not clear which construct or constructs it is actually reflecting.
+
+
+
+\section{Measurement Model Assessment: \\ Formative Indicators}
+Unlike reflective indicators, formative indicators are considered as causing (i.e. forming) a latent variable. The truth is that mathematically, all blocks of indicators could always be taken in a reflective way. However, there may be theoretical or conceptual reasons to consider a block as formative. Formative indicators do not necessarily measure the same underlying construct. In this case, any change experienced by a construct does not imply a change in all its indicators; that is, formative indicators are not supposed to be correlated. For this reason, formative measures cannot be evaluated in the same way of reflective measures; and all the assessment criteria based on the loadings are discarded in the formative measures.
+
+We compare the outer weights of each indicator in order to determine which indicators contribute most effectively to the construct. Attention must be paid in order to avoid misinterpreting relative small absolute values of weights as poor contributions. If we are considering the elimination of some indicator, this should be done based on multicollinearity: the elimination is recommended if high multicollinearity occurs. This implies a strong consensus among experts (based on theory) about how the latent variable is formed.
+
+
+
+\section{Structural Model Assessment}
+After assessing the quality of the measurement model, the next stage is to assess the structural part. To inspect the results of each regression in the structural equations we need to display the results contained in \code{\$inner\_model}. These results are displayed in a list in the same way as those provided by the function \code{lm()} (i.e. linear model fitting). Since our example has only one regression, we just have one element (\code{\$Success})
+<<check_inner_model>>=
+# inner model
+foot_pls$inner_model
+@
+
+Besides the results of the regression equations, the quality of the structural model is evaluated by examining three indices or quality
+metrics:
+\begin{itemize}
+ \item the $R^2$ determination coefficients
+ \item the redundancy index
+ \item the Goodness-of-Fit (GoF)
+\end{itemize}
+
+
+\subsection{Coefficients of determination $R^2$}
+The $R^2$ are the coefficients of determination of the endogenous latent variables. To inspect these coefficients you need to print the results in \code{\$inner\_summary}.
+<<check_inner_summary_R2>>=
+# inner model summary
+foot_pls$inner_summary
+
+# select R2
+foot_pls$inner_summary[ ,"R2", drop = FALSE]
+@
+For each regression in the structural model we have an $R^2$ that is interpreted similarly as in any multiple regression analysis. $R^2$ indicates the amount of variance in the endogenous latent variable explained by its independent latent variables.
+
+The inner model seems to be fine, although we must keep in mind that this is a very simple model. We have an $R^2 = 0.85$ which under the PLS-PM standards can be considered as an outstanding $R^2$. In fact, values for the R-squared can be classified in three categories (please don't take them as absolute truth):
+\begin{enumerate}
+ \item Low: $R < 0.30$ (although some authors consider $R<0.20$)
+ \item Moderate: $0.30 < R < 0.60$ (you can also find $0.20 < R < 0.50$)
+ \item High: $R > 0.60$ (alternatively there's also $R > 0.50$)
+\end{enumerate}
+
+
+\subsection{Redundancy}
+Redundancy measures the percent of the variance of indicators in an endogenous block that is predicted from the independent latent variables associated to the endogenous LV. Another definition of redundancy is the amount of variance in an endogenous construct explained by its independent latent variables. In other words, it reflects the ability of a set of independent latent variables to explain variation in the dependent latent variable. The redundancy index for the $j$-th manifest variable associated to the $k$-th block is:
+$$ Rd(LV_k, mv_{jk}) = loading^2_{jk} R^2_k $$
+
+High redundancy means high ability to predict. In particular, the researcher may be interested in how well the independent latent variables predict values of the indicators' endogenous construct. Analogous to the communality index, one can calculate the mean redundancy, that is, the average of the redundancy indices of the endogenous blocks.
+<<check_inner_summary_redundancy>>=
+# inner model summary
+foot_pls$inner_summary
+@
+
+For each latent variable we have some descriptive information: type (exogenous or endogenous), measurement (reflective or formative), and number of indicators. The column \texttt{R-square} is only available for endogenous variables. The averga communality \texttt{Av.Commu} indicates how much of the block variability is reproducible by the latent variable. 
+
+Next to the average communality we have the average redundancy \texttt{Av.Redun} which like the R2 is only available for endogenous constructs. \texttt{Av.Redun} represents the percentage of the variance in the endogenous block that is predicted from the indepedent LVs associated to the endogenous LV. High redundancy means high ability to predict. Let's say that we are interested in checking how well the indepedent LVs predict values of endogenous indicators. In our example the average redundancy for Success represents that Attack and Defense predict 68\% of the variability of Success indicators
+
+
+
+\subsection{GoF}
+A remarkable aspect is that no single criterion exists within the PLS framework to measure the overall quality of a model, so we cannot perform inferential statistical tests for goodness of fit. As an alternative, non-parametrical tests can be applied for the assessment of the structural model.
+
+The GoF index is a pseudo Goodness of fit measure that accounts for the model quality at both the measurement and the structural models. GoF is calculated as the geometric mean of the average communality and the average R2 value. Since it takes in to account communality, this index is more applicable to reflective indicators than to formative indicators. However, you can also use the GoF index in presence of formative blocks, in which case more importance will be given to the average R2.
+<<check_gof>>=
+# gof index
+foot_pls$gof
+@
+
+GoF can be used a global criterion that helps us to evaluate the performance of the model in both the inner and the outer models. Basically, GoF assess the overall prediction performance of the model. The main drawback with the GoF index is that there is no threshold that allows us to determine its statistical significance. Unfortunately, there is also no guidance about what number could be considered a good GoF value. You can think of GoF as an index of average prediction for the entire model. Although this is not entirely true, it helps to understand GoF values. From this point of view, a GoF value of 0.78 could be interpreted as if the prediction power of the model is of 78\%. The naive rule of thumb is: the higher, the better. Acceptable ``good'' values within the PLS-PM community are GoF \textgreater 0.7
+
+
+\section{Validation}
+Since PLS-PM does not rest on any distributional assumptions, significance levels for the parameter estimates (based on normal theory) are not suitable. Instead, resampling procedures such as blindfolding, jackknifing, and bootstrapping are used to obtain information about the variability of the parameter estimates. \fplspm{} uses the former approach to provide a means for validating results.
+
+\subsection{Bootstrapping}
+Bootstrapping is a non-parametric approach for estimating the precision of the PLS parameter estimates. The bootstrap procedure is the following: $M$ samples are created in order to obtain $M$ estimates for each parameter in the PLS model. Each sample is obtained by sampling with replacement from the original data set, with sample size equal to the number of cases in the original data set. 
+
+We use the argument \code{boot.val} to indicate that we wish to perform bootstrap validation. By default \fplspm{} runs 100 resamples but we can specify a different number with the argument \code{br}. For instance, let's get a validation with \code{br=200} resamples. 
+<<plspm_bootstrap, tidy=FALSE>>=
+# running bootstrap validation
+foot_val = plspm(spainfoot, foot_path, new_blocks_str, modes = foot_modes, 
+                 boot.val = TRUE, br = 200)
+
+# bootstrap results
+foot_val$boot
+@
+What we obtain in \code{foot\_val\$boot} is a list with results for:
+\begin{itemize}
+ \item the outer weights (\code{foot\_val\$boot\$weigts})
+ \item the loadings (\code{foot\_val\$boot\$loadings})
+ \item the path coefficients (\code{foot\_val\$boot\$paths})
+ \item the $R^2$ (\code{foot\_val\$boot\$rsq}) 
+ \item the total effects (\code{foot\_val\$boot\$total.efs})
+\end{itemize}
+Each one of these elements is a \code{matrix} that contains five columns: the original value of the parameters, the bootstrap mean value, the bootstrap standard error, and the lower percentile and upper percentiles of the 95\% bootstrap confidence interval.
+
+
+
+\section{Reading List}
+\begin{itemize}
+ \item \textbf{\textsf{How to Write Up and Report PLS Analyses}} by Wynne Chin (2010). This is the Chapter 28 of the \textit{Handbook of Partial Least Squares}. This chapter describes the general steps to be performed for writing a report on results from a PLS-PM analysis.
+
+ \vspace{2mm}
+ \item \textbf{\textsf{Evaluation of Structural Equation Models Using Partial Least Squares (PLS) Approach}} by Oliver Gotz, Kerstin Liehr-Gobbers and Manfred Krafft (2010). This is the Chapter 29 of the \textit{Handbook of Partial Least Squares}. Provides a basic comprehension of the PLS-PM methodology and it discussess guidelines for evaluation of structural models.
+
+ \vspace{2mm}
+ \item \textbf{\textsf{The Use of Partial Least Squares Path Modeling in International Marketing}} by Jorg Henseler, Christian Ringle and Rudolf R. Sinkovics (2009). This article in \textit{New Challenges to International Marketing Advances in International Marketing (Vol. 20, 277 - 319)} offers guidance for the use of PLS with an emphasis on reasearch studies on marketing research. Covers the requirements, strengths and weaknesses of PLS-PM.
+
+ \vspace{2mm}
+ \item \textbf{\textsf{PLS: A Silver Bullet?}} by George A. Marcoulides and Carol Saunders (2006). This is an Editorial comment in the journal \textit{MIS Quarterly (Vol. 30, No. 2)}. The authors express their concerns about claims made by a number of authors about taking PLS as a magic wand that can be applied indiscriminately to all problems.
+
+ \vspace{2mm}
+ \item \textbf{\textsf{A Critical Look at Partial Least Squares Modeling}} by George A. Marcoulides, Wynne W. Chin and Carol Saunders (2009). This is the Foreword in the Special Issue Section of the journal \textit{MIS Quarterly (Vol. 33, No. 1, 171-175)}. The authors express their concerns about claims made by a number of authors about taking PLS as a magic wand that can be applied indiscriminately to all problems.
+\end{itemize}
+  

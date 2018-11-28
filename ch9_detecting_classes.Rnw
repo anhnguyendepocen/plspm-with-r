@@ -1,0 +1,543 @@
+% !Rnw root = ../PLS_Path_Modeling_with_R.Rnw
+
+
+\chapter{Detecting Classes with REBUS-PLS}
+Many datasets are far from being a homogenous mass of data. Diversity is the rule. More often than not, you will find subsets of observations with a particular behavior; perhaps there is a subset that shows different patterns in the distribution of the variables, or maybe there are observations that could be grouped together and analyzed separately. It might well be the case that one single model is not be the best model for your entire dataset, and you might need to estimate different PLS path models for different groups of observations.
+
+In Chapter 6 we talked about comparing groups in PLS Path Modeling by taking into account available information from different groups in data. One of the traditional examples is when we have demographic information like gender and we apply a group analysis between females and males. But what about those situations when we don't have categorical variables to play with for multi-group comparisons? In these circumstances we could still apply a PLS-PM analysis but we probably will be wondering ``What if there's something else? What if there's something \textit{hidden} in the data? What if there's more juice to be extracted from our data?'' In this chapter we will describe one of the available methods to deal with this type of analysis: the REBUS approach for detecting classes in PLS Path Modeling.
+
+
+
+\section{Diversity in Data}
+When we estimate PLS path models, we do it under the implicit assumption that all the observations in the data are more or less homogeneous. This implies that we treat all observations alike without considering any group structure, and we take for granted that a single model will adequately represent all the individuals. Consequently, we are supposing that the same set of parameter values applies to all observations. The problem, however, is that this assumption may not be realistic in all cases; and it is reasonable to expect diversity in our data. This ``diversity'' in data receives the special name of \textbf{heterogeneity}.
+
+Consider, for example, marketing research studies using Customer Sastisfaction Index (CSI) models.  Potential sources of heterogeneity in data can be due to customer preferences, brand awareness, or service usage rate, for example. Some customers' satisfaction may be more driven because of higher expectations, while other customers may be more satisfied because of the perceived value. 
+
+So, what happens if we don't take into account the so-called heterogeneity? Well, the problem of not considering the possible existence of classes in the observations is that conventional structural equation modeling techniques may lead us to obtain inadequate results. Since the model for the entire data may be mispecified, we run the risk of drawing poor conclusions. Thus, to overcome this situation it is necessary to assume heterogeneity with groups having different behavior. This implies that more than one single set of parameter estimates is needed to adequately characterize the analyzed model.
+
+
+
+\subsection{Unobserved Classes}
+People say that heterogeneity can be observed or unobserved. When we have information characterizing groups in data like gender, ethnic group or income level, we talk about \textbf{observed heterogeneity}. In contrast, when we don't have such variables or any other information about the causes of diversity we talk about \textbf{unobserved heterogeneity}. This may sound a little complicated but is just a term to say that we don't have the slightest idea of what the heck is causing diversity in our data. 
+
+Basically, unobserved heterogeneity implies that we have no clue whatsoever about the possible number of classes in which the observations can be grouped. Therefore, we cannot divide \textit{a priori} the observations into groups. Although we are supposing that the data consists of different classes, we don't know beforehand which observations belong to which of the classes. Fortunately, within the PLS-PM world we have a number of options to handle unobserved heterogeneity by applying traditional clustering techniques, latent class analysis, and mixture models. The main idea behind these methods is to infer class memberships of observations by using some type of clustering-based procedure. 
+
+
+\subsubsection*{A naive approach}
+Perhaps the most naive and simplest approach to tackle unobserved heterogeneity consists of a sequential two-step procedure; one in which we combine cluster analysis in the first step with a
+multi-group analysis in the second step. First, we form groups by performing typical clustering analysis on the data (on the manifest variables or on the latent variables). Then, we perform a multi-group analysis on the separate models for each cluster. However, this approach has been criticized by many people because the resulting groups may not produce differentiated path models, and because this approach does not take into account the hypothesized structural relationships among variables.
+
+To overcome the shortcomings of the two-step procedure, some authors have developed a variety of proposals using a model-based focus approach. Generally speaking, model-based techniques involve some clustering-based procedure that takes into consideration the cause-effect structure of path models. In PLS-PM, the most known approaches for detecting unobserved classes are \textbf{FIMIX-PLS} by Hahn, Johnson, Herrmann and Huber; and \textbf{REBUS-PLS} by Vincenzo Esposito Vinzi and Laura Trinchera. We are not going to discuss FIMIX but you can check more references about it in the reading list section at the end of the chapter. The following sections are entirely dedicated to REBUS.
+
+
+
+\section{What is REBUS?}
+REBUS is the acronym for \textbf{Response Based Unit Segmentation} in PLS-PM, and it is an approach based on an algorithm designed to ``discover'' latent classes inside a PLS-PM global model. If you have the chance to check the references about REBUS, you will see that is said to be a \textit{response-based clustering technique}. What does this mean? This means that it is a technique inspired by cluster analysis techniques, and it applies clustering principles to obtain the solution. But don't get confused. REBUS is not equivalent to cluster analysis. Although you could apply your favorite type of clsuter analysis method to detect classes in your data, this is not what we are talking about. We are talking about going beyond simple clustering techniques. Why? Because no cluster analysis method will take into account the structural (cause-effect) relationship of a PLS path model. 
+
+\subsection{The REBUS Approach}
+With REBUS, we seek to optimize the predictive capacity of the model in each detected class without requiring distributional assumptions about the latent or manifest variables. In order to form the classes, REBUS assigns observations to groups based on a unit-model distance. The procedure starts with calculating the global PLS model (for all observations). Next, according to the obtained results from a hierarchical clustering based on the unit-model distance, preliminary classes are defined. Then, local models are estimated for each class and a measure of the distance between each observation and each local model is computed. Observations are then re-assigned to the class corresponding to the closest local model. An iterative algorithm re-estimates local models until no change in the composition of the classes is observed.
+
+The first key component behind REBUS is the use of a measure to calculate the distance of an observation to a given model. The proposed distance is actually a pseudo distance or \textit{closeness measure} that is based on the Goodness of Fit index ``GoF'' (see chapter 4). Remember that the GoF index can be seen as a compromise between the quality of the measurement model and the quality of the structural model:
+$$ GoF^2 = (Average Communality) x (Average R^2) $$
+
+Although I could show you the formula of the closeness measure used in REBUS, I prefer not to do so because of its complexity (which is beyond the scope of the book). Instead, I will describe you the main idea. The important thing that you need to know is that the distance measure behind REBUS is based on the GoF index. Consequently, we can decompose the closeness measure in two elements: one element to assess the quality of the measurement model, an another element to assess the quality of the structural model. The element associated to the measurement model implies calculating \textit{communality residuals} of each observation to each class. Likewise, the element associated to the structural model implies calculating \textit{structural residuals} of each observation to each class. By combining the two elements in a single measure we can assign observations to the class whose model fit is the best. Broadly speaking, REBUS is designed to identify local models that have a better fit than the global model by taking into account both the inner model and the outer model.
+
+
+\subsubsection*{REBUS Algorithm (overall description)}
+\begin{enumerate}
+ \item Estimation of the global PLS Path Model
+ \item Computation of the communality and structural residuals of all observations from the global model
+ \item Perform a hierarchical clustering on the residuals computed in step 2;
+ \item Choice the number of classes $K$ according to the dendrogram obtained in step 3;
+ \item Assignment of the observations to each group according to the cluster analysis results;
+ \item Estimation of the $K$ local models
+ \item Computation of the closeness measure for each observation with respect to each local model
+ \item Assignment of each observation to the closest local model; \\
+ Iterate steps 6 to 9 until reaching stability of class memberships
+ \item Description of the obtained classes according to differences among the local models
+\end{enumerate}
+
+\vspace{2mm}
+The REBUS algorithm begins with estimating the global model (on all the observations). Then, a hierarchical clustering of both the communality and structural residuals is calculated for the global model. This cluster analysis helps us to determine the number of classes and the initial unit assignment to them. Then, the iterative steps take place in which observations are assigned to the class corresponding with the closest local model according to the closeness measure. The stopping criterion takes into account the stability of results in terms of class' compositions. As a rule of thumb, we can use a threshold of less than 5\% of units changing class from one iteration to the next one as a stopping rule.
+
+To assess the quality of the obtained partition, REBUS uses a \textit{Group Quality Index} (GQI) which is a reformulated GoF index intended for multi-group analysis. Actually, in the case of having just one class, the GQI index is equal to the GoF index. In case of having more than one class, when the local models perform better than the global model the GQI index will be higher than the GoF index of the global model.
+
+
+\subsubsection*{Key Ideas behind REBUS}
+
+\begin{itemize}
+ \item It allows us to obtain units classification taking into account units performance for both the structural and the measurement model.
+ \item No distributional assumption is required on latent or observed variables.
+ \item The chosen ``distance'' is defined according to the components of the GoF index.
+ \item Only reflective blocks are allowed (no formative measurement).
+\end{itemize}
+
+On one hand, it is supposed that if two models show identical structural coefficients but different outer weights, REBUS will be able to detect this difference. On the other, the identified local models will exhibit higher values in the communalities and in the $R^2$ coefficients.
+
+
+
+\subsection{Case Study: Success Index Model}
+We will go back to the Success Index model of chapters 2 and 4 to show an application of REBUS. As you will recall, the model is based on the premise that the Overall Succcess of a team depends on the quality of the Attack as well as the quality of the Defense. 
+
+For this case study we will use football statistics of the season 2009-2010 from three European national leagues: \textit{La Liga} (Spain), the \textit{Premier League} (England), and the \textit{Serie A} (Italy). The dataset comes with \plspm{} under the name \code{futbol}:
+<<load_futbol, message=FALSE>>=
+# only if you haven't load it
+library(plspm)
+
+# load data futbol
+data(futbol)
+@
+
+The following path diagram illustrates our proposed model:
+<<futbol_model, echo=FALSE, message=FALSE>>=
+library(pathdiagram)
+
+# define Attack block
+attack = list(
+  att1 = manifest("GSH", x=0.15, y=0.9, width=0.09, height=0.08),
+  att2 = manifest("GSA", x=0.15, y=0.8, width=0.09, height=0.08),
+  att3 = manifest("SSH", x=0.15, y=0.7, width=0.09, height=0.08),
+  att4 = manifest("SSA", x=0.15, y=0.6, width=0.09, height=0.08))
+ATTACK = latent("Attack", x=0.35, y=0.75, rx=0.08, ry=0.08)
+
+# define Defense block
+defense = list(
+  def1 = manifest("NGCH", x=0.15, y=0.4, width=0.09, height=0.08),
+  def2 = manifest("NGCA", x=0.15, y=0.3, width=0.09, height=0.08),
+  def3 = manifest("CSH", x=0.15, y=0.2, width=0.09, height=0.08),
+  def4 = manifest("CSA", x=0.15, y=0.1, width=0.09, height=0.08))
+DEFENSE = latent("Defense", x=0.35, y=0.25, rx=0.08, ry=0.08)
+
+# define Success block
+success = list(
+  suc1 = manifest("WMH", x=0.85, y=0.55, width=0.09, height=0.08),
+  suc2 = manifest("WMA", x=0.85, y=0.45, width=0.09, height=0.08))
+SUCCESS = latent("Success", x=0.65, y=0.5, rx=0.08, ry=0.08)
+@
+
+<<futbol_model_diagram, echo=FALSE, fig.keep='last', fig.width=6, fig.height=4, out.width='.9\\linewidth', out.height='.5\\linewidth', fig.align='center', fig.pos='h'>>=
+# PLOT
+op = par(mar = rep(0, 4))
+wall(xlim = c(0.1, 0.9), ylim = c(0.05, 1))
+# draw latent variables
+draw(ATTACK)
+draw(DEFENSE)
+draw(SUCCESS)
+# draw manifest variables
+for (i in 1:4) {
+  draw(attack[[i]])
+  arrow(from=ATTACK, to=attack[[i]], start="west", end="east")
+  draw(defense[[i]])
+  arrow(from=DEFENSE, to=defense[[i]], start="west", end="east")
+}
+for (i in 1:2) {
+  draw(success[[i]])
+  arrow(from=SUCCESS, to=success[[i]], start="east", end="west")
+}
+# arrows of inner model
+arrow(from=ATTACK, to=SUCCESS, start="east", end="west")
+arrow(from=DEFENSE, to=SUCCESS, start="east", end="west")
+text(x=0.5, y=1, "Path Diagram with the Success Index model for REBUS")
+#
+par(op)
+@
+
+The description of each variable is given in the following table:
+
+\begin{table}[h]
+ \caption{Description of variables in data \code{futbol}} 
+ \centering
+ \begin{tabular}{l l}
+  \hline
+  Variable & Description \\
+  \hline
+  \code{GSH} & total number of goals scored at home  \\
+  \code{GSA} & total number of goals scored away \\
+  \code{SSH} & percentage of matches with scores goals at home \\
+  \code{SSA} & percentage of matches with scores goals away \\
+  \code{NGCH} & total number (negative) of goals conceded at home \\
+  \code{NGCA} & total number (negative) of goals conceded away \\
+  \code{CSH} & percentage of matches with no conceded goals at home \\
+  \code{CSA} & percentage of matches with no conceded goals away \\
+  \code{WMH} & total number of won matches at home \\
+  \code{WMA} & total number of won matches away \\
+  \code{Country} & country of the team's league \\
+  \code{Rank} & final ranking position within its league \\
+  \hline
+ \end{tabular}
+ \label{tab:futbol}
+\end{table}
+
+
+
+\subsection{Global PLS Path Model}
+Let us start by estimating the global PLS path model with all the observations. As usual, we prepare the ingredients to cook our model (path matrix, list of blocks, vector of modes) and then apply \fplspm{}:
+<<futbol_plspm>>=
+# rows of the path matrix
+Attack = c(0, 0, 0)
+Defense = c(0, 0, 0)
+Success = c(1, 1, 0)
+
+# matrix created by row binding
+fut_path = rbind(Attack, Defense, Success)
+
+# list of blocks
+fut_blocks = list(1:4, 5:8, 9:10)
+
+# vector of modes (reflective)
+fut_mods = rep("A", 3)
+
+# apply plspm
+fut_pls = plspm(futbol, fut_path, fut_blocks, modes = fut_mods)
+@
+
+<<fut_pls_path_coeffs, fig.width=4.5, fig.height=2.5, out.width='.65\\linewidth', out.height='.4\\linewidth', fig.align='center', fig.pos='h', fig.cap='Visualizing the path coefficients of the inner model', echo=c(1,3)>>=
+# plot the inner matrix
+op = par(mar = rep(0, 4))
+plot(fut_pls)
+par(op)
+@
+
+After applying \fplspm{}, we begin by checking the unidimensionality of the reflective blocks, making sure we have adequate values for the Cronbach's alpha, the Dillon-Goldstein's rho and the dominance of the first eigenvalue:
+<<fut_pls_unidim>>=
+# plot the inner matrix
+fut_pls$unidim
+@
+
+For the sake of simplicity I will show just the loadings but your homework is to assess the quality of the outer model in your computer following the guidelines of Chapter 4:
+<<plot_loadings_fut_pls, fig.width=5.5, fig.height=2, out.width='1\\linewidth', out.height='.45\\linewidth', fig.align='center', fig.pos='h', echo=c(1,3)>>=
+# plotting loadings of the outer model
+op = par(mar = rep(0,4))
+plot(fut_pls, what = "loadings", arr.width = 0.1)
+par(op)
+@
+
+Now, let us inspect the results of the inner model:
+<<fut_pls_inner>>=
+# inner model resutls
+fut_pls$inner_model
+@
+
+\subsubsection*{Cluster Analysis on Scores}
+Perhaps the simplest and quickest way to detect classes is by performing a standard cluster analysis on the obtained scores of the latent variables. Keep in mind that this is a naive approach that doesn't take into account the structural relaitonships of the inner model. For instance, we could apply a hierarchical clustering with the \textit{Ward} method just by using the function \code{hclust()} and selecting the parameter \code{method = "ward"}. 
+<<futbol_cluster, fig.keep='none'>>=
+# hierarchical cluster analysis on the LV scores
+fut_hclus = hclust(dist(fut_pls$scores), method = "ward")
+
+# plot dendrogram
+plot(fut_hclus, xlab="", sub="", cex=0.8)
+abline(h=10, col="#bc014655", lwd=4)
+@
+
+<<futbol_cluster_dendrogram, fig.width=8, fig.height=5, out.width='0.95\\linewidth', out.height='.65\\linewidth', fig.align='center', fig.pos='h', echo=FALSE, fig.cap='Hierarchical Clustering Dendrogram'>>=
+# plot dendrogram
+op = par(mar = c(1, 4, 3, 1))
+plot(fut_hclus, xlab="", sub="", cex=0.7, cex.axis=0.85, cex.main=0.9)
+abline(h=10, col="#bc014655", lwd=4)
+par(op)
+@
+
+If we take a look at the dendrogram we may try to select four clusters (the ones obtained by cutting the dendrogram with the red line). To obtain the observations in each cluster we use the function \code{cutree()} and we specify its argument \code{k = 4} to indicate that we want 4 clusters:
+<<futbol_cutree>>=
+# cut tree to obtain 4 clusters
+clusters = cutree(fut_hclus, k = 4)
+
+# how many observations in each clsuter?
+table(clusters)
+@
+
+For convenience purposes we will put the scores and the cluster memberships in a data frame:
+<<futbol_scores_dataframe>>=
+# latent variable scores in data frame
+fut_scores = as.data.frame(fut_pls$scores)
+
+# add clusters to data frame
+fut_scores$Cluster = as.factor(clusters)
+
+# what does the data look like?
+head(fut_scores, n=5)
+@
+
+We know we have four clusters but we need to get some descriptive statistics like the average values of the variables in each cluster (i.e. the centroids of each cluster). We can use the \code{ddply()} function of package \code{plyr} (by Hadley Wickham) to quickly get the cluster centroids:
+<<futbol_scores_ddply, message=FALSE>>=
+# package plyr
+library(plyr)
+
+# calculate cluster centroids
+centroids = ddply(fut_scores, .(Cluster), summarise, 
+      AvgAttack=mean(Attack), AvgDefense=mean(Defense), AvgSuccess=mean(Success))
+
+# show centroids
+centroids
+@
+\code{ddply()} is a handy function that allows us to split a data frame and apply a specified function in an easy way. In this case we are telling \code{ddply()} that we want to split the data frame \code{fut\_scores} by \code{Cluster} in order to get the mean values of \code{Attack}, \code{Defense}, and \code{Success}.
+
+We can also use the package \code{ggplot2} (also by Wickham) to get a nice graphic of the scores with \code{ggplot()}, like the following one:
+<<futbol_scores_ggplot, message=FALSE, fig.width=8, fig.height=5, out.width='0.95\\linewidth', out.height='.65\\linewidth', fig.align='center', fig.pos='h', fig.cap='Scatter plot: Attack -vs- Success', tidy=FALSE>>=
+# package ggplot2
+library(ggplot2)
+
+# ggplot: Attack -vs- Success
+ggplot(data = fut_scores, 
+       aes(x = Attack, y = Success, label = rownames(fut_scores))) + 
+  geom_text(size = 4, alpha = 0.8, aes(color = Cluster))
+@
+The figure above is just a scatter plot between \code{Attack} and \code{Success}. To add the names of the teams we use the function \code{geom\_text()} specifying the size of the text (\code{size = 4}), and the transparency color (\code{alpha = 0.8}). Notice also that we are telling \code{geom\_text()} to use the clusters as an aesthetic color attribute: \code{aes(color = Cluster)}.
+
+What we get with the cluster analysis are groups of teams that are formed in such a way that they reflect a performance effect. The cluster 3 (in turquoise) are the most successful teams like Barcelona, Real Madrid, ManchesterUnited, Chelsea, Arsenal, Inter and Milan. If you are familiar with the European football, the teams in cluster 3 are the ones that get to play the \textit{Champions League}. Then we have cluster 1 (in purple) formed by teams that are not the best but still are in the top 5 places of their league's ranking (these are the \textit{UEFA teams}). In color green we have the cluster 2 formed by teams in middle of the ranking table. And finally we have the cluster 4 (in pink-red) that includes those teams with poor performance.
+
+Although the hierarchical cluster analysis can be interesting and useful, its main drawback is that it does not take into account the structural relationships of the model. The clustering may helps us to reveal some information about the data, but it doesn't tell us anything about the model parameters of each group of observations. For that purpose we need to use better approaches like REBUS.
+
+
+
+
+\section{Applying REBUS}
+\plspm{} provides a couple of functions that allow us to perform a REBUS analysis. The main function is \code{rebus.pls()} which can be used as:
+
+\texttt{rebus.pls(pls, stop.crit = 0.005, iter.max = 100)}
+
+The first argument \code{pls} is an object of class \code{"plspm"}. The second argument \code{stop.crit} indicates the stop criterion for the iterative algorithm in REBUS. The default value means that we are using a threshold of less than 0.05\% of units changing class from one iteration to the other as stopping rule. Don't worry if this sounds complicated; 99\% of the times you can leave this parameter untouched unless you want to have a more relaxed threshold (e.g. \code{stop.crit = 0.10}), or a more strict one (e.g. \code{stop.crit = 0.001}). The third argument \code{iter.max} indicates the maximum number of iterations. The default value \code{iter.max = 100} should be enough, but you can increase it if you needed to, although this could be evidence that the detected classes may be unstable.
+
+With that said, let us apply \code{rebus.pls()} on \code{fut\_pls} with the default settings:
+<<fut_rebus, eval=FALSE>>=
+# apply rebus
+fut_rebus = rebus.pls(fut_pls)
+@
+When you run \texttt{rebus.pls()}, two things should happen: 1) a plot window should pop-up showing a dendrogram, and 2) the following message should appear in your console: \\
+\begin{verbatim}
+[1] "Enter the number of classes (an integer > 1), and then press Enter:"
+1: 
+\end{verbatim}
+
+\vspace{3mm}
+As the message says, you should enter a digit greater than 1 and then press the key Enter. This number will be the number of classes that REBUS will compute to get the preliminary cluster partition.
+
+The displayed dendrogram is just a visual aid so you can choose the number of classes to be taken into account. Once you have decided how many clusters to choose, say three in this case, you must enter the number 3 in your console and then press Enter.
+
+<<fut_pls_rebus, echo=FALSE, fig.width=7, fig.height=5, out.width='0.95\\linewidth', out.height='.65\\linewidth', fig.align='center', fig.pos='h', fig.cap='REBUS: Cluster Dendrogram of Outer and Inner residuals'>>=
+# apply rebus
+fut_resclus = res.clus(fut_pls)
+fut_rebus = it.reb(fut_pls, fut_resclus, nk = 3)
+abline(h=10, col="#bc014655", lwd=4)
+@
+
+\vspace{2mm}
+The cluster analysis behind REBUS, that produces the dendrogram, is a hierarchical clustering (with Ward method) applied on the residuals of both the outer and the inner model. This clustering is the first step in the REBUS algorithm and the number of chosen classes will create a preliminary partition of the observations. Then, in the iterative procedure, the observations will be reassigned to the class' model that best fits them. 
+
+What you get in \code{fut\_rebus} is an object of class \code{"rebus"}. When typing an object of this class you get a display with the following results: the first section contains 1) the parameters specification, 2) information of the found solutions, and 3) the composition of the found segments. The second section denoted by \code{\$path.coef} shows the values of the path coefficients for each class. The third section denoted by \code{\$quality} shows some measures about the quality of the models in each class.
+
+<<print_fut_rebus>>=
+# what's in fut_rebus?
+fut_rebus
+@
+
+As you can see from the list of results we have 3 classes with the following composition: Class 1 has 18 teams (30\%), Class 2 has 22 teams (37\%), and Class 3 has 20 teams (33\%). In addition, we have a Global Quality Index (GQI) of 0.8251 which is greater than the GoF index of the global model :
+<<fut_pls_gof>>=
+# GoF global model
+fut_pls$gof
+@
+
+
+\paragraph{Class 1 Teams} If we inspect the path coefficients of the teams in the first class, we will see they have more or less similar values: \code{Success = 0.5731}, and \code{Defense = 0.5731}. However, compared to the path coefficients of the other classes, we can clearly see that the Class 1 teams are definitely more defensive driven. We could dub these teams as the \textit{defensive teams}:
+<<fut_rebus_class1, echo=-1>>=
+options(width = 65)
+# teams in class 1
+names(fut_rebus$segments[fut_rebus$segments == 1])
+@
+
+\paragraph{Class 2 Teams} The teams in the second class have an \code{Attack} coefficient of 0.6401 and a \code{Defense} coefficient of 0.5083. This implies that the \code{Success} of these teams is more driven by their \code{Attack} although their \code{Defense} is still important:
+<<fut_rebus_class2>>=
+# teams in class 2
+names(fut_rebus$segments[fut_rebus$segments == 2])
+@
+
+\paragraph{Class 3 Teams} As you can see from the results, the teams in class 3 have the most disimilar path values of all 3 classes. The \code{Success} of these teams is primarily driven by \code{Attack} (path = 0.6881). It doesn't mean that all the teams in the class are successful; instead, it means that their \code{Success} (or lack of it) can be explained more by its \code{Attack} (or lack of it) than by its \code{Defense} (path = 0.3654):
+<<fut_rebus_class3>>=
+# teams in class 3
+names(fut_rebus$segments[fut_rebus$segments == 3])
+@
+
+
+
+\subsection{Local Models}
+Although we have the path coefficients for each class in \code{fut\_rebus\$path.coef}, we can use the function \code{local.models()} to calculate the PLS path models of each detected class, and then plot the inner results of each local model. The way in which you should use \code{local.models()} is by indicating the \code{"plspm"} object as the first argument, and then the \code{"rebus"} object as the second argument:
+<<fut_rebus_local_models>>=
+# local plspm models
+locs = local.models(fut_pls, fut_rebus)
+
+# what's in locs?
+locs
+@
+\code{local.models()} returns a list with the PLS-PM results of the global model, as well as the results of each local model. For instance, the output of the local model Class 1 is in \code{locs\$loc.model.1}; likewise the output of the local model Class 3 is in \code{locs\$loc.model.3}. Each of these results can be inspected using the \code{summary()} method or any other function that applies to objects of class \code{"plspm"}, like \code{plot()}:
+
+<<fut_rebus_locals_plot, eval=FALSE>>=
+# plot inner models
+plot(locs$loc.model.1, main="Class 1")
+plot(locs$loc.model.2, main="Class 2")
+plot(locs$loc.model.3, main="Class 3")
+@
+
+<<fut_rebus_plot_locals, echo=FALSE, fig.width=4.5, fig.height=2, out.width='0.95\\linewidth', out.height='.45\\linewidth', fig.align='center', fig.pos='h', fig.cap='Comparing inner models'>>=
+# local plspm models
+locs = local.models(fut_pls, fut_rebus)
+# comparing path coefficients
+op = par(mfrow = c(1,3), mar=c(0,0.7,1,0.7))
+plot(locs$loc.model.1, box.size = 0.14, arr.width=0.15, arr.pos=0.4, main="Class 1", cex.main=0.9)
+plot(locs$loc.model.2, box.size = 0.14, arr.width=0.15, arr.pos=0.4, main="Class 2", cex.main=0.9)
+plot(locs$loc.model.3, box.size = 0.14, arr.width=0.15, arr.pos=0.4, main="Class 3", cex.main=0.9)
+par(op)
+@
+
+
+\subsubsection*{Examining the Loadings}
+We also have the loadings contained in \code{fut\_rebus\$outer\_model\$loading}. However, we can create a data frame \code{rebus\_loads} containing the loadings of all models: the global and the local ones. This data frame will let us examine the loadings in a better way with some graphics:
+<<rebus_loads_dataframe, tidy=FALSE>>=
+# data frame of loadings
+rebus_loads = as.data.frame(cbind(fut_pls$outer_model$loading, 
+                                  fut_rebus$loadings))
+
+# add column names
+colnames(rebus_loads) = c("Global", paste("Class", 1:3, sep=""))
+@
+
+In addition, we will include information about the names of the indicators as well as the construct to which they belong to:
+<<rebus_loads_additions, tidy=FALSE>>=
+# create factor with names of indicators
+aux_inds = factor(rownames(rebus_loads),
+    levels=c("GSH","GSA","SSH","SSA","CSH","CSA","NGCH","NGCA","WMH","WMA"))
+
+# add factor of indicator
+rebus_loads$indicator = aux_inds
+
+# add constructs
+rebus_loads$construct = rep(rownames(fut_path), sapply(fut_blocks, length))
+
+# what does it look like?
+head(rebus_loads)
+@
+
+It would be nice to have a barplot comparing the loadings of the global and the local models with \code{ggplot2}. The ``problem'' is that if we try to use \code{rebus\_loads} as it is, we won't get further with our plotting attempts. The solution consists of using some functionalities of the package \code{reshape} (also by Hadley Wickham) to manipulate the data frame of loadings into the right format for \code{ggplot()}. 
+
+The trick is to use the function \code{melt()} which, as its name says, allows you to \textit{melt} the specified variables in your data frame. The idea is to transform \code{rebus\_loads} into another data frame that will have the same data but in a different format. In our case we want to melt all the loadings in one single column while keeping the information about which model, construct and indicator they belong to. Here is the code to do the melting:
+<<melt_rebus_loads, message=FALSE, tidy=FALSE>>=
+# package reshape
+library(reshape)
+
+# melt loadings
+melt_loads = melt(rebus_loads, id.vars = c("indicator", "construct"), 
+                  variable_name = "model")
+
+# what does it look like?
+head(melt_loads)
+@
+What we are doing is telling \code{melt()} that we want to transform the data frame \code{rebus\_loads}. The way in which the transformation should be done is by keeping the information in \code{indicator} and \code{construct} in separate columns (this is specified with \code{id.vars}). Because we are keeping intact \code{indicator} and \code{construct}, the melting will be applied on the rest of the available variables (\code{Global, Class1, Class2, Class3}). Actually, \code{melt()} is going to stack the values in those columns to form a single column with all the loadings. To keep tracking of the model to which the values belong to, we tell \code{melt()} to create a new column: \code{variable\_name = "model"}.
+
+Now that we have the data frame \code{melt\_loads} in the desired format, we can use \code{ggplot()} to get a barplot like the one below. Notice that the bar colors are specfied using the function \code{brewer.pal()} from the package \code{RColorBrewer} (just a personal preference):
+
+<<melt_loads_ggplot_code, eval=FALSE, tidy=FALSE>>=
+# package RColorBrewer
+library(RColorBrewer)
+# plot loadings
+ggplot(data=melt_loads, aes(x=indicator, y=value, fill=construct)) +
+  # apply bar geom
+  geom_bar(stat = "identity") +
+  # require facetting based on model
+  facet_wrap(~ model) + 
+  # x-axis label
+  xlab("Indicators") +
+  # y-axis-label
+  ylab("Loadings") +
+  # add colors of bars
+  scale_fill_manual(values = brewer.pal(9, "PuOr")[c(3,7,2)]) +
+  # labels of x-axis at an angle of 90 degrees
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+@
+
+<<melt_loads_ggplot, fig.width=8, fig.height=5, out.width='0.95\\linewidth', out.height='.65\\linewidth', fig.align='center', fig.pos='h', echo=FALSE, fig.cap='Comparative barplots of loadings', message=FALSE>>=
+require(RColorBrewer)
+# plot loadings
+ggplot(data = melt_loads, aes(x = indicator, y = value, fill = construct)) + 
+  geom_bar(stat = "identity") +
+  facet_wrap(~ model) + 
+  xlab("Indicators") +
+  ylab("Loadings") +
+  scale_fill_manual(values = brewer.pal(9, "PuOr")[c(3,7,2)]) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+@
+
+
+\subsection{Quality of REBUS models}
+To assess the quality of the local models obtained by REBUS we use the function \code{rebus.test()} that performs permutation tests for comparing pairs of groups from a \code{"rebus"} object. The
+function \code{rebus.pls()} has the following usage:
+
+\texttt{rebus.test(pls, reb)}
+
+The first argument \code{pls} is an object of class \code{"plspm"}. The second argument \code{reb} indicates the \code{"rebus"} object. This is how we use it:
+<<fut_rebus_test>>=
+# apply rebus.test
+fut_test = rebus.test(fut_pls, fut_rebus)
+
+# check results
+fut_test
+@
+
+What we get in \code{fut\_test} is a list with elements for each pair of compared models. To see the comparison of model Class 1 against model Class 2 just type:
+<<fut_test_mod1_mod2>>=
+# class 1 -vs- class 2
+fut_test$test_1_2
+@
+As you can see from the results, none of the model parameters is significantly different between Class 1 and Class 2. But what about the comparison between Class 1 and Class 3? Let's find out:
+<<fut_test_mod1_mod3>>=
+# class 1 -vs- class 3
+fut_test$test_1_3
+@
+In this case, we have two relevant differences in the loadings: one with the indicator \code{CSA} (\% of matches with no conceded goals away), and the other one with the indicator \code{NGCH} (negative goals conceded at home). Both manifest variables have loadings smaller in Class 1.
+
+The last pair comparison that we have to examine is the comparison of Class 2 and Class 3:
+<<fut_test_mod2_mod3>>=
+# class 2 -vs- class 3
+fut_test$test_2_3
+@
+Interestingly, we have three model parameters with a significant difference. On one hand we have two loadings that show smaller values in Class 2: \code{CSA} and \code{NGCH}. On the other hand, we have that the \code{gof} value of Class 2 is also significantly smaller than the one of Class 3.
+
+
+\subsection{Final Comments}
+REBUS-PLS is able to detect unobserved heterogeneity not only when it affects the whole model (i.e. both the measurement and structural models), but also when it focuses only on the structural model level or on the measurement model level.
+
+REBUS is limited to reflective measurement models because the way in which the measurement residuals are calculated.
+
+
+
+
+\section{Reading List}
+\begin{itemize}
+ \vspace{2mm}
+ \item \textsf{\textbf{REBUS-PLS: A response-based procedure for detecting unit segments in PLS Path Modeling}} by Vincezo Esposito Vinzi, Laura Trinchera, Silvia Squillacciotti and Michel Tenenhaus (2008). This paper in the journal \textit{Applied Stochastic Models in Business and Industry} (24: 439-458) presents the REBUS methodology.
+ 
+ \vspace{2mm}
+ \item \textsf{\textbf{PLS Path Modeling: From Foundations to Recent Developments and Open Issues for Model and Improvement}} by Vincenzo Esposito Vinzi, Laura Trinchera and Silvano Amato (2010). In Chapter 2 of the \textit{Handbook of Partial Least Squares}, the section 2.4.1 is dedicated to describe the REBUS-PLS Algorithm.
+
+ \vspace{2mm}
+ \item \textsf{\textbf{Laura Trinchera's PhD Thesis}} (2008). The doctoral dissertation of Laura Trinchera about REBUS-PLS is available at: \\ \texttt{\href{http://www.fedoa.unina.it/2702/1/Trinchera_Statistica.pdf}{http://www.fedoa.unina.it/2702/1/Trinchera\_Statistica.pdf}}. 
+
+ \vspace{2mm}
+ \item \textsf{\textbf{Detecting Unobserved Heterogeneity in the Relationship Between Subjective Well-Being and Satisfaction in Various Domains of Life Using the REBUS-PLS Path Modelling Approach: A Case Study}} by Luca Zanin (2011). In this paper, published in the journal \textit{Social Indicators Research (DOI 10.1007/s11205-011-9931-5)}, the author shows an application of REBUS using a model to study the relationship between Subjective Well-Being (SWB) and Satisfaction in various domains of life. 
+\end{itemize}
+
+
+\paragraph{References about FIMIX-PLS:} 
+\begin{itemize}
+ \vspace{2mm}
+ \item \textsf{\textbf{Capturing customer heterogeneity using a finite mixture PLS approach}} by Carsten Hahn, Michael D. Johnson, Andreas Herrmann, and Frank Huber (2002). This article in the journal \textit{Schmalenbach Business Review (54-3: 243-269)}, is the original paper that proposes the FIMIX approach for PLS Path Modeling.
+
+ \vspace{2mm}
+ \item \textsf{\textbf{Finite Mixture Partial Least Squares Analysis: Methodology and Numerical Examples}} by Christian Ringle, Sven Wende and Alexander Will (2010). As Chapter 8 of the \textit{Handbook of Partial Least Squares}, the authors describe the FIMIX methodology with an application on empirical data. 
+
+ \vspace{2mm}
+ \item \textsf{\textbf{Capturing and Treating Unobserved Heterogeneity by Response Based Segmentation in PLS Path Modeling. A Comparison of Alternative Methods by Computational Experiments}} by Vincenzo Esposito Vinzi, Christian Ringle, Silvia Squillacciotti and Laura Trinchera (2007). This working paper, from the ESSEC Business School, describes three approaches for unobserved heterogeneity in PLS-PM: FIMIX-PLS, PLS Typological Path Modeling, and REBUS-PLS. It also compares the three approaches using simulated data. Available at: \\
+ \href{http://www.essec.fr/faculty/showDeclFileRes.do?declId=7153&key=__workpaper__}{http://www.essec.fr/faculty/showDeclFileRes.do?declId=7153\&key=\_\_workpaper\_\_}
+
+\vspace{2mm}
+ \item \textsf{\textbf{Segmentation for Path Models and Unobserved Heterogeneity: The Finite Mixture Partial Least Squares Approach.}} by Christian Ringle (2006). This is a working paper published by University of Hamburg in \textit{Research Papers on Marketing and Retailing (No. 35, November 2006)}. It contains a detailed description of FIMIX-PLS with an application on survey data from Benetton. Available at: \\
+ \href{http://mpra.ub.uni-muenchen.de/10734/1/MPRA_paper_10734.pdf}{http://mpra.ub.uni-muenchen.de/10734/1/MPRA\_paper\_10734.pdf}
+\end{itemize}

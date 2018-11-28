@@ -1,0 +1,861 @@
+% !Rnw root = ../PLS_Path_Modeling_with_R.Rnw
+
+
+\chapter{Running a PLS-PM Analysis}
+In this chapter we are going to carry out a PLS-PM analysis from beginning to end with \plspm{}. The purpose of this exercise is to reproduce, as much as possible, the main steps that you would have to perform in a real life PLS-PM application. As in any data analysis and modeling project, building models is usually the ultimate goal, yet we spend a lot more time understanding the context of the analysis, manipulating the data into the right shape, before we can begin estimating the models. I remember one of my mentors saying that we spend 90\% of the time cleaning and processing the data (I think he underestimated that proportion). As we will find, we prepare the ingredients for our model, do some preliminary check-ups, calculate the model, inspect some results, detect points than need improvement, take a break and get a coffee, then go back to work on the data doing some transformation, formatting, cleaning, build another model, drink more coffee, then return to processing the data once again, and so on for many iterations. In most cases, each cycle takes us a step closer to achieveing a satisfying solution. 
+
+This chapter presents the opportunity to work on a real case study in which we will go through the iterative process required in almost every PLS-PM application. The application is based on a modified Customer Satisfaction model, which is without a doubt \textit{the} standard bearer of the PLS Path Modeling applications. 
+
+<<echo=FALSE>>=
+#options(width = 70)
+@
+
+\section{Modeling Customer Satisfaction}
+We cannot scape the influence \textit{Customer Satisfaction} modeling has had on PLS-PM. Over the last ten years ($\sim$ 2000-2010) many of the successful applications of PLS Path Modeling have been performed within marketing and management studies related with measuring customer satisfaction. It is impossible to deny that this topic has played a key role on the applicability of PLS-PM. Truth be told, Customer Satisfaction Modeling has become the reference application when presenting the PLS path Modeling approach in academic courses, conferences, seminars and workshops. No wonder why Customer Satisfaction Modeling is considered a landmark for PLS-PM as well as an experimental field, becoming the main developmental arena for PLS proposals and innovations.
+
+\subsection{ECSI Model}
+Among the large number of available measures of customer satisfaction, we can find the \textbf{European Customer Satisfaction Index} (ECSI). In the late 1990s, the European Union, inspired by the Swedish and the American Customer Satisfaction Indices, started to develop a comparative system of national satisfaction indices. The result was the establishment of the European Customer Satisfaction Index founded by the European Organization for Quality (EOQ), the European Foundation for Quality Management (EFQM) and the European Academic Network for Customer Oriented Quality Analysis (IFCF), with the support of the European Commission and the collaboration of the CSI university network integrated by 8 European universities. 
+
+The ECSI model, illustrated in the diagram below, is designed to measure the cause-effect relationships from the antecedents of \textit{Customer Satisfaction} to its consequences.
+<<ECSI_model, echo=FALSE, message=FALSE>>=
+# load pathdiagram
+library(pathdiagram)
+# define graphic parameters of latent variables
+ima = latent("Image", x=0.45, y=0.85, rx=0.09, ry=0.07, font=1)
+exp = latent("Expec-\ntations", x=0.15, y=0.65, rx=0.09, ry=0.07, font=1)
+qua = latent("Perceived\nQuality", x=0.15, y=0.25, rx=0.09, ry=0.07, font=1)
+val = latent("Perceived\nValue", x=0.35, y=0.45, rx=0.09, ry=0.07, font=1)
+sat = latent("Satisfaction", x=0.6, y=0.45, rx=0.09, ry=0.07, font=1)
+com = latent("Complaints", x=0.85, y=0.25, rx=0.09, ry=0.07, font=1)
+loy = latent("Loyalty", x=0.85, y=0.65, rx=0.09, ry=0.07, font=1)
+@
+
+<<ECSI_model_diag, echo=FALSE, fig.keep='last', fig.width=6, fig.height=4.5, out.width='.95\\linewidth', out.height='.5\\linewidth', fig.align='center', fig.pos='h', fig.cap='Diagram of the European Customer Satisfaction Index (ECSI) model'>>=
+# PLOT
+op = par(mar = rep(0,4))
+# open wall to draw path diagram
+wall(ylim = c(0.2, 0.9))
+# draw latent variables
+draw(ima); draw(exp); draw(qua); draw(val)
+draw(sat); draw(com); draw(loy); 
+# add arrows
+arrow(from=ima, to=exp, start="west", end="north", angle=18)
+arrow(from=ima, to=sat, start="south", end="north", angle=18)
+arrow(from=ima, to=loy, start="east", end="north", angle=18)
+arrow(from=exp, to=qua, start="south", end="north", angle=18)
+arrow(from=exp, to=val, start="east", end="north", angle=18)
+arrow(from=exp, to=sat, start="east", end="north", angle=18)
+arrow(from=qua, to=val, start="east", end="south", angle=18)
+arrow(from=qua, to=sat, start="east", end="south", angle=18)
+arrow(from=val, to=sat, start="east", end="west", angle=18)
+arrow(from=sat, to=loy, start="east", end="west", angle=18)
+arrow(from=sat, to=com, start="east", end="west", angle=18)
+arrow(from=com, to=loy, start="north", end="south", angle=18)
+par(op)
+@
+
+The antecedents of Customer Satisfaction (Image, Expectations, Perceived Quality, and Perceived Value) are the drivers that affect customer satisfaction, while the consequences of customer satisfaction (Loyalty and Complaints) are performance constructs. 
+
+Overview of constructs in the ECSI model:
+\begin{itemize}
+ \item \textbf{Image} refers to the brand name and the kind of associations customers get from the product/brand/company. It is expected that image will have a positive effect on customer satisfaction and loyalty. In addition, image is also expected to have a direct effect on expectations.
+ \item \textbf{Expectations} is the information based on, not actual consumption experienced but, accumulated information about quality from outside sources, such as advertising, word of mouth, and general media.
+ \item \textbf{Perceived Quality} comprises product quality (hardware) and service quality (software/humanware). Perceived product quality is the evaluation of recent consumption experience of products. Perceived service quality is the evaluation of recent consumption experience of associated services like customer service, conditions of product display, range of services and products, etc. Perceived quality is expected to affect satisfaction.
+ \item \textbf{Perceived Value} is the perceived level of product quality relative to the price paid of the ``value for the money'' aspect of the customer experience.
+ \item \textbf{Satisfaction} is defined as an overall evaluation of a firm's post-purchase performance or utilization of a service.
+ \item \textbf{Complaints} implies the complaints of customers
+ \item \textbf{Loyalty} refers to the intention repurchase and price tolerance of customers. It is the ultimate dependent variable in the model and it is expected that the better image and higher customer satisfaction should increase customer loyalty.
+\end{itemize}
+
+\subsection{Case Study: Satisfaction in Education}
+The case study for this chapter consists of an application of the ECSI model to Educational Services. The data comes from a survey study made by a student diversity program office in an American university. Typically, this kind of academic programs provide resources to improve the career success of educationally and financially disadvantaged students throughout their college years. In this case study we are going to consider a simplified and modified version of the ECSI model. 
+
+The adapted model aims to measure how satisfied are the members of the program taking into account the quality of the Support provided, the quality of the Advising, and the quality of the Tutoring. It is also supposed that these three quality constructs have an impact on the perceived Value. Besides measuring the satisfaction, the model also pays attention to the Loyalty understood as the commitment and involvement of the students with the program. As we would expect, the more satisfied the members of the program are, the more loyal to the program they will be. The graphical display of the adapted PLS Path Model is shown in the next diagram:
+<<education_path_diagram, echo=FALSE, fig.keep='last', fig.width=5.5, fig.height=4.5, out.width='.85\\linewidth', out.height='.5\\linewidth', fig.align='center', fig.pos='h', fig.cap='Path Diagram of an adapted ECSI model for Educational Services'>>=
+# latent variables
+sup = latent("Support", x=0.3, y=0.9, rx=0.08, ry=0.07, font=1)
+adv = latent("Advising", x=0.15, y=0.65, rx=0.08, ry=0.07, font=1)
+tut = latent("Tutoring", x=0.15, y=0.15, rx=0.08, ry=0.07, font=1)
+val = latent("Value", x=0.4, y=0.4, rx=0.08, ry=0.07, font=1)
+sat = latent("Satisfaction", x=0.625, y=0.4, rx=0.08, ry=0.07, font=1)
+loy = latent("Loyalty", x=0.85, y=0.4, rx=0.08, ry=0.07, font=1)
+
+# PLOT
+op = par(mar = rep(0,4))
+wall(xlim=c(.1,.9), ylim=c(0.1, 0.95))
+# draw latent variables
+draw(sup); draw(adv); draw(tut)
+draw(val); draw(sat); draw(loy)
+# add arrows
+arrow(from=sup, to=val, start="south", end="north")
+arrow(from=sup, to=sat, start="east", end="north")
+arrow(from=adv, to=val, start="east", end="west")
+arrow(from=adv, to=sat, start="east", end="north")
+arrow(from=tut, to=val, start="east", end="west")
+arrow(from=tut, to=sat, start="east", end="south")
+arrow(from=val, to=sat, start="east", end="west")
+arrow(from=sat, to=loy, start="east", end="west")
+#
+par(op)
+@
+
+
+
+\subsubsection*{Data Education}
+The dataset for the case study does NOT come with \plspm{}. Since the goal of this chapter is to show you how to use R for running a full PLS Path Modeling analysis, I've decided to go through all the main steps of the analysis process. And that implies that you have to import the dataset in R.
+
+The dataset is available in text format (\code{education.txt}) and in comma separated value format (\code{education.csv}) so you can choose the option that you like the most. Both files can be downloaded from my website:
+\begin{itemize}
+ \item[] \texttt{\href{http://www.gastonsanchez.com/education.txt}{http://www.gastonsanchez.com/education.txt}}
+ \item[] \texttt{\href{http://www.gastonsanchez.com/education.csv}{http://www.gastonsanchez.com/education.csv}}
+\end{itemize}
+I suggest you to open the downloaded file with your favorite text processor (for the \code{txt} file) or spreadsheet software (for the \code{csv} file) so that you take a quick glance at the data.
+
+\subsubsection*{Importing data in R}
+Once you downloaded the file with the \code{education} data, the first step is importing the data in your R session. R comes with various functions to read files. The most common option is to use the function \code{read.table()}, but there are also other sister functions: \code{read.csv()} to read \code{.csv} files, and \code{read.delim()} to read files with other types of delimiters. If you want to know more about importing and exporting data in R, there is a dedicated manual in the CRAN website: \\
+\texttt{\href{http://cran.r-project.org/doc/manuals/R-data.html}{http://cran.r-project.org/doc/manuals/R-data.html}} \\
+And of course, you can always google for more specific questions.
+
+In my case, I have the data files in my directory \code{"/Users/gaston/PLS"} (the location of the data will be different in your case). Let's see how to read the text file with the function \code{read.table()}:
+<<read_education_txt, eval=FALSE, error=FALSE, tidy=FALSE>>=
+# read "education.txt"
+education = read.table("/Users/gaston/PLS/education.txt", header = TRUE, 
+                       row.names = 1)
+@
+Basically, we are telling \code{read.table()} to read the text file \code{education.txt} located at \code{"/Users/gaston/PLS/education.txt"}. The parameter \code{header=TRUE} indicates that the first row of the data are the column names. In turn, the parameter \code{row.names=1} is used to indicate that the first column contains the names of the rows.
+
+Alternatively, if you prefer to read the \code{.csv} file, you can import the data with the function \code{read.csv()} like this:
+<<read_education_csv, eval=FALSE, error=FALSE, tidy=FALSE>>=
+# read "education.csv"
+education = read.csv("/Users/gaston/PLS/education.csv", header = TRUE, 
+                     row.names = 1)
+@
+
+
+<<read_education_data, echo=FALSE>>=
+# read education
+education = read.csv("/Users/Gaston/Documents/PLS_Path_Modeling_with_R/education.csv", 
+                     row.names=1, header=T, stringsAsFactors=TRUE)
+@
+
+If everything went fine, you can use the function \code{dim()} to get the dimensions of the data frame. 
+<<education_dim>>=
+# how many rows and oclumns?
+dim(education)
+@
+
+The function \code{summary()} provides basic descriptive statistics of each column:
+<<education_summary, size="small">>=
+# summarized statistics of the first 20 columns
+summary(education[,1:20])
+@
+
+\subsubsection*{Survey Questionnaire}
+Each column in the data is a response of the applied questionnaire to 181 students members of the academic program. There are also three categorical variables (the last three columns): \code{gender}, \code{scholarships}, and \code{job}. They indicate the gender of the respondents, whether they have a scholarship, and whether they have a job. The rest of the questions are measured on a 7-point scale. Depending on the question, the following options were given to the respondents:
+\begin{itemize}
+ \item[A)] 1 = completely disagree, 4 = neither agree nor disagree, 7 = completely agree
+ \item[B)] 1 = not at all, 7 = very much
+\end{itemize}
+
+\vspace{2mm}
+Below is the list of variables in the data, presented in blocks of indicators with their corresponding question: \\
+%\begin{table}[h]
+\begin{tabular}{l l}
+ \textbf{Support} & \\
+ \code{sup.help} & I feel comfortable asking for help from the program's staff \\
+ \code{sup.under} & I feel underappreciated in the program \\
+ \code{sup.safe} & I can find a place where I feel safe in the program \\
+ \code{sup.conc} & I go to the program when I have concerns about school \\
+\end{tabular}
+%\end{table}
+
+%\begin{table}[h]
+\begin{tabular}{l l}
+ \textbf{Advising} & \\
+ \code{adv.comp} & Competence of advisors \\
+ \code{adv.acces} & Access to advisors \\
+ \code{adv.comm} & Communication skills of advisors \\
+ \code{adv.qual} & Overall quality of advising \\
+\end{tabular}
+%\end{table}
+
+%\begin{table}[h]
+\begin{tabular}{l l}
+ \textbf{Tutoring} & \\
+ \code{tut.prof} & Proficiency of tutors \\
+ \code{tut.sched} & Tutoring schedules \\
+ \code{tut.stud} & Variety of study groups \\
+ \code{tut.qual} & Overall quality of tutoring \\
+\end{tabular}
+%\end{table}
+
+%\begin{table}[h]
+\begin{tabular}{l l}
+ \textbf{Value} & \\
+ \code{val.devel} & Helpfulness in my personal development \\
+ \code{val.deci} & Helpfulness in personal decision making \\
+ \code{val.meet} & Facilitating meeting people and contacts \\
+ \code{val.info} & Accessibility to support and information \\
+\end{tabular}
+%\end{table}
+
+%\begin{table}[h]
+\begin{tabular}{l l}
+ \textbf{Satisfaction} & \\
+ \code{sat.glad} & I'm glad to be a member of the program \\
+ \code{sat.expe} & The program meets my expectations \\
+ \code{sat.over} & Overall, I'm very satisfied with the program \\
+\end{tabular}
+%\end{table}
+
+%\begin{table}[h]
+\begin{tabular}{l l}
+ \textbf{Loyalty} & \\
+ \code{loy.proud} & I'm proud to tell others I'm part of the program \\
+ \code{loy.recom} & I would recommend the program to my colleagues \\
+ \code{loy.asha} & I often feel ashamed of being a member of the program \\
+ \code{loy.back} & I'm interested in giving something back to the program \\
+\end{tabular}
+%\end{table}
+
+
+
+\section{Preliminary Exploration}
+The dataset is already clean and shaped in the right format, which will save us a lot of time dealing with the boring part of data pre-processing. As you can tell, the variables are already named according the their corresponding blocks. However, we still have to work on a couple of preparatory tasks before playing with the \fplspm{} function. So let us start with some preliminary analysis by exploring the dataset and the blocks of variables.
+
+\subsection{Looking at the data}
+First we will perform some visual explorations. We can calculate the distribution values with the function \code{table()} and then apply \code{barplot()} to get a bar chart. This is how we do it with the first variable \code{sup.help}:
+<<support_mvs_distrs, fig.width=5, fig.height=3.5, out.width='.55\\linewidth', out.height='.4\\linewidth', fig.align='center', fig.pos='h', fig.cap='Visualizing the distribution of the first Support indicator', echo=-c(3,7)>>=
+# distribution of first column
+aux_distrib = table(education[,1]) / nrow(education)
+op = par(mar = rep(2, 4))
+
+# barplot of the distribution
+barplot(aux_distrib, border=NA, main=colnames(education)[1])
+par(op)
+@
+
+Because we have four manifest variables related to \code{Support}, it would be nice to visualize the distributions of all the indicators. Most of the graphics that we do are for purely inspection purposes. But then we need to prepare some plots in a nicer way to be included in a report or a presentation. Say we want to get more beautiful charts than the default options provided by \code{barplot()}. We can use the colors in the package \code{RColorBrewer} (by Erich Neuwirth):
+<<load_RColorBrewer, message=FALSE>>=
+# package RColorBrewer (for nice colors)
+library(RColorBrewer)
+@
+
+We will also need to have better column labels instead of the column names in the data \code{education}. Let's create a vector with names for the indicators of \code{Support}:
+<<labels_support_block>>=
+# questions of Support indicators
+sq1 = "Help when not doing well"
+sq2 = "I feel underappreciated"
+sq3 = "I can find a place where I feel safe"
+sq4 = "Concerns about school"
+
+# put questions in one vector
+sup_questions = c(sq1, sq2, sq3, sq4)
+@
+
+Here's the figure with the bar charts of the manifest variables in \code{Support}:
+<<barplots_support_figure, fig.width=8, fig.height=4, out.width='1\\linewidth', out.height='.6\\linewidth', fig.align='center', fig.pos='h', fig.cap='Visualizing the distributions of Support indicators', echo=FALSE>>=
+# barplots of Support indicators
+op = par(mfrow = c(2,2), mar=c(2.5, 3.2, 2, 0.8))
+for (j in 1:4) {
+  distrib = table(education[,j]) / nrow(education)
+  barplot(distrib, border=NA, col = brewer.pal(8, "Blues")[2:8], axes=FALSE,
+          main=sup_questions[j], cex.main=1)
+  axis(side = 2, las=2)
+  box("figure", col="gray70")
+}
+par(op)
+@
+
+How do we get such a nice graphic? Here is the code to get pretty barplots of the first block of manifest variables: 
+<<barplots_support_block, fig.keep='none', tidy=FALSE>>=
+# setting graphical parameters
+op = par(mfrow = c(2,2), mar = c(2.5, 3.2, 2, 0.8))
+# bar-chart for each indicator of Support
+for (j in 1:4) {
+  distribution = table(education[,j]) / nrow(education)
+  barplot(distribution, border = NA, col = brewer.pal(8, "Blues")[2:8], 
+          axes = FALSE, main = sup_questions[j], cex.main = 1)
+  # add vertical axis, and rectangle around figure
+  axis(side = 2, las=2)
+  box("figure", col="gray70")
+}
+# reset default graphical parameters
+par(op)
+@
+
+To plot the distributions in a single graphic window, we use the function \code{par()} to set the graphical parameters \code{mfrow} and \code{mar}. The parameter \code{mfrow} allows to set a layout with a vector specifying the number of rows and columns. The parameter \code{mar} sets the margins of the figures. In order to plot each barchart we apply a \code{for} loop that goes from the first to the fourth column in the dataset. Notice that inside \code{barplot()} we are using \code{brewer.pal()} to specify the color palette \code{"Blues"}. In addition, we are using \code{axis()} to manipulate the vertical axis and show its numbers in a horizontal way (which makes it easier to read the numbers). Finally, \code{box()} is used to plot the gray frame around each single figure. Your turn: try to plot the distributions of all blocks of indicators in \code{education}.
+
+If we pay attention to the barplots associated with \code{Support}, we should be able to see a clear pattern: the distributions are skewed, either to the left or to the right. This is something very common when working with people's perceptions where they tend to agree or disagree in a strong way. The other pattern has to do with the question ``I feel underappreciated in the program''. Notice that its distribution is concentrated in the lower values of the scale, specially on 1. Can you guess why is this happening?
+
+
+
+\subsection{Seeing the forest, not just the trees}
+The barplots are a good means to have a better idea of what the data look like. But if we want to have a deeper understanding of the data we have to take a next step: \textbf{correlations}. Calculating correlations allows us to get a feeling of the relationships between the variables. Let's examine the correlations of the manifest variables integrating the \code{Support} block:
+<<support_correlations>>=
+# correlations of Support indicators
+cor(education[,1:4])
+@
+
+Is there anything that calls your attention? Notice that \code{sup.under} is negatively correlated with the rest of indicators in the block \code{Support}. Jointly with the correlations, we can also make use of Principal Component Analysis (PCA) in an attempt to appreciate the systematic patterns in the data that are hard to see with the naked eye. We will perform a PCA with the function \code{nipals()} available in the package \code{plsdepot} (rememeber to install it first with \code{install.packages()}):
+<<support_nipals, fig.width=4.25, fig.height=4.25, out.width='.55\\linewidth', out.height='.55\\linewidth', fig.align='center', fig.pos='h', fig.cap='Visualizing the correlations of Support indicators', echo=-c(8,10), tidy=FALSE>>=
+# load plsdepot
+library(plsdepot)
+
+# PCA of Support indicators with nipals
+support_pca = nipals(education[,1:4])
+
+# plot
+op = par(mar = rep(0, 4))
+plot(support_pca, main = "Support indicators (circle of correlations)", 
+     cex.main = 1)
+par(op)
+@
+
+This graphic is known as a \textbf{circle of correlations} and is just a representation of the variable correlations on the first two principal axes associated with the first two principal components. You can read this graphic as if it were a radar. While the indicators \code{sup.conc}, \code{sup.help} and \code{sup.safe} are somewhat clustered on the right, the variable \code{sup.under} is in the upper-left corner. The fact that \code{sup.under} is on the left compared to the other indicators, reflects the fact of being negatively correlated with them. Why do we have this ``anomaly''? The answer can be found if we look at the second question associated to \code{Support}: \textit{I feel underappreciated in the program}. Clearly, this question is not measuring Support but rather Lack of Support. Right now we are not going to do anything with this issue, although you should keep it in mind (we'll talk about it in the next section).
+
+For the sake of convenience I'm not going to perform more PCA's on the rest of blocks of manifest variables. However, I encourage you to try to do the same exploratory analysis. This is something that eventually you will have to do in any real life situation, and it will save you further headaches when cooking your PLS path models.
+
+
+
+\section{PLS-PM Round 1}
+Let us assume that we have completed the exploratory phase of the manifest variables and that everything seems to be reasonably OK. This would mean that we did our homework by cleaning the data, treating missing values, deciding what to do with the outliers, formatting those variables that needed some transformations, and so on. We are now ready for the main show: the PLS Path Model building part. To start our model building process, we need to prepare the main ingredients for \fplspm{}: the \code{path\_matrix}, the list of \code{blocks}, and the vector \code{modes}.
+
+<<echo=FALSE, message=FALSE>>=
+library(plspm)
+@
+
+\subsubsection*{Inner model: \code{path\_matrix}}
+The path matrix of our model can be defined as:
+<<edu_path_matrix>>=
+# rows of path matrix
+Support = c(0, 0, 0, 0, 0, 0)
+Advising = c(0, 0, 0, 0, 0, 0)
+Tutoring = c(0, 0, 0, 0, 0, 0)
+Value = c(1, 1, 1, 0, 0, 0)
+Satisfaction = c(1, 1, 1, 1, 0, 0)
+Loyalty = c(0, 0, 0, 0, 1, 0)
+
+# matrix (by row binding)
+edu_path = rbind(Support, Advising, Tutoring, Value, Satisfaction, Loyalty)
+
+# add column names (optional)
+colnames(edu_path) = rownames(edu_path)
+@
+
+We can check the \code{path\_matrix} in path diagram version with \code{innerplot()}. This will help you to inspect the model and see if it is well defined:
+<<edu_innerplot, fig.width=5, fig.height=3.5, out.width='.8\\linewidth', out.height='.5\\linewidth', fig.align='center', fig.pos='h', fig.cap='Visualizing the path diagram of the inner model with innerplot', echo=c(1,3)>>=
+# plot the inner matrix
+op = par(mar = rep(0,4))
+innerplot(edu_path, box.size=0.1)
+par(op)
+@
+
+\subsubsection*{Outer model: \code{blocks} and \code{modes}}
+The second ingredient for \fplspm{} is the list defining the blocks of the measurement (outer) model and the measurement type to be used (reflective indicators in this case):
+<<edu_blocks_round1>>=
+# outer model
+edu_blocks = list(1:4, 5:8, 9:12, 13:16, 17:19, 20:23)
+
+# modes (reflective blocks)
+edu_modes = rep("A", 6)
+@
+
+\subsubsection*{Applying \fplspm{}}
+Once we have the required ingredients, we can apply \fplspm{}. Since this is our first attempt, we will use \fplspm{} with its default arguments. We will later ask for bootstrap validation.
+<<edu_plspm_round1>>=
+# apply plspm
+edu_pls1 = plspm(education, edu_path, edu_blocks, modes = edu_modes)
+
+# print edu_pls1
+edu_pls1
+@
+As you know, you can use the function \code{summary()} to display all the results of the model in the screen of your R session. For illustration purposes I won't use \code{summary()} but instead will go step by step with the results contained in \code{edu\_pls1}:
+
+
+\subsubsection*{Unidimensionality of Reflective Blocks}
+The diagnosis of a PLS path model begins with assessing the quality of the measurement model. Since we have reflective indicators, we must chek the unidimensionality of the blocks. Unidimensionality implies that the reflective indicators must be in a geometrical space of one dimension. Remember that manifest variables in a reflective block are considered as being caused by their latent variable (i.e. reflective manifest variables are indicating the same latent variable). In PLS-PM we have three main indices to check unidimensionality: 1) the Cronbach's alpha, 2) the Dillon-Goldstein's rho, and 3) the first eigenvalue of the MVs correlation matrix:
+<<edu_unidim_round1>>=
+# check unidimensionality
+edu_pls1$unidim
+@
+
+Looking at the table in \code{edu\_pls1\$unidim}, most of the blocks seem to have acceptable values (greater than 0.7) for the Cronbach's alpha and Dillon-Goldstein's rho. However, \code{Support} and \code{Loyalty} present low alphas of 0.1967 and 0.3383, respectively. To have a better idea of what's going on with the indicators in the ``problematic'' blocks, let's plot the loadings
+<<edu_pls1_loadings_plot, fig.width=6, fig.height=3.5, out.width='1\\linewidth', out.height='.6\\linewidth', fig.align='center', fig.pos='h', fig.cap='Visualizing the loadings (correlations)', echo=c(1,3)>>=
+# plotting the loadings
+op = par(mar = rep(0,4))
+plot(edu_pls1, what = "loadings")
+par(op)
+@
+
+It turns out that the variable \code{sup.under} has a negative loading with \code{Support}. This corresponds to what we saw earlier in section 2 of this chapter. In addition, the variable \code{loy.asha} presents the same issue in the block of \code{Loyalty}. Although these two blocks can be considered as unidimensional, they both have an indicator that is not pointing in the same direction as the other indicators in each block. What would you do to fix this problem?
+
+
+
+
+\section{PLS-PM Round 2}
+We need to change the indicators \code{sup.under} and \code{loy.asha}. The question behind \code{sup.under} is: ``I feel underappreciated in the program''. The question behind \code{loy.asha} is: ``I often feel ashamed of the program''. Thus, instead of ``I feel underappreciated'' we would like to have ``I feel appreciated''. In the same way, instead of ``I often feel ashamed of being a member of the program'', we would like to have ``I feel pleased of being a member of the program''. 
+
+This issue is more common than you think. You would be surprised by how many times I've seen this ``anomaly'' when analyzing others researchers' data. This is obviously not a problem of PLS or any other structural equation modeling approach. This is an issue that has to do with survey desings, more specifically with the designing of the questions. That's why is so crucial to get familiar with your data and do the exploratory analysis so you don't get caught unguarded with this type of phenomenon. I know that we already had detected the problem with \code{sup.under}, but I wanted to get to this point so you could see one of the many fault-prone components that you will encounter when applying PLS-PM.
+
+The proposed solution is to invert the scale of the ill-fated manifest variables. Actually, the proposal consists of creating new indicators that we may call \code{sup.appre} (I feel \textit{appreciated} in the program) and \code{loy.pleas} (I feel \textit{pleased} of being a member of the program). Here is how you can create the new indicators and add them to \code{education}:
+<<edu_change_mvs>>=
+# adding Support "appreciated"
+education$sup.appre = 8 - education$sup.under
+
+# adding "Loyalty" pleased
+education$loy.pleas = 8 - education$loy.asha 
+@
+We take the number 8 and we subtract the original values. In this way, when we had a value of 1 we now have a value of 7. Conversely, when we had a 7 we now have a 1.
+
+Let's apply \fplspm{} again. Of all the ingredients, we need to re-specify the outer list because of the two new indicators that we just aggregated to the data frame:
+<<edu_plspm_round2>>=
+# outer model 2
+edu_blocks2 = list(c(1,27,3,4), 5:8, 9:12, 13:16, 17:19, c(20,21,28,23))
+
+# apply plspm
+edu_pls2 = plspm(education, edu_path, edu_blocks2, modes = edu_modes)
+@
+
+As we did in the last section, we can visualize the loadings in each block and make sure that this time all the arrows are colored in blue, meaning positive correlations (i.e. loadings):
+<<edu_pls2_loadings_plot, fig.width=6, fig.height=3.5, out.width='1\\linewidth', out.height='.6\\linewidth', fig.align='center', fig.pos='h', fig.cap='Visualizing loadings - round 2', echo=c(1,3)>>=
+# plotting the loadings
+op = par(mar = rep(0,4))
+plot(edu_pls2, what = "loadings")
+par(op)
+@
+
+And we check the blocks' unidimensionality:
+<<edu_unidim_round2>>=
+# check unidimensionality
+edu_pls2$unidim
+@
+By using the modified indicators with inverted scales, we have managed to solve the issue with the unidimensionality of the blocks. Now \code{Support} has a Cronbach's alpha of 0.7433 and \code{Loyalty} has a corresponding alpha of 0.82. 
+
+
+\subsubsection*{Loadings and Communalities}
+Besides plotting the loadings, we need to do a more careful inspection by checking the results contained in \code{\$outer\_model}:
+<<edu_pls2_outer>>=
+# check outer model
+edu_pls2$outer_model
+@
+What we get is a data frame with the outer weights, the loadings (correlations), the communalities and the redundancies. Acceptable values for the loadings are values greater than 0.7. Equivalently, communalities values greater than $0.7^2 = 0.49$ are considered as acceptable. Because communalities represent the amount of variablity explained by a latent variable, a communality greater than 0.5 means that more than 50\% of the variablity in an indicator is captured by its latent construct. 
+
+Since the output of the outer model is a data frame, we can take advantage of the package \code{ggplot2} to produce a bar chart of loadings (or communalitites). Here's an option to visualize the loadings (remember to install \code{ggplot2} if you haven't done it):
+<<edu_pls2_barplot_loadings, fig.width=9, fig.height=5, out.width='1\\linewidth', out.height='.6\\linewidth', fig.align='center', fig.pos='h', tidy=FALSE>>=
+# load ggplot2
+library(ggplot2)
+
+# barchart of loadings
+ggplot(data = edu_pls2$outer_model, 
+       aes(x = name, y = loading, fill = block)) +
+  geom_bar(stat = 'identity', position = 'dodge') +
+  # threshold line (to peek acceptable loadings above 0.7)
+  geom_hline(yintercept = 0.7, color = 'gray50') +
+  # add title
+  ggtitle("Barchart of Loadings") +
+  # rotate x-axis names
+  theme(axis.text.x = element_text(angle = 90))
+
+@
+
+Notice that the \code{Support} indicator \code{sup.appre} has a loading of 0.6539 (below the gray horizontal line). Likewise, the \code{Loyalty} indicator \code{loy.pleas} has a loading of 0.6561. These loadings are below the recommended threshold of 0.7. Actually, these are the modified indicators that we included in the data and it seems that they are not happy indicators. Whether you decide to keep them or remove them is up to many things. Are they really important for the model? Are they really relevant in the theory used to propose the model? What do the experts that you are working with have to say? Could you replace them with other indicators? These are some of the question that you have to face in cases like this one. Being this a tutorial example, I propose to ban the unhappy indicators and re-run again our PLS path model without \code{sup.appre} and \code{loy.pleas}.
+
+
+
+
+\section{PLS-PM Round 3}
+We said in this chapter's introduction that data analysis and model building is an iterative process. The myth of applying any method in a straightforward way is just that: a myth. We have tried to estimate two PLS models without much ``success''. But you should know that this is totally fine, after all we are just getting a little bit closer to our goal. This is a trial and error process that may require transforming and merging data, redefine the model, remove some observations, and sometimes even get more data with better quality. In real life I would recommend you to stop for a while, take a break, go for a walk. After that, we can go back to work and redefine the list of \code{blocks} and re-apply \fplspm{} one more time:
+<<edu_plspm_round3>>=
+# outer model 3
+edu_blocks3 = list(c(1,3,4), 5:8, 9:12, 13:16, 17:19, c(20,21,23))
+
+# re-apply plspm
+edu_pls3 = plspm(education, edu_path, edu_blocks3, modes = edu_modes)
+@
+
+\subsection{Checking unidimensionality}
+As it is customary, we begin by checking the blocks' unidimensionality:
+<<edu_unidim_round3>>=
+# check unidimensionality
+edu_pls3$unidim
+@
+Everything looks fine: both the Croncbach's alphas and the Dillon-Goldstein's rhos are greater than 0.7. Regarding the eigen-analysis, the first eigenvalues are much more larger than 1, while the second eigenvalues are smaller than 1, which is taken as evidence that the variables in each block live in a more-or-less unidimensional space.
+
+
+\subsection{Loadings and Communalities}
+We then proceed with evaluating the loadings and communalities. This time all the indicators in each block should be happy indicators: loadings greater than 0.7 and communalities greater than 0.49:
+<<edu_pls3_outer>>=
+# check outer model
+edu_pls3$outer_model
+@
+
+
+\subsubsection*{Cross-lodadings}
+After checking the loadings of the indicators with their own latent variables, we continue with inspecting the so-called \textbf{cross-loadings}. That is, the loadings of an indicator with the rest of latent variables. The reason why we check this is because we don't want traitor indicators:
+<<edu_pls3_crosloadings, size='small', echo=-1>>=
+options(width = 85)
+# check cross loadings
+edu_pls3$crossloadings
+@
+Remember that you need to look at the list of results as if it were a super matrix: read it block by block paying attention to the sections in the diagonal. These sections are the loadings of each block with its construct. A given loading in one of these sections must be greater than any other loading in its row. For example, let's consider the last section that corresponds to \code{Loyalty}. The last column in this section has the loadings of the manifest variables in \code{Loyalty}. Let's focus on the first indicator \code{loy.proud} that has a loading of 0.8873. All of its cross-loadings are smaller than 0.8873, which is good. If you do the same check-up for \code{loy.recom} and \code{loy.back}, you should see that all their cross-loadings are below their respective loadings.
+
+What if an indicator loads higher with other constructs than the one it is intended to measure? Then you must consider whether it is appropriate to include it in the model. A hesitant indicator that is not clear which construct or constructs it is actually reflecting is not well seen. Reflective indicators need to get along with its latent variable; they must show sings of membership and belonging to one and only one latent variable: they need to be loyal to its construct. If one indicator loads higher on another construct, this could be evidence of treason. We don't want traitor indicators, we want loyal indicators.
+
+
+
+\subsection{Path Coefficients}
+After assessing the quality of the outer model, then we can turn into the inner model to check its quality. We may start evaluating the structural results by taking a peek at the path coefficients using the \code{plot()} function:
+<<edu_pls3_plot_inner1, fig.width=5, fig.height=3.5, out.width='.8\\linewidth', out.height='.5\\linewidth', fig.align='center', fig.pos='h', fig.cap='Inner model with path coefficients', echo=c(1,3)>>=
+# plotting results (inner model)
+op = par(mar = rep(0, 4))
+plot(edu_pls3)
+par(op)
+@
+As you can see from the previous plot, we have an issue with the arrows from \code{Support} to \code{Value} and from \code{Advising} to \code{Satisfaction}. The problem is that the path coefficients on these arrows are overlapped and it's impossible to distinguish them. We can also inspect the coefficients directly on the matrix of path coefficients:
+<<edu_pls3_path_coefs_matrix>>=
+# matrix of path coefficients
+edu_pls3$path_coefs
+@
+
+Even though we have the matrix of path coefficients, it would still be good to visualize the coefficients on the path diagram without the overlapping inconvenient. This can be easily solved using the arrow position argument \code{arr.pos} inside the \code{plot()} function. The default value of this argument is \code{arr.pos = 0.5} indicating that the arrowhead is located at the middle of the arrow. Try a different value to modify the position:
+<<edu_pls3_plot_inner2, fig.width=5, fig.height=3.5, out.width='.8\\linewidth', out.height='.5\\linewidth', fig.align='center', fig.pos='h', fig.cap='Slightly changing the location of the path coefficients', echo=c(1,3)>>=
+# plotting results (inner model)
+op = par(mar = rep(0, 4))
+plot(edu_pls3, arr.pos=0.35)
+par(op)
+@
+
+We can obtain another interesting display by using the parameter \code{arr.lwd} inside the \code{plot()} function. This parameter allows us to modify the line width of the arrows between any two latent variables. By default \code{arr.lwd = 3}, but we can specify a matrix like the matrix of path coefficients (\code{\$path\_coefs}) with different values for each arrow. Here is an example of how can we define such a matrix:
+<<edu_pls3_arr_lwd, echo=-1>>=
+options(width=70)
+# matrix of path coefficients
+Paths = edu_pls3$path_coefs
+
+# matrix with values based on path coeffs
+arrow_lwd = 10 * round(Paths, 2)
+
+# how does it look like?
+arrow_lwd
+@
+
+Let us see the effect that \code{arrow\_lwd} has on the size of each arrow:
+<<edu_pls3_plot_inner3, fig.width=5, fig.height=3.5, out.width='.8\\linewidth', out.height='.5\\linewidth', fig.align='center', fig.pos='h', fig.cap='Line width of arrows reflecting the magnitude of the path coefficients', echo=c(1,3)>>=
+# arrows of different sizes reflecting the values of the path coeffs
+op = par(mar = rep(0, 4))
+plot(edu_pls3, arr.pos = 0.35, arr.lwd = arrow_lwd)
+par(op)
+@
+
+
+
+\subsection{Structural Regressions}
+In addition to inspecting the path coefficients, we must also review the regression results of each endogenous construct. This implies examining the regressions for \code{Value}, \code{Satisfaction}, and \code{Loyalty}. To check the inner regressions we print the output of \code{\$inner\_model}:
+<<edu_inner_model_assess, echo=-1>>=
+options(width = 65)
+# inner model
+edu_pls3$inner_model
+@
+The \code{R2} values are the coefficients of determination of the endogenous latent variables. For each regression in the structural model we have an $R^2$ that is interpreted similarly as in any multiple regression analysis. $R^2$ indicates the amount of variance in the endogenous latent variable explained by its independent latent variables.
+
+
+\subsection{Effects}
+Another interesting result to pay attention to is the table of \code{\$effects}. This table contains the effects that each construct has on the rest of constructs by taking into consideration the total number of connections in the inner model. The direct effects are given by the path coefficients. But there are also the indirect effects and the total effects. An indirect effect is the influence of one construct on another construct by taking an indirect path. The total effects are the sum of both the direct and indirect effects: 
+<<edu_pls3_effects>>=
+# effects
+edu_pls3$effects
+@
+The indirect effects are obtained as the product of the path coefficients by taking an indirect path. For instance, consider the impact of \code{Value} on \code{Loyalty}. Even though these two constructs are not directly connected, there is an indirect path from \code{Value} to \code{Loyalty} that goes through \code{Satisfaction}. If you multiply the path coefficient of \code{Value} on \code{Satisfaction} (0.3493) with the path coefficient of \code{Satisfaction} on \code{Loyalty} (0.764), you get the indirect effect of \code{Value} on \code{Loyalty}: 0.2668 = 0.3493 x 0.764.
+
+\subsubsection{Visualizing the Effects}
+A useful and nicer way to inspect the combined effects is by using the graphic capabilities of R to produce a bar chart with the function \code{barplot()}. To create the barplot of effects we first select the ``active'' rows from \code{edu\_pls3\$effects}. We can do this by creating a vector with those rows from the data frame of effects that contain direct and indirect effects (we don't want the uninteresting rows full with zeros).
+<<edu_path_effects_matrix>>=
+# selecting effects ('active' rows)
+good_rows = c(3:5, 7:15)
+
+# 'active' effects in matrix format
+path_effs = as.matrix(edu_pls3$effects[good_rows,2:3])
+@
+
+Because \code{barplot()} only works with vectors or matrices, we need to impose a matrix format to \code{path\_effs}. For convenience sake, we also add row names to our matrix \code{path\_effs}:
+<<inspect_edu_path_effects_matrix>>=
+# add rownames to path_effs
+rownames(path_effs) = edu_pls3$effects[good_rows,1]
+
+# how does path_effs look like?
+path_effs
+@
+
+<<edu_pls3_effects_barchart, fig.width=7, fig.height=5, out.width='1\\linewidth', out.height='.7\\linewidth', fig.align='center', fig.pos='h', fig.cap='Total Effects: Direct + Indirect paths', echo=FALSE>>=
+# effects (barplots)
+good_rows = c(3:5, 7:15)
+path_effs = as.matrix(edu_pls3$effects[good_rows,2:3])
+rownames(path_effs) = edu_pls3$effects[good_rows,1]
+op = par(mar = c(8,3,1,0.5))
+barplot(t(path_effs), border = NA, las = 2, legend = c("Direct", "Indirect"),
+        cex.names = 0.8, col = c("#9E9AC8", "#DADAEB"), cex.axis = 0.8, 
+        args.legend = list(x = "top", ncol = 2, border = NA, bty = "n", 
+                           title = "Effects"))
+par(op)
+@
+
+Once we have our matrix with path effects, we can create the bar chart like so:
+<<edu_pls3_effects_barplot, fig.keep='none', tidy=FALSE>>=
+# setting margin size
+op = par(mar = c(8, 3, 1, 0.5))
+# barplots of total effects (direct + indirect)
+barplot(t(path_effs), border = NA, col = c("#9E9AC8", "#DADAEB"),
+        las = 2, cex.names = 0.8, cex.axis = 0.8, 
+        legend = c("Direct", "Indirect"),        
+        args.legend = list(x = "top", ncol = 2, border = NA, 
+                           bty = "n", title = "Effects"))
+# resetting default margins
+par(op)
+@
+The first line defines the graphical parameter \code{mar} that sets the figure margins to the specfied values. Then we have the function \code{barplot()}. Note that we are using \code{t(path\_effs)} which means that we are trasposing the matrix of path effects. To get nice bars I avoid borders (\code{border=NA}). The vector of colors \code{col} is expressed in \textit{hexadecimal} (hex) notation. Then we have another graphical parameter \code{las=2} that is used to specify the style of the axis labels in a perpendicular way, making numbers easier to read and showing the x-axis labels in vertical way. The \code{cex} arguments indicate the expansion of the names and axis-numbers. \code{legend} is a character vector with the labels used for the displayed legend. And finally, there is a long list of parameters in \code{args.legend} that are passed to the function \code{legend()}. Your homework is to use \code{help(legend)} to see the meaning behind the arguments in \code{args.legend}.
+
+
+
+\subsection{Inner Model Summary}
+The next set of results that you need to evaluate are the summary indices contained in \code{\$inner\_summary}. This is a data frame with diferent metrics that provides you with an overall summary of the structural model. 
+<<edu_inner_summary, echo=-1>>=
+#options(width = 67)
+# inner model summary
+edu_pls3$inner_summary
+@
+
+We already saw the \code{R2} values when we inspected the structural regressions, so let's focus on the last three columns. The average communality \texttt{Av.Commu} indicates how much of a reflective block variability is reproducible by the latent variable. On average, we would expect to have at least 50\% of communality in a reflective block. The next column \texttt{Av.Redun} is the average redundancy which reflects the ability of the independent latent variables to explain the average variation of the indicators in the dependent latent variable. For isntance, the average redundancy for \code{Loyalty} implies that \code{Satisfaction} predicts 44\% of the variability in \code{Loyalty} indicators.
+
+The last columnn \code{AVE} is the \textit{Average Variance Extracted} which measures the amount of variance that a latent variable captures from its indicators in relation to the amount of variance due to measurement error. As a rule of thumb, we should check that AVE is greater than 0.50 which means that 50\% or more of the indicators's variance is accounted for.
+
+
+\subsection{GoF}
+The final measure of quality that we need to examine is the so-called GoF index contained in \code{\$gof}. This is a pseudo Goodness-of-Fit measure that attempts to account for the overall quality at both the measurement and the structural models. Basically, GoF assess the overall prediction performance of the model by taking into account the communality and the $R^2$ coefficients. However, you can also use the GoF index in presence of formative blocks, in which case more importance will be given to the average R2.
+<<edu_gof>>=
+# gof index
+edu_pls3$gof
+@
+
+You can think of GoF as an index of average prediction for the entire model. Although this is not entirely exact, it helps to understand GoF values. From this point of view, a GoF value of 0.689 could be roughly interpreted as if the prediction power of the model is of 69\%. The naive rule of thumb is: the higher, the better. GoF values greater than 0.7 are considered as ``very good'' within the PLS-PM community.
+
+
+
+\subsection{Bootstrap Validation}
+Since PLS-PM does not rest on any distributional assumptions, resampling procedures are used to obtain information about the variability of the parameter estimates. \fplspm{} provides bootstrap resampling to get confidence intervals for evaluating the precision of the PLS parameter estimates. 
+So far we haven't required bootstrap validation because we needed to check first that the results of the outer and inner models make sense. But now that we are satisfied with the obtained results, we can proceed with the bootstrap validation. We use the argument \code{boot.val = TRUE} to indicate that we wish to perform bootstrap validation. By default \fplspm{} runs 100 resamples but we can specify a different number. For instance, let's get a validation with \code{br=200} resamples:
+<<edu_plspm_bootstrap, echo=-5>>=
+# running bootstrap validation
+edu_val = plspm(education, edu_path, edu_blocks3, modes = edu_modes, 
+                boot.val = TRUE, br = 200)
+
+# bootstrap results
+options(width = 75)
+edu_val$boot
+@
+We obtain bootstrapped results for the outer weights, the loadings, tha path coefficients, the $R^2$ and the total effects. For each of the displayed results, we should examine the bootstrap confidence interval (95\%) provided by the percentiles 0.025 and 0.975. This is specially important for the path coefficients:
+<<edu_plspm_boot_paths>>=
+# bootstrap path coefficients
+edu_val$boot$paths
+@
+As you can see from the previous table, bootstrap intervals for the path coefficients of \code{Support} on \code{Satisfaction} and \code{Tutoring} on \code{Value} contain the zero. Hence we may say that these coefficients are not significant at a 5\% confidence level.
+
+
+\subsection{Inspecting scores of latent variables}
+After checking the overall quality of the inner model and the prediction capacity, it is also interesting to inspect the obtained scores of the latent variables. The values in \code{\$scores} are standardized scores (mean zero, unit variance), thus if we use \code{summary()} we won't get much information:
+<<edu_pls3_latents>>=
+# summary of latent variable scores
+summary(edu_pls3$scores)
+@
+
+
+Instead of the \code{summary()} we can use a more informative alternative by plotting histograms of each latent variable with the \code{hist} function:
+<<edu_scores_histograms1, fig.width=7, fig.height=4.5, out.width='0.95\\linewidth', out.height='0.65\\linewidth', fig.align='center', fig.pos='h', fig.cap='Histograms (in densities) of scores', echo=FALSE>>=
+# setting graphic layout and margin sizes
+op = par(mfrow=c(2,3), mar=c(4,5,2,0.5))
+# for each score
+for (j in 1:6)
+{
+  # histogram (with probability density)
+  hist(edu_pls3$scores[,j], freq=FALSE, xlab="", border="#6A51A3", 
+       col="#DADAEB", main=colnames(edu_pls3$scores)[j])
+  # add axes
+  axis(side=1, col="gray70", col.axis="gray70")
+  axis(side=2, col="gray70", col.axis="gray70")
+}
+par(op)
+@
+
+This is the code to obtain the histograms in the figure above:
+<<edu_scores_hist_code, fig.keep='none'>>=
+# setting graphic layout and margin sizes
+op = par(mfrow=c(2,3), mar=c(4,5,2,0.5))
+# for each score
+for (j in 1:6)
+{
+  # histogram (with probability density)
+  hist(edu_pls3$scores[,j], freq=FALSE, xlab="", border="#6A51A3", 
+       col="#DADAEB", main=colnames(edu_pls3$scores)[j])
+  # add axes
+  axis(side=1, col="gray70", col.axis="gray70")
+  axis(side=2, col="gray70", col.axis="gray70")
+}
+par(op)
+@
+
+\subsubsection*{Rescaling Scores}
+Because all the manifest variables in \code{education} are expressed in the same scale (from 1 to 7), it would be interesting and convenient to have the scores of the latent variables expressed in the same scale as the indicators. This can be done by normalizing the outer weights in each block of indicators so that the weights are expressed as proportions. However, in order to apply this normalization all the outer weights must be positive.
+
+You can apply the function \code{rescale()} to the object \code{edu\_pls3} and get scores expressed in the original scale of the manifest variables. Once you get the rescaled scores you can use \code{summary()} to verify that the obtained results make sense (i.e. scores expressed in original scale of indicators):
+<<edu_rescaling_scores, echo=-1>>=
+options(width = 70)
+# rescaling scores
+Scores = rescale(edu_pls3)
+
+# summary
+summary(Scores)
+@
+
+With the rescaled \code{Scores} we can create another graphic with histograms to see the distributions of the latent variables in a more meaningful way:
+<<edu_scores_hist2_code, fig.keep='none', tidy=FALSE>>=
+# setting graphic layout and margin sizes
+op = par(mfrow = c(2,3), mar = c(4, 5, 2, 1.5), bty = "n")
+
+# for each score
+for (j in 1:6)
+{
+  # histogram (not showing axes)
+  hist(Scores[,j], main = colnames(Scores)[j], axes = FALSE, 
+       xlim = c(1,7), ylim = c(0, 125), xlab = "", 
+       border = "#6A51A3", col = "#DADAEB")
+  # add horizontal axis
+  axis(side = 1, col = "gray70", col.axis = "gray70")
+  # add vertical axis
+  axis(side = 2, col = "gray70", col.axis = "gray70", las = 2)
+}
+
+# resetting default graphical parameters
+par(op)
+@
+
+<<edu_scores_histograms2, fig.width=7, fig.height=4.5, out.width='0.95\\linewidth', out.height='0.65\\linewidth', fig.align='center', fig.pos='h', fig.cap='Histograms of rescaled scores', echo=FALSE>>=
+# setting graphic layout and margin sizes
+op = par(mfrow=c(2,3), mar=c(4,5,2,1.5), bty="n")
+for (j in 1:6)
+{
+  hist(Scores[,j], main=colnames(Scores)[j], axes=FALSE, xlim = c(1,7),
+       ylim=c(0,125), xlab="", border="#6A51A3", col="#DADAEB")
+  axis(side=1, col="gray70", col.axis="gray70")
+  axis(side=2, col="gray70", col.axis="gray70", las=2)
+}
+par(op)
+@
+
+Another graphical tool that we can apply is to get scatter plots with the function \code{pairs()}
+<<edu_scores_pairs, fig.width=5, fig.height=5, out.width='0.9\\linewidth', out.height='0.9\\linewidth', fig.align='center', fig.pos='h', fig.cap='Scatter plots of latent variable scores', echo=c(1,3), tidy=FALSE>>=
+# scatter plots of rescaled scores
+op = par(mar = c(2, 2, 2, 2))
+pairs(Scores, pch = 19, cex = 0.7, col = "#807DBA33", cex.axis = 0.8, 
+      col.axis = "gray70", gap = 0.5)
+par(op)
+@
+
+
+
+
+\section{Guidelines for a PLS-PM analysis}
+We'll end this chapter by providing some general guidelines and advices for performing PLS Path Modeling analysis. 
+
+\paragraph{Urban Legend}
+First we need to address one important issue that you will often find about why to use PLS-PM:
+``because it makes no sample size assumptions and you can even use it with small sample sizes''. This is one of the not-so-accurate claims that many people make about PLS-PM. Although it is true that PLS-PM does not impose sample size restrictions, this does not mean that you can abuse by applying it with ridiculously small sample sizes. 
+
+\paragraph{Rule of thumb}
+The only thing for sure we can say is that there is no rule of thumb about a minimum number of observations that can be applied to all situations. In fact, how large or small the sample size should be is something that depends on various factors: the strength of the relationships between the variables, the complexity of the model, the proportion of missing values, and even the distribution of the observed variables.
+
+In the article \textit{The Partial Least Squares Approach to Structural Equation Modeling}, Wynne Chin (1998) provides some recommendations:
+\begin{quotation} \noindent
+``If one were to use a regression heuristic of 10 cases per indicator, the sample size requirement would be 10 times either: a) the block with the largest number of indicators; or b) the largest structural equation''
+\end{quotation}
+
+In another publication, \textit{Structural Equation Modeling Analysis with Small Samples Using Partial Least Squares}, Wynne Chin and Peter Newsted (1999) make it clear that for the sample size for PLS path models to be determined, requires ``a power analysis based on the portion of the model with the largest number of predictors''.
+
+\paragraph{Consistency at Large}
+The concept that we should keep in mind is the so-called \textit{consistency at large} which basically means:
+\begin{itemize}
+ \item The larger the sample size, the better: PLS estimates improve as sample size increases; and their average absolute error rates diminish .
+ \item The more indicators per latent variable, and the larger the number of observations, the better PLS estimates you'll get.
+\end{itemize}
+
+
+
+
+\subsection*{Some Personal Tips and Advices}
+
+\paragraph{\#1 Get to know your data}
+Seriously. Spend as much time as possible ``chatting'' with your data. Above all: visualize it! Do barplots, scatter plots, histograms, glyphs, PCA plots, dendrograms, you name it. Also, get summary statistics, measures of dispersion. I can hardly stress out all the positive effects that you can achieve by getting to know your data, but be assured that they are enormous.
+
+\paragraph{\#2 Talk to the ``experts''}
+By experts I mean the people running the business of your data, either those who designed the survey, those who you are consulting for, or those who have the \textit{big picture} of the field you are working in. Maybe you are the expert. In that case, go and talk to other experts, ask for a second opinion of what you are doing; whether your model and its underlying hypotheses make sense.
+
+\paragraph{\#3 Read papers}
+See what other people are doing; how do they draw the diagrams, what jargon and argot they use, how do they report the results, etc. Get inspired and steal like an artist (but don't plagiarize, please).
+
+\paragraph{\#4 Learn to lose}
+Face it: sometimes the data in your hands does not cooperate with you. Maybe the data is simply crap or maybe is not suited for PLS-PM. The worst you can do is forcing fitting a model. I've tried to force models, sometimes working-around and finding a non-trivial solution. But most of the times I will eventually realize that there is nothing I can do. This is specially the case when somebody has a dataset and wants stubbornly to do something with it. Perhaps a researcher wants to publish a paper or prepare a talk, and they will ask you to do some magic with PLS-PM (or any other method). That's the time when you have to learn to say no.
+
+\paragraph{\#5 Be cautious}
+Specially when you are mixing very different types of data. For instance, you may have observational data like macroeconomic indices or demographic statistics, and then you also have perception data. It's like trying to mix oil and water: economic indices with poeple's thoughts. That's a combination that you need to handle with tweezers, specially when drawing any type of conclusion. I'm not saying that you shouldn't do it, I'm just saying be cautious.
+
+\paragraph{\#6 Practice, practice, practice}
+As with any other skill that you want to master (like a sport, hobby, language, etc) you need to practice as much as possible to be a PLS \textit{ninja}. I don't have a recipe for you that allows you to \textit{learn PLS-PM in 30 minutes} or something like that. My best advice is to practice, and if possible, get to work under the guidance of a PLS-PM guru.
+
+
+\section{Reading List}
+\paragraph{ECSI Model in Education} 
+Some papers with applications of PLS Path Modeling to Education:
+\begin{itemize}
+ \vspace{2mm}
+ \item \textbf{\textsf{The Influence of University Image in Student's Expectations, Satisfaction and Loyalty}} by Helena Alves and Mario Reposado (2007). Paper presented at the 29th Annual EAIR Forum (Innbrusck, Austria).
+
+ \vspace{2mm}
+ \item \textbf{\textsf{Measuring Student Oriented Quality in Higher Education: Application of the ECSI Methodology}} by Anne Martensen, Lars Gronholdt, Jacob K. Eskildsen and Kai Kristensen (1999). Paper presented at the conference \textit{TQM for Higher Education Institutions II} (Universita di Verona, Italy)
+
+ \vspace{2mm}
+ \item \textbf{\textsf{Drivers of student satisfaction and loyalty at different levels of higher education (HE) -cross-institutional results based on ECSI methodology}} by Dean Peder Ostergaard and Kai Kristensen (2005). Paper presented at the Society for Research into Higher Education (SRHE) Available at: \\
+ \texttt{\href{http://pure.au.dk/portal/files/214/PAPER\_SRHE\_2005\_SESSION\_PAPER\_6.31.PDF}{http://pure.au.dk/portal/files/214/PAPER\_SRHE\_2005\_SESSION\_PAPER\_6.31.PDF}}
+
+ \vspace{2mm}
+ \item \textbf{\textsf{Is the European Customer Satisfaction Index Model Applicable to Tertiary Education?}} by Bill Chitty and Geoffrey N. Soutar (2004). Paper presented at the Australian and New Zealand Marketing Academy (ANZMAC). Available at: \\
+ \texttt{\href{http://anzmac.info/conference/2004/papers/Chitty1.PDF}{http://anzmac.info/conference/2004/papers/Chitty1.PDF}}
+
+ \vspace{2mm}
+ \item \textbf{\textsf{Evaluating the quality of the university educational process: an application of the ECSI model}} by Bruno Chiandotto, Matilde Bini and Bruno Bertaccini. Available at: \\
+ \texttt{\href{http://valmon.ds.unifi.it/docpub/ECSI\%20BCMBBB\_engversion.pdf}{http://valmon.ds.unifi.it/docpub/ECSI\%20BCMBBB\_engversion.pdf}}
+\end{itemize}
+  
+
+\paragraph{PLS-PM analysis}
+Other resources about PLS Path Modeling and how to carry out PLS-PM analysis:
+\begin{itemize}
+ \vspace{2mm}
+ \item \textbf{\textsf{How to Write Up and Report PLS Analyses}} by Wynne Chin (2010). This is the Chapter 28 of the \textit{Handbook of Partial Least Squares}. This chapter describes the general steps to be performed for writing a report on results from a PLS-PM analysis.
+
+ \vspace{2mm}
+ \item \textbf{\textsf{Evaluation of Structural Equation Models Using Partial Least Squares (PLS) Approach}} by Oliver Gotz, Kerstin Liehr-Gobbers and Manfred Krafft (2010). As Chapter 29 of the \textit{Handbook of Partial Least Squares}, it provides a basic comprehension of PLS-PM and it discussess key guidelines for evaluation of structural models.
+
+ \vspace{2mm}
+ \item \textbf{\textsf{The Use of Partial Least Squares Path Modeling in International Marketing}} by Jorg Henseler, Christian Ringle and Rudolf R. Sinkovics (2009). This article in \textit{New Challenges to International Marketing Advances in International Marketing} (Vol. 20, 277 - 319) offers guidance for the use of PLS with an emphasis on reasearch studies on marketing research. Covers the requirements, strengths and weaknesses of PLS-PM.
+
+ \vspace{2mm}
+ \item \textbf{\textsf{The Partial Least Squares to Structural Equation Modeling}} by Wynne Chin (1998). As Chapter 10 of the book \textit{Modern Methods for Business Research} (George A. Marcoulides editor; pp: 295-336), this article is one of the classic references of Chin when he describes the PLS-PM methodology for a business research audience. 
+
+\vspace{2mm}
+ \item \textbf{\textsf{Structural Equation Modeling Analysis With Small Samples Using Partial Least Squares}} by Wynne Chin and Peter Newsted (1999). This article in Chapter 12 of the book \textit{Statistical Strategies for Small Sample Research} (Rick H. Hoyle editor; pp: 307-341), provides a comprehensive overview of PLS-PM for non-statisticians.
+
+ \vspace{2mm}
+ \item \textbf{\textsf{PLS: A Silver Bullet?}} by George A. Marcoulides and Carol Saunders (2006). This is an Editorial comment in the journal \textit{MIS Quarterly} (Vol. 30, No. 2). The authors express their concerns about claims made by a number of authors about taking PLS as a magic wand that can be applied indiscriminately to all problems.
+
+ \vspace{2mm}
+ \item \textbf{\textsf{A Critical Look at Partial Least Squares Modeling}} by George A. Marcoulides, Wynne W. Chin and Carol Saunders (2009). This is the Foreword in the Special Issue Section of the journal \textit{MIS Quarterly} (Vol. 33, No. 1, 171-175). The authors express their concerns about claims made by a number of authors about taking PLS as a magic wand that can be applied indiscriminately to all problems.
+\end{itemize}
+  

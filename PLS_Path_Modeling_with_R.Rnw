@@ -1,0 +1,231 @@
+\documentclass[12pt]{book}
+%\usepackage[a4paper, top=2cm, bottom=2cm]{geometry}
+\usepackage[margin=2.5cm,bottom=2cm,includehead,includefoot]{geometry}
+\usepackage{color}
+\definecolor{gray}{rgb}{0.7,0.7,0.7}
+\definecolor{tomato}{rgb}{0.87,0.32,0.24}
+\definecolor{myindex}{rgb}{0.45,0.49,0.74}
+\definecolor{darkgray}{rgb}{0.3,0.3,0.3}
+\definecolor{lightgray}{rgb}{0.5,0.5,0.5}
+\definecolor{linkblue}{rgb}{0.33,0.41,0.90}
+\definecolor{otherblue}{rgb}{0.066,0.545,0.890}
+\definecolor{citepurple}{rgb}{0.58,0.63,0.91}
+\definecolor{oldpurple}{rgb}{0.77,0.0,0.50}
+\usepackage[breaklinks=true]{hyperref}
+\hypersetup{
+  colorlinks=true,
+  urlcolor=linkblue,
+  linkcolor=linkblue,
+}
+\usepackage{alltt}
+\usepackage[latin1]{inputenc}
+\usepackage{setspace}
+\usepackage{parskip}
+\usepackage{fancyhdr}
+\usepackage{tocloft}
+\usepackage{relsize}
+\usepackage{amsmath}
+\usepackage{enumitem}
+
+\setlength{\parindent}{0in}
+\newcommand{\plspm}{\texttt{plspm}}
+\newcommand{\fplspm}{\texttt{plspm()}}
+\newcommand{\plsdepot}{\texttt{plsdepot}}
+\newcommand{\code}[1]{\texttt{#1}}
+
+
+\begin{document}
+
+
+\pagestyle{empty}
+%\pagenumbering{}
+% Set book title
+\title{\textbf{PLS Path Modeling \\
+with R}}
+% Include Author name and Copyright holder name
+\author{
+ \Large{
+ \textbf{\textcolor{darkgray}{G}}\textcolor{lightgray}{aston} 
+ \textbf{\textcolor{darkgray}{S}}\textcolor{lightgray}{anchez}} \\
+ \texttt{\href{http://www.gastonsanchez.com}{www.gastonsanchez.com}}
+}
+\date{\parbox{\linewidth}{
+  \vspace*{8cm} \footnotesize \textcolor{lightgray}{This work is licensed under a \textsf{Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License (CC BY-NC-SA 3.0)} \url{http://creativecommons.org/licenses/by-nc-sa/3.0/} In short: Gaston Sanchez retains the Copyright but you are free to reproduce, reblog, remix and modify the content only under the same license to this one. You may not use this work for commercial purposes but permission to use this material in nonprofit teaching is still granted, provided the authorship and licensing information here is displayed.}}
+}
+
+% 1st page for the Title
+%-------------------------------------------------------------------------------
+\maketitle
+
+
+% 2nd page, dedication
+%-------------------------------------------------------------------------------
+\pagenumbering{roman} % roman numbers
+\thispagestyle{empty}
+\chapter*{}
+\textbf{Citation}
+
+\vspace{5mm}
+\textsf{Sanchez, G. (2013) \textbf{PLS Path Modeling with R} \\
+Trowchez Editions. Berkeley, 2013.} \\
+\texttt{http://www.gastonsanchez.com/PLS\_Path\_Modeling\_with\_R.pdf}
+
+% 2nd page, dedication
+%-------------------------------------------------------------------------------
+\newpage
+\thispagestyle{empty}
+\begin{flushright}
+\textit{\textbf{To Jessica} \\
+\vspace{5mm}
+for her manifest love, \\
+her latent support, \\
+her outer energy, \\
+and her inner strength.}
+\end{flushright}
+
+% 3rd page, opinion
+%-------------------------------------------------------------------------------
+\newpage
+\thispagestyle{empty}
+\vspace*{\stretch{1}}
+\begin{quotation} \noindent
+I wish my college teachers would have taught many more things than the ones they did. Preferably, I would have liked to be taught more computational courses and programming classes. They taught me the basics but they missed one key lesson that I learned years later with a blend of great disillusionment and enriching experience: \textit{the important modeling should take place in the mind of the analyst, not in the computer}. Computers and software are indispensable but they can't make sense of data; only people who have developed the necessary data analysis skills can. Whether it is PLS Path Modeling or any other type of modeling, always remember this little-big advice.
+\end{quotation}
+\vspace*{\stretch{1}}
+
+
+\newpage
+
+<<my_model, echo=FALSE, message=FALSE>>=
+# load pathdiagram
+library(pathdiagram)
+
+# latent variables
+opti = latent("Optimism", x=0.35, y=0.75, rx=0.08, ry=0.06, 
+              fill="gray90", col="#1B9E77", font=1)
+dedi = latent("Dedication", x=0.2, y=0.6, rx=0.08, ry=0.06, 
+              fill="gray90", col="#D95F02", font=1)
+pati = latent("Patience", x=0.2, y=0.4, rx=0.08, ry=0.06, 
+              fill="gray90", col="#7570B3", font=1)
+sacr = latent("Sacrifice", x=0.35, y=0.25, rx=0.08, ry=0.06, 
+              fill="gray90", col="#E7298A", font=1)
+work = latent("Work", x=0.5, y=0.5, rx=0.08, ry=0.06, 
+              fill="gray90", col="#1F78B4", font=1)
+achi = latent("Achievement", x=0.8, y=0.5, rx=0.10, ry=0.075, 
+              fill="gray90", col="tomato", font=1)
+luck = latent("Luck", x=0.85, y=0.7, rx=0.065, ry=0.06, 
+              fill="gray90", col="#E6AB02", font=1)
+
+# open wall to plot
+wall(xlim=c(0.15, 0.9))
+
+# draw latent variables
+draw(opti)
+draw(dedi)
+draw(pati)
+draw(sacr)
+draw(work)
+draw(achi)
+draw(luck)
+
+# add arrows
+arrow(from=opti, to=work, start="east", end="north", col="gray90")
+arrow(from=dedi, to=work, start="east", end="west", col="gray90")
+arrow(from=pati, to=work, start="east", end="west", col="gray90")
+arrow(from=sacr, to=work, start="east", end="south", col="gray90")
+arrow(from=work, to=achi, start="east", end="west", col="gray90")
+arrow(from=luck, to=achi, start="south", end="north", col="gray90")
+#
+text(x=0.55, y=0.15, labels="My Model", col="gray60", cex=0.8)
+@
+
+% 4rd page, table of contents
+%-------------------------------------------------------------------------------
+\newpage
+% Include dots between chapter name and page number
+\renewcommand{\cftchapdotsep}{\cftdotsep}
+% include the ToC
+\tableofcontents
+
+
+
+% General definitions for all Chapters
+%-------------------------------------------------------------------------------
+
+% Define Page style for all chapters
+\pagestyle{fancy}
+   
+
+% Define Page style for all chapters
+\pagestyle{fancy}
+% Delete the current section for header and footer
+\fancyhf{}
+% Set custom header
+\lhead[]{\thepage}
+\rhead[\thepage]{}
+\lfoot{\scriptsize{\textsf{\textcolor{gray}{CC BY-NC-SA 3.0 \hspace{.5mm} Gaston Sanchez}}}}
+\rfoot{\scriptsize{\textsf{\textcolor{gray}{PLS Path Modeling with R}}}}
+
+
+
+
+% Preface
+%-------------------------------------------------------------------------------
+<<preface, child='ch0_preface.Rnw', eval=TRUE>>=
+@
+
+% Set arabic (1,2,3...) page numbering
+\pagenumbering{arabic}
+
+% If the chapter ends in an odd page, you may want to skip having the page
+%  number in the empty page
+\newpage
+\thispagestyle{empty}
+\mbox{}
+
+
+% Chapter1
+<<opening, child='ch1_opening.Rnw', eval=TRUE>>=
+@
+
+% Chapter2
+<<started, child='ch2_getting_started.Rnw', eval=TRUE>>=
+@
+
+% Chapter3
+<<framework, child='ch3_setting_framework.Rnw', eval=TRUE>>=
+@
+
+% Chapter4
+<<results, child='ch4_interpreting_plspm.Rnw', eval=TRUE>>=
+@
+
+% Chapter5
+<<running, child='ch5_running_plspm.Rnw', eval=TRUE>>=
+@
+
+% Chapter6
+<<groups, child='ch6_comparing_groups.Rnw', eval=TRUE>>=
+@
+
+% Chapter7
+<<moderating, child='ch7_moderating_effects.Rnw', eval=TRUE>>=
+@
+
+% Chapter8
+<<hierarchical, child='ch8_hierarchical_models.Rnw', eval=TRUE>>=
+@
+
+% Chapter9
+<<rebuspls, child='ch9_detecting_classes.Rnw', eval=TRUE>>=
+@
+
+
+% Appendix
+\appendix
+\renewcommand{\thesection}{\arabic{section}}
+<<history, child='ch10_history_pls.Rnw', eval=TRUE>>=
+@
+
+
+\end{document}

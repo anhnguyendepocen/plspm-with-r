@@ -1,0 +1,1801 @@
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012) (format=pdflatex 2012.6.30)  22 FEB 2014 23:27
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**PLS_Path_Modeling_with_R.tex
+(./PLS_Path_Modeling_with_R.tex
+LaTeX2e <2011/06/27>
+Babel <v3.8m> and hyphenation patterns for english, dumylang, nohyphenation, ge
+rman-x-2012-05-30, ngerman-x-2012-05-30, afrikaans, ancientgreek, ibycus, arabi
+c, armenian, basque, bulgarian, catalan, pinyin, coptic, croatian, czech, danis
+h, dutch, ukenglish, usenglishmax, esperanto, estonian, ethiopic, farsi, finnis
+h, french, friulan, galician, german, ngerman, swissgerman, monogreek, greek, h
+ungarian, icelandic, assamese, bengali, gujarati, hindi, kannada, malayalam, ma
+rathi, oriya, panjabi, tamil, telugu, indonesian, interlingua, irish, italian, 
+kurmanji, latin, latvian, lithuanian, mongolian, mongolianlmc, bokmal, nynorsk,
+ polish, portuguese, romanian, romansh, russian, sanskrit, serbian, serbianc, s
+lovak, slovenian, spanish, swedish, turkish, turkmen, ukrainian, uppersorbian, 
+welsh, loaded.
+(/usr/local/texlive/2012/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/local/texlive/2012/texmf-dist/tex/latex/base/bk12.clo
+File: bk12.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@chapter=\count80
+\c@section=\count81
+\c@subsection=\count82
+\c@subsubsection=\count83
+\c@paragraph=\count84
+\c@subparagraph=\count85
+\c@figure=\count86
+\c@table=\count87
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+(/usr/local/texlive/2012/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/local/texlive/2012/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+\KV@toks@=\toks14
+)
+(/usr/local/texlive/2012/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/local/texlive/2012/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+)
+(/usr/local/texlive/2012/texmf-dist/tex/latex/latexconfig/graphics.cfg
+File: graphics.cfg 2010/04/23 v1.9 graphics configuration of TeX Live
+)
+Package graphics Info: Driver file: pdftex.def on input line 91.
+
+(/usr/local/texlive/2012/texmf-dist/tex/latex/pdftex-def/pdftex.def
+File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
+
+(/usr/local/texlive/2012/texmf-dist/tex/generic/oberdiek/infwarerr.sty
+Package: infwarerr 2010/04/08 v1.3 Providing info/warning/error messages (HO)
+)
+(/usr/local/texlive/2012/texmf-dist/tex/generic/oberdiek/ltxcmds.sty
+Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
+)
+\Gread@gobject=\count88
+))
+\Gin@req@height=\dimen103
+\Gin@req@width=\dimen104
+)
+(/usr/local/texlive/2012/texmf-dist/tex/latex/graphics/color.sty
+Package: color 2005/11/14 v1.0j Standard LaTeX Color (DPC)
+
+(/usr/local/texlive/2012/texmf-dist/tex/latex/latexconfig/color.cfg
+File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
+)
+Package color Info: Driver file: pdftex.def on input line 130.
+)
+(/usr/local/texlive/2012/texmf-dist/tex/latex/framed/framed.sty
+Package: framed 2011/10/22 v 0.96: framed or shaded text with page breaks
+\OuterFrameSep=\skip43
+\fb@frw=\dimen105
+\fb@frh=\dimen106
+\FrameRule=\dimen107
+\FrameSep=\dimen108
+)
+(/usr/local/texlive/2012/texmf-dist/tex/latex/base/alltt.sty
+Package: alltt 1997/06/16 v2.0g defines alltt environment
+)
+(/usr/local/texlive/2012/texmf-dist/tex/latex/geometry/geometry.sty
+Package: geometry 2010/09/12 v5.6 Page Geometry
+
+(/usr/local/texlive/2012/texmf-dist/tex/generic/oberdiek/ifpdf.sty
+Package: ifpdf 2011/01/30 v2.3 Provides the ifpdf switch (HO)
+Package ifpdf Info: pdfTeX in PDF mode is detected.
+)
+(/usr/local/texlive/2012/texmf-dist/tex/generic/oberdiek/ifvtex.sty
+Package: ifvtex 2010/03/01 v1.5 Detect VTeX and its facilities (HO)
+Package ifvtex Info: VTeX not detected.
+)
+(/usr/local/texlive/2012/texmf-dist/tex/generic/ifxetex/ifxetex.sty
+Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
+)
+\Gm@cnth=\count89
+\Gm@cntv=\count90
+\c@Gm@tempcnt=\count91
+\Gm@bindingoffset=\dimen109
+\Gm@wd@mp=\dimen110
+\Gm@odd@mp=\dimen111
+\Gm@even@mp=\dimen112
+\Gm@layoutwidth=\dimen113
+\Gm@layoutheight=\dimen114
+\Gm@layouthoffset=\dimen115
+\Gm@layoutvoffset=\dimen116
+\Gm@dimlist=\toks15
+)
+(/usr/local/texlive/2012/texmf-dist/tex/latex/hyperref/hyperref.sty
+Package: hyperref 2012/05/13 v6.82q Hypertext links for LaTeX
+
+(/usr/local/texlive/2012/texmf-dist/tex/generic/oberdiek/hobsub-hyperref.sty
+Package: hobsub-hyperref 2012/05/28 v1.13 Bundle oberdiek, subset hyperref (HO)
+
+
+(/usr/local/texlive/2012/texmf-dist/tex/generic/oberdiek/hobsub-generic.sty
+Package: hobsub-generic 2012/05/28 v1.13 Bundle oberdiek, subset generic (HO)
+Package: hobsub 2012/05/28 v1.13 Construct package bundles (HO)
+Package hobsub Info: Skipping package `infwarerr' (already loaded).
+Package hobsub Info: Skipping package `ltxcmds' (already loaded).
+Package: ifluatex 2010/03/01 v1.3 Provides the ifluatex switch (HO)
+Package ifluatex Info: LuaTeX not detected.
+Package hobsub Info: Skipping package `ifvtex' (already loaded).
+Package: intcalc 2007/09/27 v1.1 Expandable calculations with integers (HO)
+Package hobsub Info: Skipping package `ifpdf' (already loaded).
+Package: etexcmds 2011/02/16 v1.5 Avoid name clashes with e-TeX commands (HO)
+Package etexcmds Info: Could not find \expanded.
+(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
+(etexcmds)             that some package has redefined \expanded.
+(etexcmds)             In the latter case, load this package earlier.
+Package: kvsetkeys 2012/04/25 v1.16 Key value parser (HO)
+Package: kvdefinekeys 2011/04/07 v1.3 Define keys (HO)
+Package: pdftexcmds 2011/11/29 v0.20 Utility functions of pdfTeX for LuaTeX (HO
+)
+Package pdftexcmds Info: LuaTeX not detected.
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+Package: pdfescape 2011/11/25 v1.13 Implements pdfTeX's escape features (HO)
+Package: bigintcalc 2012/04/08 v1.3 Expandable calculations on big integers (HO
+)
+Package: bitset 2011/01/30 v1.1 Handle bit-vector datatype (HO)
+Package: uniquecounter 2011/01/30 v1.2 Provide unlimited unique counter (HO)
+)
+Package hobsub Info: Skipping package `hobsub' (already loaded).
+Package: letltxmacro 2010/09/02 v1.4 Let assignment for LaTeX macros (HO)
+Package: hopatch 2012/05/28 v1.2 Wrapper for package hooks (HO)
+Package: xcolor-patch 2011/01/30 xcolor patch
+Package: atveryend 2011/06/30 v1.8 Hooks at the very end of document (HO)
+Package atveryend Info: \enddocument detected (standard20110627).
+Package: atbegshi 2011/10/05 v1.16 At begin shipout hook (HO)
+Package: refcount 2011/10/16 v3.4 Data extraction from label references (HO)
+Package: hycolor 2011/01/30 v1.7 Color options for hyperref/bookmark (HO)
+)
+(/usr/local/texlive/2012/texmf-dist/tex/latex/oberdiek/kvoptions.sty
+Package: kvoptions 2011/06/30 v3.11 Key value format for package options (HO)
+)
+\@linkdim=\dimen117
+\Hy@linkcounter=\count92
+\Hy@pagecounter=\count93
+
+(/usr/local/texlive/2012/texmf-dist/tex/latex/hyperref/pd1enc.def
+File: pd1enc.def 2012/05/13 v6.82q Hyperref: PDFDocEncoding definition (HO)
+)
+\Hy@SavedSpaceFactor=\count94
+
+(/usr/local/texlive/2012/texmf-dist/tex/latex/latexconfig/hyperref.cfg
+File: hyperref.cfg 2002/06/06 v1.2 hyperref configuration of TeXLive
+)
+Package hyperref Info: Option `breaklinks' set `true' on input line 3941.
+Package hyperref Info: Hyper figures OFF on input line 4062.
+Package hyperref Info: Link nesting OFF on input line 4067.
+Package hyperref Info: Hyper index ON on input line 4070.
+Package hyperref Info: Plain pages OFF on input line 4077.
+Package hyperref Info: Backreferencing OFF on input line 4082.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4300.
+\c@Hy@tempcnt=\count95
+
+(/usr/local/texlive/2012/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip10
+Package: url 2006/04/12  ver 3.3  Verb mode for urls, etc.
+)
+LaTeX Info: Redefining \url on input line 4653.
+\Fld@menulength=\count96
+\Field@Width=\dimen118
+\Fld@charsize=\dimen119
+Package hyperref Info: Hyper figures OFF on input line 5773.
+Package hyperref Info: Link nesting OFF on input line 5778.
+Package hyperref Info: Hyper index ON on input line 5781.
+Package hyperref Info: backreferencing OFF on input line 5788.
+Package hyperref Info: Link coloring OFF on input line 5793.
+Package hyperref Info: Link coloring with OCG OFF on input line 5798.
+Package hyperref Info: PDF/A mode OFF on input line 5803.
+LaTeX Info: Redefining \ref on input line 5843.
+LaTeX Info: Redefining \pageref on input line 5847.
+\Hy@abspage=\count97
+\c@Item=\count98
+\c@Hfootnote=\count99
+)
+
+Package hyperref Message: Driver (autodetected): hpdftex.
+
+(/usr/local/texlive/2012/texmf-dist/tex/latex/hyperref/hpdftex.def
+File: hpdftex.def 2012/05/13 v6.82q Hyperref driver for pdfTeX
+\Fld@listcount=\count100
+\c@bookmark@seq@number=\count101
+
+(/usr/local/texlive/2012/texmf-dist/tex/latex/oberdiek/rerunfilecheck.sty
+Package: rerunfilecheck 2011/04/15 v1.7 Rerun checks for auxiliary files (HO)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
+82.
+)
+\Hy@SectionHShift=\skip44
+)
+Package hyperref Info: Option `colorlinks' set `true' on input line 73.
+
+(/usr/local/texlive/2012/texmf-dist/tex/latex/base/inputenc.sty
+Package: inputenc 2008/03/30 v1.1d Input encoding file
+\inpenc@prehook=\toks16
+\inpenc@posthook=\toks17
+
+(/usr/local/texlive/2012/texmf-dist/tex/latex/base/latin1.def
+File: latin1.def 2008/03/30 v1.1d Input encoding file
+))
+(/usr/local/texlive/2012/texmf-dist/tex/latex/setspace/setspace.sty
+Package: setspace 2011/12/19 v6.7a set line spacing
+)
+(/usr/local/texlive/2012/texmf-dist/tex/latex/parskip/parskip.sty
+Package: parskip 2001/04/09 non-zero parskip adjustments
+)
+(/usr/local/texlive/2012/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty
+\fancy@headwidth=\skip45
+\f@ncyO@elh=\skip46
+\f@ncyO@erh=\skip47
+\f@ncyO@olh=\skip48
+\f@ncyO@orh=\skip49
+\f@ncyO@elf=\skip50
+\f@ncyO@erf=\skip51
+\f@ncyO@olf=\skip52
+\f@ncyO@orf=\skip53
+)
+(/usr/local/texlive/2012/texmf-dist/tex/latex/tocloft/tocloft.sty
+Package: tocloft 2010/10/13 v2.3e parameterised ToC, etc., typesetting
+Package tocloft Info: The document has chapter divisions on input line 43.
+\cftparskip=\skip54
+\cftbeforetoctitleskip=\skip55
+\cftaftertoctitleskip=\skip56
+\cftbeforepartskip=\skip57
+\cftpartnumwidth=\skip58
+\cftpartindent=\skip59
+\cftbeforechapskip=\skip60
+\cftchapindent=\skip61
+\cftchapnumwidth=\skip62
+\cftbeforesecskip=\skip63
+\cftsecindent=\skip64
+\cftsecnumwidth=\skip65
+\cftbeforesubsecskip=\skip66
+\cftsubsecindent=\skip67
+\cftsubsecnumwidth=\skip68
+\cftbeforesubsubsecskip=\skip69
+\cftsubsubsecindent=\skip70
+\cftsubsubsecnumwidth=\skip71
+\cftbeforeparaskip=\skip72
+\cftparaindent=\skip73
+\cftparanumwidth=\skip74
+\cftbeforesubparaskip=\skip75
+\cftsubparaindent=\skip76
+\cftsubparanumwidth=\skip77
+\cftbeforeloftitleskip=\skip78
+\cftafterloftitleskip=\skip79
+\cftbeforefigskip=\skip80
+\cftfigindent=\skip81
+\cftfignumwidth=\skip82
+\c@lofdepth=\count102
+\c@lotdepth=\count103
+\cftbeforelottitleskip=\skip83
+\cftafterlottitleskip=\skip84
+\cftbeforetabskip=\skip85
+\cfttabindent=\skip86
+\cfttabnumwidth=\skip87
+)
+(/usr/local/texlive/2012/texmf-dist/tex/latex/relsize/relsize.sty
+Package: relsize 2011/09/21 ver 4.0
+
+Examine \normalsize starts \@setfontsize size may be \@xiipt. 
+Examine \small starts \@setfontsize size may be \@xipt. 
+Examine \footnotesize starts \@setfontsize size may be \@xpt. 
+Examine \large starts \@setfontsize size may be \@xivpt. 
+Examine \Large starts \@setfontsize size may be \@xviipt. 
+Examine \LARGE starts \@setfontsize size may be \@xxpt. 
+Examine \scriptsize starts \@setfontsize size may be \@viiipt. 
+Examine \tiny starts \@setfontsize size may be \@vipt. 
+Examine \huge starts \@setfontsize size may be \@xxvpt. 
+Examine \Huge starts \@setfontsize size may be \@xxvpt. )
+(/usr/local/texlive/2012/texmf-dist/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2000/07/18 v2.13 AMS math features
+\@mathmargin=\skip88
+
+For additional information on amsmath, use the `?' option.
+(/usr/local/texlive/2012/texmf-dist/tex/latex/amsmath/amstext.sty
+Package: amstext 2000/06/29 v2.01
+
+(/usr/local/texlive/2012/texmf-dist/tex/latex/amsmath/amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0
+\@emptytoks=\toks18
+\ex@=\dimen120
+))
+(/usr/local/texlive/2012/texmf-dist/tex/latex/amsmath/amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d
+\pmbraise@=\dimen121
+)
+(/usr/local/texlive/2012/texmf-dist/tex/latex/amsmath/amsopn.sty
+Package: amsopn 1999/12/14 v2.01 operator names
+)
+\inf@bad=\count104
+LaTeX Info: Redefining \frac on input line 211.
+\uproot@=\count105
+\leftroot@=\count106
+LaTeX Info: Redefining \overline on input line 307.
+\classnum@=\count107
+\DOTSCASE@=\count108
+LaTeX Info: Redefining \ldots on input line 379.
+LaTeX Info: Redefining \dots on input line 382.
+LaTeX Info: Redefining \cdots on input line 467.
+\Mathstrutbox@=\box26
+\strutbox@=\box27
+\big@size=\dimen122
+LaTeX Font Info:    Redeclaring font encoding OML on input line 567.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 568.
+\macc@depth=\count109
+\c@MaxMatrixCols=\count110
+\dotsspace@=\muskip11
+\c@parentequation=\count111
+\dspbrk@lvl=\count112
+\tag@help=\toks19
+\row@=\count113
+\column@=\count114
+\maxfields@=\count115
+\andhelp@=\toks20
+\eqnshift@=\dimen123
+\alignsep@=\dimen124
+\tagshift@=\dimen125
+\tagwidth@=\dimen126
+\totwidth@=\dimen127
+\lineht@=\dimen128
+\@envbody=\toks21
+\multlinegap=\skip89
+\multlinetaggap=\skip90
+\mathdisplay@stack=\toks22
+LaTeX Info: Redefining \[ on input line 2666.
+LaTeX Info: Redefining \] on input line 2667.
+)
+(/usr/local/texlive/2012/texmf-dist/tex/latex/enumitem/enumitem.sty
+Package: enumitem 2011/09/28 v3.5.2 Customized lists
+\labelindent=\skip91
+\enit@outerparindent=\dimen129
+\enit@toks=\toks23
+\enit@inbox=\box28
+\enitdp@description=\count116
+)
+(/usr/local/texlive/2012/texmf-dist/tex/latex/upquote/upquote.sty
+Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verba
+tim
+)
+(./PLS_Path_Modeling_with_R.aux)
+\openout1 = `PLS_Path_Modeling_with_R.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 92.
+LaTeX Font Info:    ... okay on input line 92.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 92.
+LaTeX Font Info:    ... okay on input line 92.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 92.
+LaTeX Font Info:    ... okay on input line 92.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 92.
+LaTeX Font Info:    ... okay on input line 92.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 92.
+LaTeX Font Info:    ... okay on input line 92.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 92.
+LaTeX Font Info:    ... okay on input line 92.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 92.
+LaTeX Font Info:    ... okay on input line 92.
+
+(/usr/local/texlive/2012/texmf-dist/tex/context/base/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count117
+\scratchdimen=\dimen130
+\scratchbox=\box29
+\nofMPsegments=\count118
+\nofMParguments=\count119
+\everyMPshowfont=\toks24
+\MPscratchCnt=\count120
+\MPscratchDim=\dimen131
+\MPnumerator=\count121
+\makeMPintoPDFobject=\count122
+\everyMPtoPDFconversion=\toks25
+) (/usr/local/texlive/2012/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
+Package: epstopdf-base 2010/02/09 v2.5 Base part for package epstopdf
+
+(/usr/local/texlive/2012/texmf-dist/tex/latex/oberdiek/grfext.sty
+Package: grfext 2010/08/19 v1.1 Manage graphics extensions (HO)
+)
+Package grfext Info: Graphics extension search list:
+(grfext)             [.png,.pdf,.jpg,.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 452.
+
+(/usr/local/texlive/2012/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+*geometry* verbose mode - [ preamble ] result:
+* driver: pdftex
+* paper: <default>
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: includehead includefoot twoside 
+* h-part:(L,W,R)=(71.13188pt, 472.03123pt, 71.13188pt)
+* v-part:(T,H,B)=(71.13188pt, 666.9326pt, 56.9055pt)
+* \paperwidth=614.295pt
+* \paperheight=794.96999pt
+* \textwidth=472.03123pt
+* \textheight=605.0588pt
+* \oddsidemargin=-1.1381pt
+* \evensidemargin=-1.1381pt
+* \topmargin=-1.1381pt
+* \headheight=12.0pt
+* \headsep=19.8738pt
+* \topskip=12.0pt
+* \footskip=30.0pt
+* \marginparwidth=98.0pt
+* \marginparsep=7.0pt
+* \columnsep=10.0pt
+* \skip\footins=10.8pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidetrue
+* \@mparswitchtrue
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+\AtBeginShipoutBox=\box30
+Package hyperref Info: Link coloring ON on input line 92.
+(/usr/local/texlive/2012/texmf-dist/tex/latex/hyperref/nameref.sty
+Package: nameref 2010/04/30 v2.40 Cross-referencing by name of section
+
+(/usr/local/texlive/2012/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
+Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
+)
+\c@section@level=\count123
+)
+LaTeX Info: Redefining \ref on input line 92.
+LaTeX Info: Redefining \pageref on input line 92.
+LaTeX Info: Redefining \nameref on input line 92.
+
+(./PLS_Path_Modeling_with_R.out) (./PLS_Path_Modeling_with_R.out)
+\@outlinefile=\write3
+\openout3 = `PLS_Path_Modeling_with_R.out'.
+
+ [1
+
+
+{/usr/local/texlive/2012/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [1
+
+] [2] [3]
+Package color Info: Redefining color shadecolor on input line 155.
+
+<figure/my_model.pdf, id=581, 505.89pt x 505.89pt>
+File: figure/my_model.pdf Graphic file (type pdf)
+ <use figure/my_model.pdf>
+Package pdftex.def Info: figure/my_model.pdf used on input line 156.
+(pdftex.def)             Requested size: 472.03123pt x 472.03983pt.
+
+[4 <./figure/my_model.pdf>] (./PLS_Path_Modeling_with_R.toc [5] [6]
+Overfull \hbox (2.03766pt too wide) detected at line 117
+ \OT1/cmr/bx/n/12 117
+ []
+
+
+Overfull \hbox (2.03766pt too wide) detected at line 132
+ \OT1/cmr/bx/n/12 135
+ []
+
+
+Overfull \hbox (2.03766pt too wide) detected at line 147
+ \OT1/cmr/bx/n/12 157
+ []
+
+[7]
+Overfull \hbox (2.03766pt too wide) detected at line 172
+ \OT1/cmr/bx/n/12 177
+ []
+
+
+Overfull \hbox (2.03766pt too wide) detected at line 188
+ \OT1/cmr/bx/n/12 205
+ []
+
+)
+\tf@toc=\write4
+\openout4 = `PLS_Path_Modeling_with_R.toc'.
+
+
+
+Package Fancyhdr Warning: \headheight is too small (12.0pt): 
+ Make it at least 14.49998pt.
+ We now make it that large for the rest of the document.
+ This may cause the page layout to be inconsistent, however.
+
+[8] [9
+
+] [10] [11] [12]
+Underfull \hbox (badness 10000) in paragraph at lines 257--258
+
+ []
+
+pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
+been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.271 \newpage
+               [1] [2]
+Chapter 1.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 289.
+
+(/usr/local/texlive/2012/texmf-dist/tex/latex/base/omscmr.fd
+File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 289.
+ [3
+
+]
+LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <17.28> not available
+(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 308.
+ [4] [5]
+[6] [7] [8]
+Overfull \hbox (2.48805pt too wide) in paragraph at lines 370--371
+[]\OT1/cmr/bx/n/12 Chapter 7 \OT1/cmr/m/n/12 de-scribes test-ing mod-er-at-ing 
+ef-fects with three types of ap-proaches: 1) product-
+ []
+
+[9]
+Package color Info: Redefining color shadecolor on input line 416.
+LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <12> not available
+(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 419.
+Package color Info: Redefining color shadecolor on input line 428.
+ [10]
+LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <14.4> not available
+(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 441.
+Package color Info: Redefining color shadecolor on input line 447.
+Package color Info: Redefining color shadecolor on input line 458.
+Package color Info: Redefining color shadecolor on input line 471.
+ [11]
+Package color Info: Redefining color shadecolor on input line 497.
+Package color Info: Redefining color shadecolor on input line 521.
+ [12] [13] [14]
+Chapter 2.
+Package color Info: Redefining color shadecolor on input line 594.
+Package color Info: Redefining color shadecolor on input line 608.
+[15
+
+] [16] [17] [18]
+Package color Info: Redefining color shadecolor on input line 710.
+
+<figure/plot_success_diagram.pdf, id=878, 325.215pt x 252.945pt>
+File: figure/plot_success_diagram.pdf Graphic file (type pdf)
+
+<use figure/plot_success_diagram.pdf>
+Package pdftex.def Info: figure/plot_success_diagram.pdf used on input line 713
+.
+(pdftex.def)             Requested size: 330.44453pt x 188.81285pt.
+ [19 <./figure/plot_success_diagram.pdf>]
+Package color Info: Redefining color shadecolor on input line 744.
+
+<figure/measure_success_diagram.pdf, id=891, 542.025pt x 180.675pt>
+File: figure/measure_success_diagram.pdf Graphic file (type pdf)
+
+<use figure/measure_success_diagram.pdf>
+Package pdftex.def Info: figure/measure_success_diagram.pdf used on input line 
+747.
+(pdftex.def)             Requested size: 424.83717pt x 165.21399pt.
+ [20 <./figure/measure_success_diagram.pdf>] [21]
+Package color Info: Redefining color shadecolor on input line 811.
+ <figure/spainfoot_model_diagram.pdf, id=911, 433.62pt x 289.08pt>
+File: figure/spainfoot_model_diagram.pdf Graphic file (type pdf)
+
+<use figure/spainfoot_model_diagram.pdf>
+Package pdftex.def Info: figure/spainfoot_model_diagram.pdf used on input line 
+814.
+(pdftex.def)             Requested size: 424.84546pt x 236.01495pt.
+Package color Info: Redefining color shadecolor on input line 831.
+
+<figure/spainfoot_inner_model_diag.pdf, id=912, 361.35pt x 216.81pt>
+File: figure/spainfoot_inner_model_diag.pdf Graphic file (type pdf)
+
+<use figure/spainfoot_inner_model_diag.pdf>
+Package pdftex.def Info: figure/spainfoot_inner_model_diag.pdf used on input li
+ne 834.
+(pdftex.def)             Requested size: 354.02686pt x 141.61624pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+Package color Info: Redefining color shadecolor on input line 847.
+<figure/spainfoot_outer_model_diag.pdf, id=913, 469.755pt x 289.08pt>
+File: figure/spainfoot_outer_model_diag.pdf Graphic file (type pdf)
+
+<use figure/spainfoot_outer_model_diag.pdf>
+Package pdftex.def Info: figure/spainfoot_outer_model_diag.pdf used on input li
+ne 850.
+(pdftex.def)             Requested size: 401.22897pt x 212.41168pt.
+ [22 <./figure/spainfoot_model_diagram.pdf>] [23 <./figure/spainfoot_inner_mode
+l_diag.pdf> <./figure/spainfoot_outer_model_diag.pdf>]
+Package color Info: Redefining color shadecolor on input line 874.
+
+Overfull \hbox (2.33833pt too wide) in paragraph at lines 890--891
+[]\OT1/cmr/m/n/12 What we are do-ing is cre-at-ing three vec-tors that will be 
+the rows of the ar-gu-ment \OT1/cmtt/m/n/12 path[]matrix\OT1/cmr/m/n/12 .
+ []
+
+Package color Info: Redefining color shadecolor on input line 893.
+[24]
+Package color Info: Redefining color shadecolor on input line 911.
+ <figure/innerplot_spainfoot.pdf, id=954, 325.215pt x 180.675pt>
+File: figure/innerplot_spainfoot.pdf Graphic file (type pdf)
+
+<use figure/innerplot_spainfoot.pdf>
+Package pdftex.def Info: figure/innerplot_spainfoot.pdf used on input line 919.
+
+(pdftex.def)             Requested size: 306.83852pt x 188.81007pt.
+Package color Info: Redefining color shadecolor on input line 934.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [25 <./figure/innerplot_spainfoot.pdf>]
+Package color Info: Redefining color shadecolor on input line 949.
+Package color Info: Redefining color shadecolor on input line 959.
+Package color Info: Redefining color shadecolor on input line 976.
+ [26]
+Package color Info: Redefining color shadecolor on input line 988.
+Package color Info: Redefining color shadecolor on input line 1020.
+ [27]
+Package color Info: Redefining color shadecolor on input line 1049.
+Package color Info: Redefining color shadecolor on input line 1063.
+Package color Info: Redefining color shadecolor on input line 1080.
+
+Overfull \vbox (0.8578pt too high) detected at line 1092
+ []
+
+[28]
+Package color Info: Redefining color shadecolor on input line 1099.
+Package color Info: Redefining color shadecolor on input line 1112.
+ <figure/plot_inner_foot_pls.pdf, id=984, 325.215pt x 216.81pt>
+File: figure/plot_inner_foot_pls.pdf Graphic file (type pdf)
+
+<use figure/plot_inner_foot_pls.pdf>
+Package pdftex.def Info: figure/plot_inner_foot_pls.pdf used on input line 1119
+.
+(pdftex.def)             Requested size: 330.44453pt x 188.81836pt.
+Package color Info: Redefining color shadecolor on input line 1130.
+
+<figure/plot_loadings_foot_pls.pdf, id=985, 433.62pt x 180.675pt>
+File: figure/plot_loadings_foot_pls.pdf Graphic file (type pdf)
+
+<use figure/plot_loadings_foot_pls.pdf>
+Package pdftex.def Info: figure/plot_loadings_foot_pls.pdf used on input line 1
+137.
+(pdftex.def)             Requested size: 472.05418pt x 212.41444pt.
+
+Underfull \vbox (badness 1348) has occurred while \output is active []
+
+ [29 <./figure/plot_inner_foot_pls.pdf>]
+Package color Info: Redefining color shadecolor on input line 1150.
+ [30 <./figure/plot_loadings_foot_pls.pdf>]
+[31] [32
+
+]
+Chapter 3.
+[33] [34] [35] [36]
+Package color Info: Redefining color shadecolor on input line 1278.
+ <figure/reflective_way.pdf, id=1051, 144.54pt x 144.54pt>
+File: figure/reflective_way.pdf Graphic file (type pdf)
+
+<use figure/reflective_way.pdf>
+Package pdftex.def Info: figure/reflective_way.pdf used on input line 1281.
+(pdftex.def)             Requested size: 118.00746pt x 118.00746pt.
+Package color Info: Redefining color shadecolor on input line 1295.
+
+<figure/formative_way.pdf, id=1052, 144.54pt x 144.54pt>
+File: figure/formative_way.pdf Graphic file (type pdf)
+
+<use figure/formative_way.pdf>
+Package pdftex.def Info: figure/formative_way.pdf used on input line 1298.
+(pdftex.def)             Requested size: 118.00746pt x 118.00746pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[37 <./figure/reflective_way.pdf>] [38 <./figure/formative_way.pdf>] [39]
+Package color Info: Redefining color shadecolor on input line 1363.
+
+<figure/auxiliary_path_diagram.pdf, id=1082, 361.35pt x 289.08pt>
+File: figure/auxiliary_path_diagram.pdf Graphic file (type pdf)
+
+<use figure/auxiliary_path_diagram.pdf>
+Package pdftex.def Info: figure/auxiliary_path_diagram.pdf used on input line 1
+366.
+(pdftex.def)             Requested size: 330.42249pt x 236.01495pt.
+ [40 <./figure/auxiliary_path_diagram.pdf>] [41] [42] [43] [44] [45] [46]
+Overfull \hbox (11.90417pt too wide) in paragraph at lines 1535--1536
+[]\OT1/cmss/bx/n/12 PLS path mod-el-ing \OT1/cmr/m/n/12 by Michel Tenen-haus, V
+in-cenzo Es-pos-ito Vinzi, Yves-Marie Chatelin,
+ []
+
+[47] [48]
+Chapter 4.
+Package color Info: Redefining color shadecolor on input line 1570.
+<figure/success_inner_model_reminder.pdf, id=1140, 361.35pt x 252.945pt>
+File: figure/success_inner_model_reminder.pdf Graphic file (type pdf)
+
+<use figure/success_inner_model_reminder.pdf>
+Package pdftex.def Info: figure/success_inner_model_reminder.pdf used on input 
+line 1573.
+(pdftex.def)             Requested size: 330.42249pt x 188.81285pt.
+Package color Info: Redefining color shadecolor on input line 1592.
+
+<figure/success_path_diagram_reminder.pdf, id=1141, 433.62pt x 289.08pt>
+File: figure/success_path_diagram_reminder.pdf Graphic file (type pdf)
+
+<use figure/success_path_diagram_reminder.pdf>
+Package pdftex.def Info: figure/success_path_diagram_reminder.pdf used on input
+ line 1595.
+(pdftex.def)             Requested size: 401.25102pt x 236.01495pt.
+ [49
+
+ <./figure/success_inner_model_reminder.pdf>]
+Package color Info: Redefining color shadecolor on input line 1614.
+ [50 <./figure/success_path_diagram_reminder.pdf>]
+Package color Info: Redefining color shadecolor on input line 1661.
+ [51]
+Package color Info: Redefining color shadecolor on input line 1678.
+Package color Info: Redefining color shadecolor on input line 1708.
+
+[52]
+Package color Info: Redefining color shadecolor on input line 1723.
+Package color Info: Redefining color shadecolor on input line 1737.
+ [53]
+Package color Info: Redefining color shadecolor on input line 1774.
+ [54]
+Package color Info: Redefining color shadecolor on input line 1803.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\\' on input line 1816.
+
+[55]
+Package color Info: Redefining color shadecolor on input line 1847.
+ [56]
+Package color Info: Redefining color shadecolor on input line 1867.
+Package color Info: Redefining color shadecolor on input line 1887.
+ [57]
+Package color Info: Redefining color shadecolor on input line 1907.
+Package color Info: Redefining color shadecolor on input line 1927.
+ <figure/plot_loadings2.pdf, id=1201, 433.62pt x 216.81pt>
+File: figure/plot_loadings2.pdf Graphic file (type pdf)
+
+<use figure/plot_loadings2.pdf>
+Package pdftex.def Info: figure/plot_loadings2.pdf used on input line 1934.
+(pdftex.def)             Requested size: 472.05418pt x 236.02708pt.
+ [58]
+Package color Info: Redefining color shadecolor on input line 1944.
+Package color Info: Redefining color shadecolor on input line 1970.
+
+Underfull \vbox (badness 2042) detected at line 1982
+ []
+
+
+Underfull \vbox (badness 2042) has occurred while \output is active []
+
+ [59 <./figure/plot_loadings2.pdf>]
+Package color Info: Redefining color shadecolor on input line 1987.
+
+<figure/plot_weights.pdf, id=1223, 433.62pt x 216.81pt>
+File: figure/plot_weights.pdf Graphic file (type pdf)
+
+<use figure/plot_weights.pdf>
+Package pdftex.def Info: figure/plot_weights.pdf used on input line 1994.
+(pdftex.def)             Requested size: 472.05418pt x 236.02708pt.
+Package color Info: Redefining color shadecolor on input line 2010.
+ [60 <./figure/plot_weights.pdf>]
+Package color Info: Redefining color shadecolor on input line 2021.
+Package color Info: Redefining color shadecolor on input line 2037.
+Package color Info: Redefining color shadecolor on input line 2054.
+
+<figure/rerun_plspm.pdf, id=1240, 433.62pt x 216.81pt>
+File: figure/rerun_plspm.pdf Graphic file (type pdf)
+
+<use figure/rerun_plspm.pdf>
+Package pdftex.def Info: figure/rerun_plspm.pdf used on input line 2065.
+(pdftex.def)             Requested size: 472.05418pt x 236.02708pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+Package color Info: Redefining color shadecolor on input line 2078.
+[61]
+Package color Info: Redefining color shadecolor on input line 2097.
+ [62 <./figure/rerun_plspm.pdf>] [63]
+Package color Info: Redefining color shadecolor on input line 2138.
+ [64]
+Package color Info: Redefining color shadecolor on input line 2166.
+
+<figure/foot_pls_xloads_ggplot.pdf, id=1270, 578.16pt x 433.62pt>
+File: figure/foot_pls_xloads_ggplot.pdf Graphic file (type pdf)
+
+<use figure/foot_pls_xloads_ggplot.pdf>
+Package pdftex.def Info: figure/foot_pls_xloads_ggplot.pdf used on input line 2
+168.
+(pdftex.def)             Requested size: 472.02992pt x 354.04228pt.
+Package color Info: Redefining color shadecolor on input line 2179.
+ [65 <./figure/foot_pls_xloads_ggplot.pdf>]
+Package color Info: Redefining color shadecolor on input line 2196.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\\' on input line 2224.
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [66]
+Package color Info: Redefining color shadecolor on input line 2234.
+
+[67]
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 2259.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `superscript' on input line 2259.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 2259.
+
+Package color Info: Redefining color shadecolor on input line 2262.
+[68]
+Package color Info: Redefining color shadecolor on input line 2303.
+Package color Info: Redefining color shadecolor on input line 2329.
+ [69]
+LaTeX Font Info:    Try loading font information for OML+cmr on input line 2341
+.
+ (/usr/local/texlive/2012/texmf-dist/tex/latex/base/omlcmr.fd
+File: omlcmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <12> not available
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 2341.
+
+Package color Info: Redefining color shadecolor on input line 2352.
+
+[70]
+Underfull \vbox (badness 2443) detected at line 2407
+ []
+
+
+Underfull \vbox (badness 2443) detected at line 2407
+ []
+
+[71] [72] [73] [74
+
+]
+Chapter 5.
+[75]
+Package color Info: Redefining color shadecolor on input line 2465.
+ <figure/ECSI_model_diag.pdf, id=1327, 433.62pt x 325.215pt>
+File: figure/ECSI_model_diag.pdf Graphic file (type pdf)
+
+<use figure/ECSI_model_diag.pdf>
+Package pdftex.def Info: figure/ECSI_model_diag.pdf used on input line 2468.
+(pdftex.def)             Requested size: 448.45313pt x 236.02046pt.
+ [76 <./figure/ECSI_model_diag.pdf>]
+Package color Info: Redefining color shadecolor on input line 2497.
+
+<figure/education_path_diagram.pdf, id=1338, 397.485pt x 325.215pt>
+File: figure/education_path_diagram.pdf Graphic file (type pdf)
+
+<use figure/education_path_diagram.pdf>
+Package pdftex.def Info: figure/education_path_diagram.pdf used on input line 2
+500.
+(pdftex.def)             Requested size: 401.2444pt x 236.02046pt.
+ [77] [78 <./figure/education_path_diagram.pdf>]
+Package color Info: Redefining color shadecolor on input line 2530.
+Package color Info: Redefining color shadecolor on input line 2543.
+Package color Info: Redefining color shadecolor on input line 2559.
+Package color Info: Redefining color shadecolor on input line 2573.
+LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <10.95> not available
+(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 2576.
+
+ [79] [80] [81]
+Package color Info: Redefining color shadecolor on input line 2695.
+
+<figure/support_mvs_distrs.pdf, id=1372, 361.35pt x 252.945pt>
+File: figure/support_mvs_distrs.pdf Graphic file (type pdf)
+
+<use figure/support_mvs_distrs.pdf>
+Package pdftex.def Info: figure/support_mvs_distrs.pdf used on input line 2706.
+
+(pdftex.def)             Requested size: 259.62042pt x 188.81285pt.
+Package color Info: Redefining color shadecolor on input line 2719.
+Package color Info: Redefining color shadecolor on input line 2730.
+ [82 <./figure/support_mvs_distrs.pdf>]
+Package color Info: Redefining color shadecolor on input line 2747.
+
+<figure/barplots_support_figure.pdf, id=1384, 578.16pt x 289.08pt>
+File: figure/barplots_support_figure.pdf Graphic file (type pdf)
+
+<use figure/barplots_support_figure.pdf>
+Package pdftex.def Info: figure/barplots_support_figure.pdf used on input line 
+2750.
+(pdftex.def)             Requested size: 472.02992pt x 283.2347pt.
+Package color Info: Redefining color shadecolor on input line 2763.
+LaTeX Font Info:    Try loading font information for OMS+cmtt on input line 276
+8.
+
+(/Library/Frameworks/R.framework/Resources/share/texmf/tex/latex/omscmtt.fd
+File: omscmtt.fd 
+)
+LaTeX Font Info:    Font shape `OMS/cmtt/m/n' in size <12> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 2768.
+
+
+[83 <./figure/barplots_support_figure.pdf>]
+Package color Info: Redefining color shadecolor on input line 2792.
+ [84]
+Package color Info: Redefining color shadecolor on input line 2810.
+
+<figure/support_nipals.pdf, id=1402, 307.1475pt x 307.1475pt>
+File: figure/support_nipals.pdf Graphic file (type pdf)
+
+<use figure/support_nipals.pdf>
+Package pdftex.def Info: figure/support_nipals.pdf used on input line 2825.
+(pdftex.def)             Requested size: 259.6331pt x 259.6331pt.
+ [85 <./figure/support_nipals.pdf>]
+Package color Info: Redefining color shadecolor on input line 2851.
+ [86]
+Package color Info: Redefining color shadecolor on input line 2873.
+
+<figure/edu_innerplot.pdf, id=1420, 361.35pt x 252.945pt>
+File: figure/edu_innerplot.pdf Graphic file (type pdf)
+
+<use figure/edu_innerplot.pdf>
+Package pdftex.def Info: figure/edu_innerplot.pdf used on input line 2881.
+(pdftex.def)             Requested size: 377.63121pt x 236.01991pt.
+Package color Info: Redefining color shadecolor on input line 2895.
+Package color Info: Redefining color shadecolor on input line 2910.
+
+Underfull \vbox (badness 3260) has occurred while \output is active []
+
+ [87 <./figure/edu_innerplot.pdf>]
+Package color Info: Redefining color shadecolor on input line 2945.
+ [88]
+Package color Info: Redefining color shadecolor on input line 2965.
+
+<figure/edu_pls1_loadings_plot.pdf, id=1442, 433.62pt x 252.945pt>
+File: figure/edu_pls1_loadings_plot.pdf Graphic file (type pdf)
+
+<use figure/edu_pls1_loadings_plot.pdf>
+Package pdftex.def Info: figure/edu_pls1_loadings_plot.pdf used on input line 2
+973.
+(pdftex.def)             Requested size: 472.05418pt x 283.22699pt.
+ [89 <./figure/edu_pls1_loadings_plot.pdf>]
+Package color Info: Redefining color shadecolor on input line 2996.
+Package color Info: Redefining color shadecolor on input line 3011.
+ [90]
+Package color Info: Redefining color shadecolor on input line 3026.
+ <figure/edu_pls2_loadings_plot.pdf, id=1464, 433.62pt x 252.945pt>
+File: figure/edu_pls2_loadings_plot.pdf Graphic file (type pdf)
+
+<use figure/edu_pls2_loadings_plot.pdf>
+Package pdftex.def Info: figure/edu_pls2_loadings_plot.pdf used on input line 3
+034.
+(pdftex.def)             Requested size: 472.05418pt x 283.22699pt.
+Package color Info: Redefining color shadecolor on input line 3047.
+
+Overfull \vbox (0.60143pt too high) detected at line 3061
+ []
+
+[91 <./figure/edu_pls2_loadings_plot.pdf>]
+Package color Info: Redefining color shadecolor on input line 3070.
+ [92]
+Package color Info: Redefining color shadecolor on input line 3108.
+
+<figure/edu_pls2_barplot_loadings.pdf, id=1485, 650.43pt x 361.35pt>
+File: figure/edu_pls2_barplot_loadings.pdf Graphic file (type pdf)
+
+<use figure/edu_pls2_barplot_loadings.pdf>
+Package pdftex.def Info: figure/edu_pls2_barplot_loadings.pdf used on input lin
+e 3126.
+(pdftex.def)             Requested size: 472.04094pt x 283.2248pt.
+ [93 <./figure/edu_pls2_barplot_loadings.pdf>]
+Package color Info: Redefining color shadecolor on input line 3143.
+Package color Info: Redefining color shadecolor on input line 3158.
+ [94]
+Package color Info: Redefining color shadecolor on input line 3181.
+Package color Info: Redefining color shadecolor on input line 3218.
+ [95] [96]
+Package color Info: Redefining color shadecolor on input line 3259.
+
+<figure/edu_pls3_plot_inner1.pdf, id=1510, 361.35pt x 252.945pt>
+File: figure/edu_pls3_plot_inner1.pdf Graphic file (type pdf)
+
+<use figure/edu_pls3_plot_inner1.pdf>
+Package pdftex.def Info: figure/edu_pls3_plot_inner1.pdf used on input line 326
+7.
+(pdftex.def)             Requested size: 377.63121pt x 236.01991pt.
+Package color Info: Redefining color shadecolor on input line 3279.
+ [97 <./figure/edu_pls3_plot_inner1.pdf>]
+Package color Info: Redefining color shadecolor on input line 3299.
+
+<figure/edu_pls3_plot_inner2.pdf, id=1526, 361.35pt x 252.945pt>
+File: figure/edu_pls3_plot_inner2.pdf Graphic file (type pdf)
+
+<use figure/edu_pls3_plot_inner2.pdf>
+Package pdftex.def Info: figure/edu_pls3_plot_inner2.pdf used on input line 330
+7.
+(pdftex.def)             Requested size: 377.63121pt x 236.01991pt.
+Package color Info: Redefining color shadecolor on input line 3320.
+ [98 <./figure/edu_pls3_plot_inner2.pdf>]
+Package color Info: Redefining color shadecolor on input line 3346.
+
+<figure/edu_pls3_plot_inner3.pdf, id=1541, 361.35pt x 252.945pt>
+File: figure/edu_pls3_plot_inner3.pdf Graphic file (type pdf)
+
+<use figure/edu_pls3_plot_inner3.pdf>
+Package pdftex.def Info: figure/edu_pls3_plot_inner3.pdf used on input line 335
+4.
+(pdftex.def)             Requested size: 377.63121pt x 236.01991pt.
+Package color Info: Redefining color shadecolor on input line 3370.
+ [99 <./figure/edu_pls3_plot_inner3.pdf>]
+Package color Info: Redefining color shadecolor on input line 3405.
+
+[100]
+Package color Info: Redefining color shadecolor on input line 3436.
+Package color Info: Redefining color shadecolor on input line 3450.
+ [101]
+Package color Info: Redefining color shadecolor on input line 3478.
+
+<figure/edu_pls3_effects_barchart.pdf, id=1565, 505.89pt x 361.35pt>
+File: figure/edu_pls3_effects_barchart.pdf Graphic file (type pdf)
+
+<use figure/edu_pls3_effects_barchart.pdf>
+Package pdftex.def Info: figure/edu_pls3_effects_barchart.pdf used on input lin
+e 3481.
+(pdftex.def)             Requested size: 472.03983pt x 330.42249pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+Package color Info: Redefining color shadecolor on input line 3494.
+Package color Info: Redefining color shadecolor on input line 3517.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [102]
+Underfull \vbox (badness 1107) detected at line 3537
+ []
+
+
+Underfull \vbox (badness 1107) has occurred while \output is active []
+
+ [103 <./figure/edu_pls3_effects_barchart.pdf>]
+Package color Info: Redefining color shadecolor on input line 3549.
+Package color Info: Redefining color shadecolor on input line 3569.
+
+Underfull \vbox (badness 1412) has occurred while \output is active []
+
+ [104]
+Underfull \vbox (badness 1521) detected at line 3662
+ []
+
+
+Underfull \vbox (badness 3375) has occurred while \output is active []
+
+ [105]
+Underfull \vbox (badness 10000) detected at line 3662
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 3662
+ []
+
+[106]
+Package color Info: Redefining color shadecolor on input line 3667.
+Package color Info: Redefining color shadecolor on input line 3692.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [107]
+Package color Info: Redefining color shadecolor on input line 3720.
+
+<figure/edu_scores_histograms1.pdf, id=1597, 505.89pt x 325.215pt>
+File: figure/edu_scores_histograms1.pdf Graphic file (type pdf)
+
+<use figure/edu_scores_histograms1.pdf>
+Package pdftex.def Info: figure/edu_scores_histograms1.pdf used on input line 3
+723.
+(pdftex.def)             Requested size: 448.43437pt x 306.83852pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+Package color Info: Redefining color shadecolor on input line 3736.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [108]
+Package color Info: Redefining color shadecolor on input line 3760.
+
+[109 <./figure/edu_scores_histograms1.pdf>]
+Package color Info: Redefining color shadecolor on input line 3790.
+Package color Info: Redefining color shadecolor on input line 3816.
+
+<figure/edu_scores_histograms2.pdf, id=1615, 505.89pt x 325.215pt>
+File: figure/edu_scores_histograms2.pdf Graphic file (type pdf)
+
+<use figure/edu_scores_histograms2.pdf>
+Package pdftex.def Info: figure/edu_scores_histograms2.pdf used on input line 3
+819.
+(pdftex.def)             Requested size: 448.43437pt x 306.83852pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+Package color Info: Redefining color shadecolor on input line 3832.
+<figure/edu_scores_pairs.pdf, id=1616, 361.35pt x 361.35pt>
+File: figure/edu_scores_pairs.pdf Graphic file (type pdf)
+
+<use figure/edu_scores_pairs.pdf>
+Package pdftex.def Info: figure/edu_scores_pairs.pdf used on input line 3841.
+(pdftex.def)             Requested size: 424.82892pt x 424.82892pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+Underfull \vbox (badness 4981) has occurred while \output is active []
+
+ [110]
+[111 <./figure/edu_scores_histograms2.pdf>] [112] [113] [114] [115] [116 <./fig
+ure/edu_scores_pairs.pdf>]
+Chapter 6.
+[117
+
+] [118] [119] [120] [121]
+Package color Info: Redefining color shadecolor on input line 4068.
+ [122]
+Package color Info: Redefining color shadecolor on input line 4126.
+ [123]
+Package color Info: Redefining color shadecolor on input line 4161.
+
+<figure/gpa_dummy_model.pdf, id=1721, 505.89pt x 289.08pt>
+File: figure/gpa_dummy_model.pdf Graphic file (type pdf)
+
+<use figure/gpa_dummy_model.pdf>
+Package pdftex.def Info: figure/gpa_dummy_model.pdf used on input line 4164.
+(pdftex.def)             Requested size: 401.23888pt x 212.41168pt.
+ [124 <./figure/gpa_dummy_model.pdf>]
+Package color Info: Redefining color shadecolor on input line 4213.
+
+<figure/gpa_model_diagram.pdf, id=1734, 578.16pt x 325.215pt>
+File: figure/gpa_model_diagram.pdf Graphic file (type pdf)
+
+<use figure/gpa_model_diagram.pdf>
+Package pdftex.def Info: figure/gpa_model_diagram.pdf used on input line 4216.
+(pdftex.def)             Requested size: 448.42224pt x 236.02046pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+Package color Info: Redefining color shadecolor on input line 4232.
+[125]
+Package color Info: Redefining color shadecolor on input line 4253.
+Package color Info: Redefining color shadecolor on input line 4265.
+ [126 <./figure/gpa_model_diagram.pdf>]
+<figure/gpa_inner_model.pdf, id=1756, 325.215pt x 252.945pt>
+File: figure/gpa_inner_model.pdf Graphic file (type pdf)
+
+<use figure/gpa_inner_model.pdf>
+Package pdftex.def Info: figure/gpa_inner_model.pdf used on input line 4273.
+(pdftex.def)             Requested size: 330.44453pt x 236.01991pt.
+Package color Info: Redefining color shadecolor on input line 4285.
+ [127 <./figure/gpa_inner_model.pdf>]
+Package color Info: Redefining color shadecolor on input line 4318.
+Package color Info: Redefining color shadecolor on input line 4332.
+Package color Info: Redefining color shadecolor on input line 4346.
+ [128]
+<figure/gpa_fem_male_models.pdf, id=1777, 469.755pt x 289.08pt>
+File: figure/gpa_fem_male_models.pdf Graphic file (type pdf)
+
+<use figure/gpa_fem_male_models.pdf>
+Package pdftex.def Info: figure/gpa_fem_male_models.pdf used on input line 4355
+.
+(pdftex.def)             Requested size: 472.03323pt x 259.63144pt.
+Package color Info: Redefining color shadecolor on input line 4379.
+ [129 <./figure/gpa_fem_male_models.pdf>]
+Underfull \vbox (badness 1708) has occurred while \output is active []
+
+ [130]
+Package color Info: Redefining color shadecolor on input line 4428.
+
+[131]
+Package color Info: Redefining color shadecolor on input line 4474.
+ <figure/female_male_barplot.pdf, id=1802, 469.755pt x 307.1475pt>
+File: figure/female_male_barplot.pdf Graphic file (type pdf)
+
+<use figure/female_male_barplot.pdf>
+Package pdftex.def Info: figure/female_male_barplot.pdf used on input line 4477
+.
+(pdftex.def)             Requested size: 401.22897pt x 295.03633pt.
+Package color Info: Redefining color shadecolor on input line 4490.
+ [132 <./figure/female_male_barplot.pdf>]
+[133] [134
+
+]
+Chapter 7.
+[135]
+Package color Info: Redefining color shadecolor on input line 4551.
+ <figure/typical_moderator.pdf, id=1829, 325.215pt x 252.945pt>
+File: figure/typical_moderator.pdf Graphic file (type pdf)
+
+<use figure/typical_moderator.pdf>
+Package pdftex.def Info: figure/typical_moderator.pdf used on input line 4554.
+(pdftex.def)             Requested size: 330.44453pt x 188.81285pt.
+ [136 <./figure/typical_moderator.pdf>]
+Package color Info: Redefining color shadecolor on input line 4597.
+
+<figure/simple_ecsi_diag.pdf, id=1841, 433.62pt x 289.08pt>
+File: figure/simple_ecsi_diag.pdf Graphic file (type pdf)
+
+<use figure/simple_ecsi_diag.pdf>
+Package pdftex.def Info: figure/simple_ecsi_diag.pdf used on input line 4600.
+(pdftex.def)             Requested size: 377.64334pt x 236.01495pt.
+ [137 <./figure/simple_ecsi_diag.pdf>]
+Package color Info: Redefining color shadecolor on input line 4623.
+
+<figure/prod_ind_app_diag.pdf, id=1853, 433.62pt x 289.08pt>
+File: figure/prod_ind_app_diag.pdf Graphic file (type pdf)
+
+<use figure/prod_ind_app_diag.pdf>
+Package pdftex.def Info: figure/prod_ind_app_diag.pdf used on input line 4626.
+(pdftex.def)             Requested size: 377.64334pt x 236.01495pt.
+ [138 <./figure/prod_ind_app_diag.pdf>]
+Package color Info: Redefining color shadecolor on input line 4647.
+
+<figure/prod_ind_app_sat_diag.pdf, id=1866, 505.89pt x 361.35pt>
+File: figure/prod_ind_app_sat_diag.pdf Graphic file (type pdf)
+
+<use figure/prod_ind_app_sat_diag.pdf>
+Package pdftex.def Info: figure/prod_ind_app_sat_diag.pdf used on input line 46
+50.
+(pdftex.def)             Requested size: 377.6334pt x 283.2248pt.
+Package color Info: Redefining color shadecolor on input line 4666.
+ [139 <./figure/prod_ind_app_sat_diag.pdf>]
+Package color Info: Redefining color shadecolor on input line 4681.
+Package color Info: Redefining color shadecolor on input line 4698.
+Package color Info: Redefining color shadecolor on input line 4725.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [140]
+Package color Info: Redefining color shadecolor on input line 4754.
+Package color Info: Redefining color shadecolor on input line 4772.
+
+[141]
+Package color Info: Redefining color shadecolor on input line 4782.
+ <figure/ProdIndApp_plot_inner.pdf, id=1890, 289.08pt x 216.81pt>
+File: figure/ProdIndApp_plot_inner.pdf Graphic file (type pdf)
+
+<use figure/ProdIndApp_plot_inner.pdf>
+Package pdftex.def Info: figure/ProdIndApp_plot_inner.pdf used on input line 47
+85.
+(pdftex.def)             Requested size: 283.2347pt x 188.81836pt.
+Package color Info: Redefining color shadecolor on input line 4799.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [142 <./figure/ProdIndApp_plot_inner.pdf>]
+Package color Info: Redefining color shadecolor on input line 4828.
+
+<figure/TwoStageApp1_diag.pdf, id=1906, 433.62pt x 325.215pt>
+File: figure/TwoStageApp1_diag.pdf Graphic file (type pdf)
+
+<use figure/TwoStageApp1_diag.pdf>
+Package pdftex.def Info: figure/TwoStageApp1_diag.pdf used on input line 4830.
+(pdftex.def)             Requested size: 330.43462pt x 212.41942pt.
+Package color Info: Redefining color shadecolor on input line 4844.
+
+<figure/TwoStageApp2_diag.pdf, id=1907, 433.62pt x 325.215pt>
+File: figure/TwoStageApp2_diag.pdf Graphic file (type pdf)
+
+<use figure/TwoStageApp2_diag.pdf>
+Package pdftex.def Info: figure/TwoStageApp2_diag.pdf used on input line 4846.
+(pdftex.def)             Requested size: 330.43462pt x 188.8134pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [143 <./figure/TwoStageApp1_diag.pdf> <./figure/TwoStageApp2_diag.pdf>]
+Package color Info: Redefining color shadecolor on input line 4862.
+
+Overfull \hbox (9.619pt too wide) in paragraph at lines 4878--4878
+[]\OT1/cmtt/m/n/12 first_pls = []plspm[](satisfaction, first_path, first_blocks
+, modes = first_modes)[] 
+ []
+
+Package color Info: Redefining color shadecolor on input line 4887.
+[144]
+Package color Info: Redefining color shadecolor on input line 4912.
+Package color Info: Redefining color shadecolor on input line 4934.
+ <figure/TwoStageApp1_distr_plot.pdf, id=1933, 578.16pt x 433.62pt>
+File: figure/TwoStageApp1_distr_plot.pdf Graphic file (type pdf)
+
+<use figure/TwoStageApp1_distr_plot.pdf>
+Package pdftex.def Info: figure/TwoStageApp1_distr_plot.pdf used on input line 
+4936.
+(pdftex.def)             Requested size: 448.42224pt x 283.23251pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [145]
+Package color Info: Redefining color shadecolor on input line 4949.
+
+Overfull \vbox (0.88873pt too high) detected at line 4980
+ []
+
+[146 <./figure/TwoStageApp1_distr_plot.pdf>]
+Package color Info: Redefining color shadecolor on input line 4985.
+
+<figure/TwoStageApp_plot_inner.pdf, id=1949, 289.08pt x 216.81pt>
+File: figure/TwoStageApp_plot_inner.pdf Graphic file (type pdf)
+
+<use figure/TwoStageApp_plot_inner.pdf>
+Package pdftex.def Info: figure/TwoStageApp_plot_inner.pdf used on input line 4
+993.
+(pdftex.def)             Requested size: 283.2347pt x 188.81836pt.
+ [147 <./figure/TwoStageApp_plot_inner.pdf>]
+Package color Info: Redefining color shadecolor on input line 5016.
+ <figure/TwoStageReg1_diag.pdf, id=1965, 433.62pt x 325.215pt>
+File: figure/TwoStageReg1_diag.pdf Graphic file (type pdf)
+
+<use figure/TwoStageReg1_diag.pdf>
+Package pdftex.def Info: figure/TwoStageReg1_diag.pdf used on input line 5019.
+(pdftex.def)             Requested size: 330.43462pt x 212.41942pt.
+Package color Info: Redefining color shadecolor on input line 5034.
+ [148 <./figure/TwoStageReg1_diag.pdf>]
+Package color Info: Redefining color shadecolor on input line 5063.
+Package color Info: Redefining color shadecolor on input line 5091.
+
+<figure/TwoStageReg2_diag.pdf, id=1978, 397.485pt x 289.08pt>
+File: figure/TwoStageReg2_diag.pdf Graphic file (type pdf)
+
+<use figure/TwoStageReg2_diag.pdf>
+Package pdftex.def Info: figure/TwoStageReg2_diag.pdf used on input line 5094.
+(pdftex.def)             Requested size: 377.63893pt x 212.41168pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+Package color Info: Redefining color shadecolor on input line 5108.
+[149]
+Package color Info: Redefining color shadecolor on input line 5126.
+Package color Info: Redefining color shadecolor on input line 5142.
+ <figure/TwoStageReg_path_diagram.pdf, id=1985, 289.08pt x 216.81pt>
+File: figure/TwoStageReg_path_diagram.pdf Graphic file (type pdf)
+
+<use figure/TwoStageReg_path_diagram.pdf>
+Package pdftex.def Info: figure/TwoStageReg_path_diagram.pdf used on input line
+ 5150.
+(pdftex.def)             Requested size: 283.2347pt x 188.81836pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[150 <./figure/TwoStageReg2_diag.pdf>]
+Package color Info: Redefining color shadecolor on input line 5175.
+
+<figure/cat_var_app_diag.pdf, id=1997, 433.62pt x 289.08pt>
+File: figure/cat_var_app_diag.pdf Graphic file (type pdf)
+
+<use figure/cat_var_app_diag.pdf>
+Package pdftex.def Info: figure/cat_var_app_diag.pdf used on input line 5178.
+(pdftex.def)             Requested size: 377.64334pt x 236.01495pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [151 <./figure/TwoStageReg_path_diagram.pdf>]
+Package color Info: Redefining color shadecolor on input line 5195.
+ [152 <./figure/cat_var_app_diag.pdf>]
+Package color Info: Redefining color shadecolor on input line 5216.
+Package color Info: Redefining color shadecolor on input line 5233.
+Package color Info: Redefining color shadecolor on input line 5257.
+
+[153]
+Package color Info: Redefining color shadecolor on input line 5284.
+ <figure/CatVarApp_plot_inner.pdf, id=2031, 325.215pt x 180.675pt>
+File: figure/CatVarApp_plot_inner.pdf Graphic file (type pdf)
+
+<use figure/CatVarApp_plot_inner.pdf>
+Package pdftex.def Info: figure/CatVarApp_plot_inner.pdf used on input line 529
+2.
+(pdftex.def)             Requested size: 283.24243pt x 188.81007pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+Package color Info: Redefining color shadecolor on input line 5305.
+[154] [155 <./figure/CatVarApp_plot_inner.pdf>] [156
+
+]
+Chapter 8.
+Package color Info: Redefining color shadecolor on input line 5351.
+<figure/gen_int_sec_ord_diag.pdf, id=2057, 433.62pt x 252.945pt>
+File: figure/gen_int_sec_ord_diag.pdf Graphic file (type pdf)
+
+<use figure/gen_int_sec_ord_diag.pdf>
+Package pdftex.def Info: figure/gen_int_sec_ord_diag.pdf used on input line 535
+4.
+(pdftex.def)             Requested size: 354.04228pt x 188.81285pt.
+ [157 <./figure/gen_int_sec_ord_diag.pdf>]
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\\' on input line 5369.
+
+Package color Info: Redefining color shadecolor on input line 5372.
+<figure/hierarchical_example1.pdf, id=2069, 325.215pt x 289.08pt>
+File: figure/hierarchical_example1.pdf Graphic file (type pdf)
+
+<use figure/hierarchical_example1.pdf>
+Package pdftex.def Info: figure/hierarchical_example1.pdf used on input line 53
+75.
+(pdftex.def)             Requested size: 330.44453pt x 236.01495pt.
+ [158 <./figure/hierarchical_example1.pdf>]
+Package color Info: Redefining color shadecolor on input line 5400.
+ <figure/molecular_molar_diag.pdf, id=2081, 397.485pt x 289.08pt>
+File: figure/molecular_molar_diag.pdf Graphic file (type pdf)
+
+<use figure/molecular_molar_diag.pdf>
+Package pdftex.def Info: figure/molecular_molar_diag.pdf used on input line 540
+3.
+(pdftex.def)             Requested size: 401.2444pt x 212.41168pt.
+
+Underfull \vbox (badness 7397) has occurred while \output is active []
+
+ [159 <./figure/molecular_molar_diag.pdf>] [160] [161]
+Package color Info: Redefining color shadecolor on input line 5458.
+
+<figure/offense_performance_model.pdf, id=2105, 397.485pt x 252.945pt>
+File: figure/offense_performance_model.pdf Graphic file (type pdf)
+
+<use figure/offense_performance_model.pdf>
+Package pdftex.def Info: figure/offense_performance_model.pdf used on input lin
+e 5461.
+(pdftex.def)             Requested size: 424.83772pt x 212.4183pt.
+Package color Info: Redefining color shadecolor on input line 5475.
+ [162 <./figure/offense_performance_model.pdf>] [163] [164]
+Package color Info: Redefining color shadecolor on input line 5572.
+
+Overfull \hbox (3.444pt too wide) in paragraph at lines 5583--5583
+[][]\OT1/cmtt/m/n/12 rownames[](nfl_path) = []c[]([]"Special"[], []"Rushing"[],
+ []"Passing"[], []"Offense"[], []"Scoring"[])[] 
+ []
+
+[165]
+Package color Info: Redefining color shadecolor on input line 5603.
+ <figure/nlf_poormans_path_coeff.pdf, id=2140, 325.215pt x 266.9975pt>
+File: figure/nlf_poormans_path_coeff.pdf Graphic file (type pdf)
+
+<use figure/nlf_poormans_path_coeff.pdf>
+Package pdftex.def Info: figure/nlf_poormans_path_coeff.pdf used on input line 
+5611.
+(pdftex.def)             Requested size: 354.05055pt x 212.42087pt.
+
+Underfull \vbox (badness 1454) has occurred while \output is active []
+
+ [166 <./figure/nlf_poormans_path_coeff.pdf>]
+Package color Info: Redefining color shadecolor on input line 5633.
+Package color Info: Redefining color shadecolor on input line 5648.
+ [167]
+Package color Info: Redefining color shadecolor on input line 5676.
+Package color Info: Redefining color shadecolor on input line 5687.
+Package color Info: Redefining color shadecolor on input line 5701.
+Package color Info: Redefining color shadecolor on input line 5722.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [168]
+Package color Info: Redefining color shadecolor on input line 5733.
+Package color Info: Redefining color shadecolor on input line 5747.
+
+<figure/nlf_patchy_path_coeff.pdf, id=2165, 325.215pt x 266.9975pt>
+File: figure/nlf_patchy_path_coeff.pdf Graphic file (type pdf)
+
+<use figure/nlf_patchy_path_coeff.pdf>
+Package pdftex.def Info: figure/nlf_patchy_path_coeff.pdf used on input line 57
+55.
+(pdftex.def)             Requested size: 354.05055pt x 212.42087pt.
+ [169 <./figure/nlf_patchy_path_coeff.pdf>]
+Package color Info: Redefining color shadecolor on input line 5773.
+Package color Info: Redefining color shadecolor on input line 5793.
+Package color Info: Redefining color shadecolor on input line 5814.
+ [170]
+Package color Info: Redefining color shadecolor on input line 5829.
+
+<figure/another_patchy_path_coeff.pdf, id=2186, 325.215pt x 266.9975pt>
+File: figure/another_patchy_path_coeff.pdf Graphic file (type pdf)
+
+<use figure/another_patchy_path_coeff.pdf>
+Package pdftex.def Info: figure/another_patchy_path_coeff.pdf used on input lin
+e 5837.
+(pdftex.def)             Requested size: 354.05055pt x 212.42087pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [171 <./figure/another_patchy_path_coeff.pdf>]
+Package color Info: Redefining color shadecolor on input line 5862.
+Package color Info: Redefining color shadecolor on input line 5878.
+ [172]
+<figure/nlf_giveaway_path_coeff.pdf, id=2206, 325.215pt x 266.9975pt>
+File: figure/nlf_giveaway_path_coeff.pdf Graphic file (type pdf)
+
+<use figure/nlf_giveaway_path_coeff.pdf>
+Package pdftex.def Info: figure/nlf_giveaway_path_coeff.pdf used on input line 
+5886.
+(pdftex.def)             Requested size: 354.05055pt x 212.42087pt.
+Package color Info: Redefining color shadecolor on input line 5902.
+ [173 <./figure/nlf_giveaway_path_coeff.pdf>]
+Package color Info: Redefining color shadecolor on input line 5926.
+Package color Info: Redefining color shadecolor on input line 5956.
+ <figure/barplot_nfl_paths.pdf, id=2221, 650.43pt x 289.08pt>
+File: figure/barplot_nfl_paths.pdf Graphic file (type pdf)
+
+<use figure/barplot_nfl_paths.pdf>
+Package pdftex.def Info: figure/barplot_nfl_paths.pdf used on input line 5969.
+(pdftex.def)             Requested size: 472.04094pt x 236.01495pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+Underfull \vbox (badness 1028) has occurred while \output is active []
+
+ [174]
+[175 <./figure/barplot_nfl_paths.pdf>] [176]
+Chapter 9.
+[177
+
+] [178] [179] [180]
+Package color Info: Redefining color shadecolor on input line 6085.
+Package color Info: Redefining color shadecolor on input line 6102.
+
+<figure/futbol_model_diagram.pdf, id=2270, 433.62pt x 289.08pt>
+File: figure/futbol_model_diagram.pdf Graphic file (type pdf)
+
+<use figure/futbol_model_diagram.pdf>
+Package pdftex.def Info: figure/futbol_model_diagram.pdf used on input line 610
+4.
+(pdftex.def)             Requested size: 424.84546pt x 236.01495pt.
+ [181]
+Package color Info: Redefining color shadecolor on input line 6144.
+ [182 <./figure/futbol_model_diagram.pdf>]
+Package color Info: Redefining color shadecolor on input line 6168.
+ <figure/fut_pls_path_coeffs.pdf, id=2288, 325.215pt x 180.675pt>
+File: figure/fut_pls_path_coeffs.pdf Graphic file (type pdf)
+
+<use figure/fut_pls_path_coeffs.pdf>
+Package pdftex.def Info: figure/fut_pls_path_coeffs.pdf used on input line 6176
+.
+(pdftex.def)             Requested size: 306.83852pt x 188.81007pt.
+Package color Info: Redefining color shadecolor on input line 6189.
+ [183 <./figure/fut_pls_path_coeffs.pdf>]
+Package color Info: Redefining color shadecolor on input line 6206.
+
+<figure/plot_loadings_fut_pls.pdf, id=2303, 397.485pt x 144.54pt>
+File: figure/plot_loadings_fut_pls.pdf Graphic file (type pdf)
+
+<use figure/plot_loadings_fut_pls.pdf>
+Package pdftex.def Info: figure/plot_loadings_fut_pls.pdf used on input line 62
+13.
+(pdftex.def)             Requested size: 472.04866pt x 212.4249pt.
+Package color Info: Redefining color shadecolor on input line 6224.
+Package color Info: Redefining color shadecolor on input line 6247.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [184 <./figure/plot_loadings_fut_pls.pdf>]
+Package color Info: Redefining color shadecolor on input line 6261.
+
+<figure/futbol_cluster_dendrogram.pdf, id=2318, 578.16pt x 361.35pt>
+File: figure/futbol_cluster_dendrogram.pdf Graphic file (type pdf)
+
+<use figure/futbol_cluster_dendrogram.pdf>
+Package pdftex.def Info: figure/futbol_cluster_dendrogram.pdf used on input lin
+e 6264.
+(pdftex.def)             Requested size: 448.42224pt x 306.81813pt.
+Package color Info: Redefining color shadecolor on input line 6277.
+ [185 <./figure/futbol_cluster_dendrogram.pdf>]
+Package color Info: Redefining color shadecolor on input line 6296.
+Package color Info: Redefining color shadecolor on input line 6321.
+ [186]
+Package color Info: Redefining color shadecolor on input line 6348.
+
+<figure/futbol_scores_ggplot.pdf, id=2337, 578.16pt x 361.35pt>
+File: figure/futbol_scores_ggplot.pdf Graphic file (type pdf)
+
+<use figure/futbol_scores_ggplot.pdf>
+Package pdftex.def Info: figure/futbol_scores_ggplot.pdf used on input line 636
+1.
+(pdftex.def)             Requested size: 448.42224pt x 306.81813pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+Underfull \vbox (badness 6016) has occurred while \output is active []
+
+ [187]
+Package color Info: Redefining color shadecolor on input line 6389.
+
+[188 <./figure/futbol_scores_ggplot.pdf>]
+Underfull \hbox (badness 10000) in paragraph at lines 6397--6398
+
+ []
+
+Package color Info: Redefining color shadecolor on input line 6409.
+<figure/fut_pls_rebus.pdf, id=2356, 505.89pt x 361.35pt>
+File: figure/fut_pls_rebus.pdf Graphic file (type pdf)
+
+<use figure/fut_pls_rebus.pdf>
+Package pdftex.def Info: figure/fut_pls_rebus.pdf used on input line 6412.
+(pdftex.def)             Requested size: 448.43437pt x 306.81813pt.
+ [189 <./figure/fut_pls_rebus.pdf>]
+Package color Info: Redefining color shadecolor on input line 6429.
+
+Underfull \vbox (badness 2343) has occurred while \output is active []
+
+ [190]
+Package color Info: Redefining color shadecolor on input line 6495.
+Package color Info: Redefining color shadecolor on input line 6510.
+
+[191]
+Package color Info: Redefining color shadecolor on input line 6529.
+Package color Info: Redefining color shadecolor on input line 6550.
+Package color Info: Redefining color shadecolor on input line 6573.
+ [192]
+Underfull \vbox (badness 1521) detected at line 6661
+ []
+
+
+Underfull \vbox (badness 3375) has occurred while \output is active []
+
+ [193]
+Underfull \vbox (badness 10000) detected at line 6661
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 6661
+ []
+
+[194]
+Package color Info: Redefining color shadecolor on input line 6667.
+Package color Info: Redefining color shadecolor on input line 6679.
+ <figure/fut_rebus_plot_locals.pdf, id=2394, 325.215pt x 144.54pt>
+File: figure/fut_rebus_plot_locals.pdf Graphic file (type pdf)
+
+<use figure/fut_rebus_plot_locals.pdf>
+Package pdftex.def Info: figure/fut_rebus_plot_locals.pdf used on input line 66
+82.
+(pdftex.def)             Requested size: 448.4647pt x 212.4249pt.
+Package color Info: Redefining color shadecolor on input line 6697.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [195 <./figure/fut_rebus_plot_locals.pdf>]
+Package color Info: Redefining color shadecolor on input line 6712.
+Package color Info: Redefining color shadecolor on input line 6744.
+
+Underfull \vbox (badness 1400) has occurred while \output is active []
+
+ [196]
+Package color Info: Redefining color shadecolor on input line 6773.
+
+[197]
+Package color Info: Redefining color shadecolor on input line 6797.
+ <figure/melt_loads_ggplot.pdf, id=2419, 578.16pt x 361.35pt>
+File: figure/melt_loads_ggplot.pdf Graphic file (type pdf)
+
+<use figure/melt_loads_ggplot.pdf>
+Package pdftex.def Info: figure/melt_loads_ggplot.pdf used on input line 6800.
+(pdftex.def)             Requested size: 448.42224pt x 306.81813pt.
+
+Overfull \hbox (6.67722pt too wide) in paragraph at lines 6813--6815
+\OT1/cmr/m/n/12 To as-sess the qual-ity of the lo-cal mod-els ob-tained by RE-B
+US we use the func-tion \OT1/cmtt/m/n/12 rebus.test()
+ []
+
+[198 <./figure/melt_loads_ggplot.pdf>]
+Package color Info: Redefining color shadecolor on input line 6820.
+Package color Info: Redefining color shadecolor on input line 6845.
+ [199]
+Package color Info: Redefining color shadecolor on input line 6878.
+Package color Info: Redefining color shadecolor on input line 6913.
+
+Underfull \vbox (badness 1163) detected at line 6941
+ []
+
+
+Underfull \vbox (badness 1163) has occurred while \output is active []
+
+ [200]
+[201]
+Overfull \hbox (1.53238pt too wide) in paragraph at lines 6967--6968
+[]\OT1/cmss/bx/n/12 Detecting Un-ob-served Het-ero-gene-ity in the Re-la-tion-s
+hip Be-tween Sub-jec-tive Well-
+ []
+
+[202] [203] [204
+
+]
+Appendix A.
+[205] [206]
+Underfull \vbox (badness 2486) has occurred while \output is active []
+
+ [207]
+[208] [209] [210] [211] [212]
+Underfull \vbox (badness 6188) has occurred while \output is active []
+
+ [213]
+[214] [215] [216] [217] [218] [219] [220] [221]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 7330.
+ [222]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 7330.
+
+(./PLS_Path_Modeling_with_R.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 7330.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 7330.
+
+Package rerunfilecheck Info: File `PLS_Path_Modeling_with_R.out' has not change
+d.
+(rerunfilecheck)             Checksum: 9570D510519DCDA85B03F981A7824954;9829.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 7330.
+ ) 
+Here is how much of TeX's memory you used:
+ 8191 strings out of 493488
+ 124847 string characters out of 3141326
+ 221763 words of memory out of 3000000
+ 10711 multiletter control sequences out of 15000+200000
+ 17383 words of font info for 62 fonts, out of 3000000 for 9000
+ 957 hyphenation exceptions out of 8191
+ 30i,12n,43p,1521b,505s stack positions out of 5000i,500n,10000p,200000b,50000s
+</usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb
+></usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb><
+/usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmbxti10.pfb>
+</usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><
+/usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></
+usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></us
+r/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/
+local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/lo
+cal/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/loca
+l/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/t
+exlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texl
+ive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr/local/texli
+ve/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmss12.pfb></usr/local/texliv
+e/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/local/texlive/
+2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmssbx10.pfb></usr/local/texlive
+/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/
+2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/20
+12/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/local/texlive/201
+2/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2012
+/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
+Output written on PLS_Path_Modeling_with_R.pdf (235 pages, 2029494 bytes).
+PDF statistics:
+ 2757 PDF objects out of 2984 (max. 8388607)
+ 2336 compressed objects within 24 object streams
+ 608 named destinations out of 1000 (max. 500000)
+ 1439 words of extra memory for PDF output out of 10000 (max. 10000000)
+
